@@ -1,0 +1,16 @@
+*.aux
+*.log
+*.out
+*.synctex.gz
+*.toc
+*.pyc
+custom_projects/
+.idea/
+main_project/cmake/*
+!main_project/cmake/CMakeLists.txt
+main_project/debug/*
+main_project/release/*
+main_project/data/*
+main_project/configs/*
+main_project/results/*
+__pychache__/
