@@ -14,3 +14,4 @@ main_project/data/*
 main_project/configs/*
 main_project/results/*
 __pychache__/
+.ipynb_checkpoints/

@@ -36,15 +36,15 @@ public:
 
         model_parameters = std::make_unique<ModelParameters>(
                 generate_parameter_class_json<LatticeParameters<T, ModelParameters, UpdateFormalismParameters, LatticeUpdateFormalismParameters>, ModelParameters> (
-                        *this, "model", rel_config_path_));
+                        *this, model_parameters->param_file_name(), rel_config_path_));
 
         update_parameters = std::make_unique<UpdateFormalismParameters>(
                 generate_parameter_class_json<LatticeParameters<T, ModelParameters, UpdateFormalismParameters, LatticeUpdateFormalismParameters>, UpdateFormalismParameters> (
-                        *this, "update", rel_config_path_));
+                        *this, update_parameters->param_file_name(), rel_config_path_));
 
         lattice_update_parameters = std::make_unique<LatticeUpdateFormalismParameters>(
                 generate_parameter_class_json<LatticeParameters<T, ModelParameters, UpdateFormalismParameters, LatticeUpdateFormalismParameters>, LatticeUpdateFormalismParameters> (
-                        *this, "lattice_update", rel_config_path_));
+                        *this, lattice_update_parameters->param_file_name(), rel_config_path_));
     }
 
     const std::vector<int>& get_dimensions() const
@@ -72,25 +72,40 @@ public:
         measures = measures_;
     }
 
-    void write_to_file(const std::string& rel_config_path) const {
-        std::string model_params_path = get_value_by_key<std::string>("model_params_path", rel_config_path);
+    void write_to_file(const std::string& rel_config_path) {
+        // ToDo: Write function in parameters that accepts various objects and does the same operation as is done here for an arbitrary number of parameters -> parameters can even be collected in a vector of std::vector<*Parameteres>
+
+        std::string model_params_path = get_value_by_key<std::string>(model_parameters->param_file_name() + "_path", rel_config_path);
         model_parameters->write_to_file(model_params_path);
 
-        std::string update_formalism_params_path = get_value_by_key<std::string>("update_params_path", rel_config_path);
+        std::string update_formalism_params_path = get_value_by_key<std::string>(update_parameters->param_file_name() + "_path", rel_config_path);
         update_parameters->write_to_file(update_formalism_params_path);
 
-        std::string lattice_update_params_path = get_value_by_key<std::string>("lattice_update_params_path", rel_config_path);
+        std::string lattice_update_params_path = get_value_by_key<std::string>(lattice_update_parameters->param_file_name() + "_path", rel_config_path);
         lattice_update_parameters->write_to_file(lattice_update_params_path);
 
-        Parameters::write_to_file(rel_config_path, "systembase_params");
+        json model_parameters_ = model_parameters->get_json();
+        delete_entry(model_parameters->param_file_name());
+
+        json update_parameters_ = update_parameters->get_json();
+        delete_entry(update_parameters->param_file_name());
+
+        json lattice_update_parameters_ = lattice_update_parameters->get_json();
+        delete_entry(lattice_update_parameters->param_file_name());
+
+        Parameters::write_to_file(rel_config_path, param_file_name());
+
+        add_entry(model_parameters->param_file_name(), model_parameters_);
+        add_entry(update_parameters->param_file_name(), update_parameters_);
+        add_entry(lattice_update_parameters->param_file_name(), lattice_update_parameters_);
     }
 
     Parameters build_expanded_raw_parameters() const
     {
         Parameters parameters(params);
-        parameters.add_entry("model", model_parameters->get_json());
-        parameters.add_entry("update", update_parameters->get_json());
-        parameters.add_entry("lattice_update", lattice_update_parameters->get_json());
+        parameters.add_entry(model_parameters->param_file_name(), model_parameters->get_json());
+        parameters.add_entry(update_parameters->param_file_name(), update_parameters->get_json());
+        parameters.add_entry(lattice_update_parameters->param_file_name(), lattice_update_parameters->get_json());
         return parameters;
     }
 
@@ -108,7 +123,7 @@ private:
     std::unique_ptr<UpdateFormalismParameters> update_parameters;
     std::unique_ptr<LatticeUpdateFormalismParameters> lattice_update_parameters;
 
-    uint16_t n_sites; // Total number sites
+    uint16_t n_sites; // Total number of sites
     uint16_t size; // Total number of elements on lattice
     std::vector<int> dimensions; // Different dimensions
     std::vector<int> dim_mul; // Accumulated different dimensions (by product)
@@ -135,8 +150,9 @@ public:
             set_nearest_neighbours();
 
         lattice_update = std::make_unique<typename LatticeUpdateFormalismParameters::LatticeUpdate>(*lp.lattice_update_parameters);
-        lattice_update->initialize(*this);
 
+        update_formalism->initialize(*this);
+        lattice_update->initialize(*this);
     }
 
     void update_step(uint measure_interval)
@@ -163,11 +179,16 @@ public:
         return 0.5 * drift_term / double(get_size()); // 2 *
     }
 
+    void normalize(std::vector<T> &lattice_grid)
+    {
+        for(auto& elem : lattice_grid)
+            elem = model->normalize(elem);
+    }
 
-    struct MeasureEnergyPolicy: public MeasurePolicy< LatticeSystem<T, ModelParameters, UpdateFormalismParameters, LatticeUpdateFormalismParameters> > {
+    struct MeasureEnergyPolicy: public common_measures::MeasurePolicy< LatticeSystem<T, ModelParameters, UpdateFormalismParameters, LatticeUpdateFormalismParameters> > {
         public:
         std::string measure(const LatticeSystem<T, ModelParameters, UpdateFormalismParameters, LatticeUpdateFormalismParameters> &system) override {
-                return std::to_string(TypePolicy<double>::realv(system.energy()));
+                return std::to_string(common_measures::TypePolicy<double>::realv(system.energy()));
         }
 
         std::string name()
@@ -176,10 +197,10 @@ public:
         }
     };
 
-    struct MeasureEnergyImagPolicy: public MeasurePolicy< LatticeSystem<T, ModelParameters, UpdateFormalismParameters, LatticeUpdateFormalismParameters> > {
+    struct MeasureEnergyImagPolicy: public common_measures::MeasurePolicy< LatticeSystem<T, ModelParameters, UpdateFormalismParameters, LatticeUpdateFormalismParameters> > {
         public:
         std::string measure(const LatticeSystem<T, ModelParameters, UpdateFormalismParameters, LatticeUpdateFormalismParameters> &system) override {
-                return std::to_string(TypePolicy<double>::imagv(system.energy()));
+                return std::to_string(common_measures::TypePolicy<double>::imagv(system.energy()));
         }
 
         std::string name()
@@ -188,11 +209,11 @@ public:
         }
     };
 
-    struct MeasureDriftTermPolicy: public MeasurePolicy< LatticeSystem<T, ModelParameters, UpdateFormalismParameters, LatticeUpdateFormalismParameters> > {
+    struct MeasureDriftTermPolicy: public common_measures::MeasurePolicy< LatticeSystem<T, ModelParameters, UpdateFormalismParameters, LatticeUpdateFormalismParameters> > {
     public:
         std::string measure(const LatticeSystem<T, ModelParameters, UpdateFormalismParameters, LatticeUpdateFormalismParameters> &system) override {
             auto drift_term = system.drift_term();
-            return std::to_string(TypePolicy<decltype(drift_term)>::realv(drift_term)) + " " + std::to_string(TypePolicy<decltype(drift_term)>::imagv(drift_term));
+            return std::to_string(common_measures::TypePolicy<decltype(drift_term)>::realv(drift_term)) + " " + std::to_string(common_measures::TypePolicy<decltype(drift_term)>::imagv(drift_term));
         }
 
         std::string name()
@@ -201,10 +222,10 @@ public:
         }
     };
 
-    struct MeasureWilsonActionPolicy: public MeasurePolicy< LatticeSystem<T, ModelParameters, UpdateFormalismParameters, LatticeUpdateFormalismParameters> > {
+    struct MeasureWilsonActionPolicy: public common_measures::MeasurePolicy< LatticeSystem<T, ModelParameters, UpdateFormalismParameters, LatticeUpdateFormalismParameters> > {
     public:
         std::string measure(const LatticeSystem<T, ModelParameters, UpdateFormalismParameters, LatticeUpdateFormalismParameters> &system) override {
-            return std::to_string(TypePolicy<double>::realv(system.energy()));
+            return std::to_string(common_measures::TypePolicy<double>::realv(system.energy()));
         }
 
         std::string name()
@@ -215,53 +236,21 @@ public:
 
     void generate_measures()
     {
-        measures = std::vector< std::unique_ptr<MeasurePolicy<LatticeSystem>> > {};
-        for (auto& element :  lp.measures)
-        {
-            if(element == "Energy")
-                measures.push_back(std::make_unique<MeasureEnergyPolicy>());
-            else if(element == "EnergyImag")
-                measures.push_back(std::make_unique<MeasureEnergyImagPolicy>());
-            else if(element == "Drift")
-                measures.push_back(std::make_unique<MeasureDriftTermPolicy>());
-            else if(element == "WilsonAction")
-                measures.push_back(std::make_unique<MeasureWilsonActionPolicy>());
-            else {
-                /* auto model_policy_measure = std::make_unique(model->template model_measure_factory<LatticeSystem<T, ModelParameters, UpdateFormalismParameters>, LatticeParameters<T, ModelParameters, UpdateFormalismParameters> >(
-                        element, lp); */
-                // if (model_policy_measure == nullptr)
-                    measures.push_back(unique_measure_factory< LatticeSystem>(element));
-                /* else
-                    measures.push-_back(model_policy_measure); */
-            }
-        }
+        auto lattice_related_measures = generate_lattice_system_measures(lp.measures);
+        this->concat_measures(lattice_related_measures);
+        auto model_related_measures =  model->template generate_model_measures<LatticeSystem>(lp.measures);
+        this->concat_measures(model_related_measures);
+        auto common_defined_measures = common_measures::generate_measures<LatticeSystem>(lp.measures);
+        this->concat_measures(common_defined_measures);
     }
 
-    std::vector<std::string> perform_measure()
-    {
-        std::vector<std::string> results;
-        for(auto const& element: measures) {
-            results.push_back(element->measure(*this));
-        }
-        return results;
-    }
-
-    std::vector<std::string> get_measure_names()
-    {
-        std::vector<std::string> results;
-        for(auto const& element: measures) {
-            results.push_back(element->name());
-        }
-        return results;
-    }
-
-    // Returns the total number of sites
+    // Returns the total number of elements of the lattice - not the total number of sites
     const auto get_size() const
     {
         return lp.size;
     }
 
-    const auto elem_per_site() const
+    const auto get_elem_per_site() const
     {
         return lp.elem_per_site;
     }
@@ -286,6 +275,11 @@ public:
         return neighbours[i];
     }
 
+    auto& get_neighbours()
+    {
+        return neighbours;
+    }
+
     const auto get_neighbours() const
     {
         return neighbours;
@@ -296,9 +290,15 @@ public:
         return *update_formalism;
     }
 
-    auto& get_lattice_grid()
+    // ToDo: Define as method in Systembase and call by Derived class!
+    auto& get_system_representation()
     {
         return lattice;
+    }
+
+    const static std::string get_name()
+    {
+        return LatticeParameters<T, ModelParameters, UpdateFormalismParameters, LatticeUpdateFormalismParameters>::name();
     }
 
     typedef T SiteType;
@@ -307,7 +307,6 @@ private:
 
     std::vector<T> lattice;
     std::vector< std::vector < T* > > neighbours;
-    std::vector< std::unique_ptr<MeasurePolicy<LatticeSystem>> > measures;
 
     std::unique_ptr<typename ModelParameters::Model> model;
     std::unique_ptr<typename UpdateFormalismParameters::UpdateFormalism> update_formalism;
@@ -317,6 +316,8 @@ private:
     int neigh_dir(int n, int d, bool dir, int mu) const;
     void set_nearest_neighbours();
     void set_plaquette_neighbours();
+
+    std::vector< std::unique_ptr<common_measures::MeasurePolicy<LatticeSystem>> > generate_lattice_system_measures(const json& measure_names);
 };
 
 
@@ -401,6 +402,24 @@ std::ostream& operator<<(std::ostream &os, const LatticeSystem<T, ModelParameter
     }
     std::cout<<std::endl;
     return os;
+}
+
+
+template<typename T, typename ModelParameters, typename UpdateFormalismParameters, typename LatticeUpdateFormalismParameters>
+std::vector< std::unique_ptr<common_measures::MeasurePolicy<LatticeSystem<T, ModelParameters, UpdateFormalismParameters, LatticeUpdateFormalismParameters>>>>
+LatticeSystem<T, ModelParameters, UpdateFormalismParameters, LatticeUpdateFormalismParameters>::generate_lattice_system_measures(const json& measure_names)
+{
+    std::vector< std::unique_ptr<common_measures::MeasurePolicy<LatticeSystem<T, ModelParameters, UpdateFormalismParameters, LatticeUpdateFormalismParameters>>> > lattice_measures {};
+    for (auto& measure_name :  measure_names)
+        if(measure_name == "Energy")
+            lattice_measures.push_back(std::make_unique<MeasureEnergyPolicy>());
+        else if(measure_name == "EnergyImag")
+            lattice_measures.push_back(std::make_unique<MeasureEnergyImagPolicy>());
+        else if(measure_name == "Drift")
+            lattice_measures.push_back(std::make_unique<MeasureDriftTermPolicy>());
+        else if(measure_name == "WilsonAction")
+            lattice_measures.push_back(std::make_unique<MeasureWilsonActionPolicy>());
+    return lattice_measures;
 }
 
 

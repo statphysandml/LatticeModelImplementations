@@ -9,24 +9,43 @@
 
 #include "mcmc_simulation/header.hpp"
 
+#include "../../include/update_dynamics/update_dynamics_header.hpp"
+#include "../../include/mcmc_update/mcmc_update_header.hpp"
+
 #include "../../include/site/site_header.hpp"
-#include "../../include/site_update/site_update_header.hpp"
-
 #include "../../include/lattice/lattice_header.hpp"
-#include "../../include/lattice_update/lattice_update_header.hpp"
-
 #include "../../include/link_lattice/link_lattice_header.hpp"
 
-#include "../../include/local_update/local_update_header.hpp"
-#include "../../include/global_update/global_update_header.hpp"
+// ToDo: Define this as namespace, class or function so that the typedefs are not globally defined!!
 
-#include "../../include/lattice/lattice_models/ising_model.hpp"
+namespace from_file_simulation {
 
-
-typedef int BasicType;
+/* typedef int BasicType;
 typedef IsingModelParameters ModelParams;
 typedef MetropolisUpdateParameters<ModelParams> UpdateParams;
-typedef LatticeParameters< BasicType, ModelParams, UpdateParams, SequentialUpdateParameters> SystemBaseParams;
+typedef LatticeParameters< BasicType, ModelParams, UpdateParams, SequentialUpdateParameters> SystemBaseParams; */
+
+/* typedef double BasicType;
+typedef XYModelParameters<GaussianSampler> ModelParams;
+typedef MetropolisUpdateParameters<ModelParams> UpdateParams;
+typedef LatticeParameters< BasicType, ModelParams, UpdateParams, SequentialUpdateParameters> SystemBaseParams; */
+
+typedef double BasicType;
+typedef XYModelParameters<GaussianSampler> ModelParams;
+typedef HybridMonteCarloUpdateParameters<BasicType, ModelParams> UpdateParams;
+typedef LatticeParameters< BasicType, ModelParams, UpdateParams, GlobalLatticeUpdateParameters> SystemBaseParams;
+
+/* typedef std::complex<double> BasicType;
+typedef CubicGaussianModelParameters<GaussianSampler> ModelParams;
+typedef ComplexLangevinUpdateParameters<ModelParams> UpdateParams;
+typedef SiteParameters< BasicType, ModelParams, UpdateParams, SiteSimpleUpdateParameters> SystemBaseParams; */
+
+/* typedef std::complex<double> BasicType;
+typedef ComplexPolynomialModelParameters<GaussianSampler> ModelParams;
+typedef ComplexLangevinUpdateParameters<ModelParams> UpdateParams;
+typedef SiteParameters< BasicType, ModelParams, UpdateParams, SiteSimpleUpdateParameters> SystemBaseParams; */
+
+
 
 // typedef
 
@@ -149,5 +168,7 @@ typedef SiteParameters< T, ModelParams, UpdateParams > SystemBaseParams; */
 typedef PolynomialModelParameters<UniformSampler> ModelParams;
 typedef LangevinUpdateParameters<ModelParams> UpdateParams;
 typedef SiteParameters< T, ModelParams, UpdateParams > SystemBaseParams; */
+
+}
 
 #endif //MAIN_SIMULATION_HEADER_HPP

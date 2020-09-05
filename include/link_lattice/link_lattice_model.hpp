@@ -18,7 +18,7 @@ class LinkLatticeModel : public LatticeModel<ModelCL>
 {
 public:
     template<typename SB>
-    struct MeasurePolyakovLoopPolicy: public MeasurePolicy< SB > {
+    struct MeasurePolyakovLoopPolicy: public common_measures::MeasurePolicy< SB > {
     public:
         MeasurePolyakovLoopPolicy(const std::vector<int> &dimensions_, const uint &elem_per_site_) : dimensions(dimensions_), elem_per_site(elem_per_site_)
         {}
@@ -46,7 +46,7 @@ public:
     };
 
     template<typename SB, typename SBP>
-    MeasurePolicy<SB>* model_measure_factory(const std::string& measure, const SBP& system_base_parameters) {
+    common_measures::MeasurePolicy<SB>* model_measure_factory(const std::string& measure, const SBP& system_base_parameters) {
         if(measure == "PolyakovLoop")
             return new MeasurePolyakovLoopPolicy<SB>(system_base_parameters.get_dimensions(), system_base_parameters.get_elems_per_site());
         else

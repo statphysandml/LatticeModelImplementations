@@ -76,63 +76,33 @@ int main(int argc, char **argv) {
     // auto result = readdy::util::integration::integrate([] (double x) { return std::pow(x, 2); }, -1.3, 3.3);
     // auto result = readdy::util::integration::integrate(func, -1.3, 3.3);
 
-    Py_Initialize();
-    PyRun_SimpleString("import sys\n" "import os");
-    PyRun_SimpleString("sys.path.append( os.path.dirname(os.getcwd()) + '/')");
-    PyRun_SimpleString("sys.path.append( os.path.dirname(os.getcwd()) + '/python_scripts/')");
-    PyRun_SimpleString("sys.path.append( os.path.dirname(os.getcwd()) + '/python_scripts/plotting_environment/')");
-    PyRun_SimpleString("print('Running python in ' + os.path.dirname(os.getcwd()) + '/python_scripts/')");
+    initialize_python();
 
     if(argc > 1)
-        run_from_file<SystemBaseParams>(argc, argv);
+        run_from_file<from_file_simulation::SystemBaseParams>(argc, argv);
     else
         custom_main();
 
-    Py_Finalize();
+    finalize_python();
 }
+
+#include "../include/examples/ising_model.hpp"
+#include "../include/examples/xy_model.hpp"
+#include "../include/examples/complex_cubic_model.hpp"
+#include "../include/examples/complex_polynomial_model.hpp"
+#include "../include/examples/complex_scalar_gaussian_model.hpp"
 
 void custom_main()
 {
-    std::vector<int> dimensions {4, 4};
+    // example_ising_model();
+    // example_xy_model_metropolis();
+    // example_xy_model_hmc_algorithm();
 
-    // MetropolisUpdateParameters<IsingModelParameters> update_parameters;
-    HybridMonteCarloUpdateParameters<IsingModelParameters> update_parameters(json {
-            {"epsilon", 0.02},
-            {"n", 100}
-    });
-
-    double beta = 0.4;
-    IsingModelParameters ising_model_parameters(json {
-            {"beta", beta},
-            {"J", {1.0, 0.0}},
-            {"h", {0.0, 0.0}},
-            {"eps", 0.1}
-    });
-
-    // typedef LatticeParameters< int, IsingModelParameters, MetropolisUpdateParameters<IsingModelParameters>, SequentialUpdateParameters> LatticeParams;
-    typedef LatticeParameters< int, IsingModelParameters, HybridMonteCarloUpdateParameters<IsingModelParameters>, GlobalLatticeUpdateParameters> LatticeParams;
-
-    LatticeParams lattice_parameters(
-            json {
-                    {"dimensions", dimensions},
-                    {"lattice_update_type", "sequential"},
-                    {"thermalization_steps", 20000},
-                    {"measures", {"Mean", "AbsMean", "Std", "Energy", "Config"}},
-                    {"model", ising_model_parameters.get_json()},
-                    {"update", update_parameters.get_json()}},
-                    "None"
-    );
-
-    typedef ExpectationValueParameters ExecutionParams;
-    ExecutionParams execution_parameters(10, 1000, 1000, {}, // optional additional measures
-                                         {"Mean", "Std", "Energy"}); // Meausures which will be evaluated in terms of mean and error evaluation
-
-    auto simparams = SimulationParameters< LatticeParams, ExecutionParams >::generate_simulation(
-            lattice_parameters, execution_parameters, "/data/IsingModel/", "model", "beta", 0.1, 0.625, 21);
-
-    Simulation<LatticeParams, ExpectationValueParameters > sim(simparams);
-
-    sim.run();
+    // example_complex_cubic_model_complex_langevin();
+    // example_complex_scalar_gaussian_model();
+    example_complex_polynomial_model_complex_langevin();
+    // example_complex_polynomial_model_cobrid_monte_carlo();
+    example_complex_polynomial_model_cobrid_imag_monte_carlo();
 }
 
 // ./LatticeModelImplementations mode_type config_file data_root_dir

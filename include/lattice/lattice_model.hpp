@@ -15,7 +15,12 @@ public:
     using Parameters::Parameters;
 
     const void write_to_file(const std::string& root_dir) {
-        Parameters::write_to_file(root_dir, "model_params");
+        Parameters::write_to_file(root_dir, param_file_name());
+    }
+
+    static const std::string param_file_name()
+    {
+        return "model_params";
     }
 };
 
@@ -24,9 +29,16 @@ template <typename ModelCL>
 class LatticeModel
 {
 public:
-    template<typename SB, typename SBP>
-    MeasurePolicy<SB>* model_measure_factory(const std::string& measure, const SBP& system_base_parameters) {
-        return nullptr;
+    template<typename T>
+    T normalize(T state)
+    {
+        return state;
+    }
+
+    template<typename SB>
+    std::vector< std::unique_ptr<common_measures::MeasurePolicy<SB>> > generate_model_measures(const json& measure_names)
+    {
+        return std::vector< std::unique_ptr<common_measures::MeasurePolicy<SB>> > {};
     }
 
 private:

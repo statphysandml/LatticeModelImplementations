@@ -14,19 +14,17 @@ class IsingModel;
 class IsingModelParameters : public LatticeModelParameters {
 public:
     explicit IsingModelParameters(const json params_) : LatticeModelParameters(params_),
-                                                     beta(get_value_by_key<double>("beta", 0.4)),
-                                                     J(get_value_by_key<std::complex<double>>("J", 1.0)),
-                                                     h(get_value_by_key<std::complex<double>>("h", 0.0)),
-                                                     eps(get_value_by_key<double>("eps", 0.1))
-    //mu(complex_to_json(get_value_by_key("mu")))
+                                                        beta(get_value_by_key<double>("beta", 0.4)),
+                                                        J(get_value_by_key<std::complex<double>>("J", 1.0)),
+                                                        h(get_value_by_key<std::complex<double>>("h", 0.0))
     {
 
     }
 
-    explicit IsingModelParameters(double beta_, std::complex<double> mu_, double eps_) : IsingModelParameters(json{
+    explicit IsingModelParameters(double beta_, std::complex<double> J_, std::complex<double> h_) : IsingModelParameters(json{
             {"beta", beta_},
-            {"mu", mu_},
-            {"eps", eps_}
+            {"J", J_},
+            {"h", h_}
     })
     {}
 
@@ -42,7 +40,6 @@ private:
     const double beta;
     const std::complex<double> J;
     const std::complex<double> h;
-    const double eps;
 };
 
 

@@ -8,5 +8,6 @@
 #include "lattice.hpp"
 
 #include "lattice_models/ising_model.hpp"
+#include "lattice_models/xy_model.hpp"
 
 #endif //LATTICEMODELIMPLEMENTATIONS_LATTICE_HEADER_HPP

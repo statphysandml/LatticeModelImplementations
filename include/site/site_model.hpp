@@ -14,7 +14,12 @@ public:
     using Parameters::Parameters;
 
     void write_to_file(const std::string& root_dir) {
-        Parameters::write_to_file(root_dir, "model_params");
+        Parameters::write_to_file(root_dir, param_file_name());
+    }
+
+    static const std::string param_file_name()
+    {
+        return "model_params";
     }
 };
 
@@ -22,6 +27,18 @@ public:
 template <typename ModelCL>
 class SiteModel
 {
+public:
+    template<typename T>
+    T normalize(T state)
+    {
+        return state;
+    }
+
+    template<typename SB>
+    std::vector< std::unique_ptr<common_measures::MeasurePolicy<SB>> > generate_model_measures(const json& measure_names)
+    {
+        return std::vector< std::unique_ptr<common_measures::MeasurePolicy<SB>> > {};
+    }
 private:
     ModelCL& site_model() {
         return *static_cast<ModelCL*>(this);
