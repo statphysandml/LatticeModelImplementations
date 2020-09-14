@@ -1,8 +1,0 @@
-//
-// Created by lukas on 07.08.20.
-//
-
-#ifndef EXAMPLES_COMPLEX_XY_MODEL_HPP
-#define EXAMPLES_COMPLEX_XY_MODEL_HPP
-
-#endif //EXAMPLES_COMPLEX_XY_MODEL_HPP
