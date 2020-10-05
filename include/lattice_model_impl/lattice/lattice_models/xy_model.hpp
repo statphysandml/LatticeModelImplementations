@@ -36,24 +36,21 @@ namespace xymodel
 }
 
 
-template<typename SamplerCl>
 class XYModel;
 
-template<typename SamplerCl>
+
 class XYModelParameters : public LatticeModelParameters {
 public:
     explicit XYModelParameters(const json params_) : LatticeModelParameters(params_),
                                                      beta(get_value_by_key<double>("beta", 0.5)),
                                                      J(get_value_by_key<double>("J", 1.0)),
-                                                     h(get_value_by_key<double>("h", 0.0)),
-                                                     eps(get_value_by_key<double>("eps", 0.1))
+                                                     h(get_value_by_key<double>("h", 0.0))
     {}
 
     explicit XYModelParameters(double beta_, double J_, double h_, double eps_) : XYModelParameters(json{
             {"beta", beta_},
             {"J", J_},
-            {"h", h_},
-            {"eps", eps_}
+            {"h", h_}
     })
     {}
 
@@ -61,35 +58,21 @@ public:
         return "XYModel";
     }
 
-    typedef XYModel<SamplerCl> Model;
+    typedef XYModel Model;
 
 private:
-    friend class XYModel<SamplerCl>;
+    friend class XYModel;
 
     const double beta;
     const double J;
     const double h;
-    const double eps;
 };
 
 
-template<typename SamplerCl>
-class XYModel : public LatticeModel< XYModel<SamplerCl> >
+class XYModel : public LatticeModel< XYModel >
 {
 public:
-    explicit XYModel(const XYModelParameters<SamplerCl> &mp_) : mp(mp_), sampler(SamplerCl(mp.eps)) {}
-
-    template<typename T>
-    T random_state()
-    {
-        return normalize(sampler.template random_state<T>());
-    }
-
-    template<typename T>
-    T propose_state(T site)
-    {
-        return normalize(sampler.template propose_state<T>(site));
-    }
+    explicit XYModel(const XYModelParameters &mp_) : mp(mp_) {}
 
     template<typename T>
     T normalize(T state)
@@ -122,11 +105,6 @@ public:
         return  mp.beta * S;
     }
 
-    const SamplerCl& get_sampler() const
-    {
-        return sampler;
-    }
-
     template<typename SB>
     std::vector< std::unique_ptr<common_measures::MeasurePolicy<SB>> > generate_model_measures(const json& measure_names)
     {
@@ -137,11 +115,8 @@ public:
         return measures;
     }
 
-
 private:
-    const XYModelParameters<SamplerCl> &mp;
-
-    SamplerCl sampler;
+    const XYModelParameters &mp;
 };
 
 #endif //LATTICEMODELIMPLEMENTATIONS_XY_MODEL_HPP

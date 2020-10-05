@@ -9,11 +9,11 @@
 #include "../../mcmc_update_base.hpp"
 
 
-template<typename ModelParameters>
+template<typename ModelParameters, typename SamplerCl>
 class ComplexLangevinUpdate;
 
 
-template<typename ModelParameters>
+template<typename ModelParameters, typename SamplerCl>
 class ComplexLangevinUpdateParameters : public MCMCUpdateBaseParameters {
 public:
     explicit ComplexLangevinUpdateParameters(const json params_) : MCMCUpdateBaseParameters(params_),
@@ -23,7 +23,8 @@ public:
     explicit ComplexLangevinUpdateParameters(
             const double epsilon_
     ) : ComplexLangevinUpdateParameters(json{
-            {"epsilon", epsilon_}
+            {"epsilon", epsilon_},
+            {"eps", epsilon_}
     })
     {}
 
@@ -31,21 +32,22 @@ public:
         return "ComplexLangevinUpdate";
     }
 
-    typedef ComplexLangevinUpdate<ModelParameters> MCMCUpdate;
+    typedef ComplexLangevinUpdate<ModelParameters, SamplerCl> MCMCUpdate;
 
 private:
-    friend class ComplexLangevinUpdate<ModelParameters>;
+    friend class ComplexLangevinUpdate<ModelParameters, SamplerCl>;
 
     const double epsilon;
     const double sqrt2epsilon;
 };
 
 
-template<typename ModelParameters>
-class ComplexLangevinUpdate : public MCMCUpdateBase< ComplexLangevinUpdate<ModelParameters> >
+template<typename ModelParameters, typename SamplerCl>
+class ComplexLangevinUpdate : public MCMCUpdateBase< ComplexLangevinUpdate<ModelParameters, SamplerCl>, SamplerCl >
 {
 public:
-    explicit ComplexLangevinUpdate(const ComplexLangevinUpdateParameters<ModelParameters> &up_, typename ModelParameters::Model & model_) : up(up_), model(model_)
+    explicit ComplexLangevinUpdate(const ComplexLangevinUpdateParameters<ModelParameters, SamplerCl> &up_, typename ModelParameters::Model & model_)
+        : MCMCUpdateBase< ComplexLangevinUpdate<ModelParameters, SamplerCl>, SamplerCl >(up_.eps), up(up_), model(model_)
     {
         normal = std::normal_distribution<double> (0, 1);
     }
@@ -91,7 +93,7 @@ public:
     }
 
 private:
-    const ComplexLangevinUpdateParameters<ModelParameters> & up;
+    const ComplexLangevinUpdateParameters<ModelParameters, SamplerCl> & up;
     typename ModelParameters::Model & model;
 
     std::normal_distribution<double> normal;

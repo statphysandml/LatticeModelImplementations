@@ -9,52 +9,35 @@
 #include "mcmc_simulation/util/random.hpp"
 
 
-template<typename SamplerCl>
+
 class ComplexCubicModel;
 
-template<typename SamplerCl>
+
 class ComplexCubicModelParameters : public SiteModelParameters {
 public:
-    explicit ComplexCubicModelParameters(const json params_) : SiteModelParameters(params_),
-                                                                eps(get_value_by_key<double>("eps", 0.1))
+    explicit ComplexCubicModelParameters(const json params_) : SiteModelParameters(params_)
     {}
 
-    explicit ComplexCubicModelParameters(double eps_) : ComplexCubicModelParameters<SamplerCl>(json {
-            {"eps", eps_}
-    })
+    explicit ComplexCubicModelParameters() : ComplexCubicModelParameters(json {})
     {}
 
     static std::string name() {
         return "ComplexCubicModel";
     }
 
-    typedef ComplexCubicModel<SamplerCl> Model;
+    typedef ComplexCubicModel Model;
 
 private:
-    friend class ComplexCubicModel<SamplerCl>;
-
-    const double eps;
+    friend class ComplexCubicModel;
 };
 
-template<typename SamplerCl>
-class ComplexCubicModel : public SiteModel<ComplexCubicModel<SamplerCl>>
+
+class ComplexCubicModel : public SiteModel<ComplexCubicModel>
 {
 public:
-    explicit ComplexCubicModel(const ComplexCubicModelParameters<SamplerCl> &mp_) : mp(mp_), sampler(SamplerCl(mp.eps)) {}
+    explicit ComplexCubicModel(const ComplexCubicModelParameters &mp_) : mp(mp_) {}
 
-    template<typename T>
-    T random_state()
-    {
-        return sampler.template random_state<T>();
-    }
-
-    template<typename T>
-    T propose_state(T site)
-    {
-        return sampler.template propose_state<T>(site);
-    }
-
-    /* std::complex<double> propose_state(const std::complex<double> site, const double KMax, const double KExpectation)
+/* std::complex<double> propose_state(const std::complex<double> site, const double KMax, const double KExpectation)
     {
         double eps = std::min(mp.eps, mp.eps * KExpectation / KMax);
         std::complex<double> state = site + eps * std::complex<double>(propose_normal(gen), propose_normal(gen));
@@ -77,15 +60,8 @@ public:
         return {-1.0 * std::pow(site.real(), 2) * site.imag() + std::pow(site.imag(), 3) / 3.0, std::pow(site.real(), 3) / 3.0 - std::pow(site.imag(), 2) * site.real() };
     }
 
-    const SamplerCl& get_sampler() const
-    {
-        return sampler;
-    }
-
 private:
-    const ComplexCubicModelParameters<SamplerCl> &mp;
-
-    SamplerCl sampler;
+    const ComplexCubicModelParameters &mp;
 };
 
 // int ComplexCubicModel::init = 0;

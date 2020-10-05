@@ -10,9 +10,12 @@ examples/cmake/*
 !examples/cmake/CMakeLists.txt
 examples/debug/*
 examples/release/*
+examples/release_thrust_cpu/*
+examples/release_thrust_gpu/*
 examples/data/*
 examples/configs/*
 examples/results/*
 lib/
+libgpu/
 __pychache__/
 .ipynb_checkpoints/

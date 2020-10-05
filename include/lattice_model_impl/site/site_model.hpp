@@ -39,9 +39,27 @@ public:
     {
         return std::vector< std::unique_ptr<common_measures::MeasurePolicy<SB>> > {};
     }
+
+    template<typename func>
+    std::complex<double> get_potential(const std::complex<double> site, func& transformer) const
+    {
+        std::complex<double> site_{transformer(site.real()), site.imag()};
+        return site_model().get_potential(site);
+    }
+
+    template<typename func>
+    std::complex<double> get_drift_term(const std::complex<double> site, func& transformer) const {
+        std::complex<double> site_{transformer(site.real()), site.imag()};
+        return site_model()(site);
+    }
+
 private:
     ModelCL& site_model() {
         return *static_cast<ModelCL*>(this);
+    }
+
+    const ModelCL& site_model() const {
+        return *static_cast<const ModelCL*>(this);
     }
 };
 

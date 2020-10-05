@@ -7,7 +7,7 @@
 
 #include "mcmc_simulation/header.hpp"
 
-#include "../measures/lattice_measures.hpp"
+#include "../util/measures/lattice_measures.hpp"
 #include "../update_dynamics/site_update_dynamics/site_update_formalisms/simple_update.hpp"
 
 template<typename T, typename ModelParameters, typename UpdateFormalismParameters, typename SiteUpdateFormalismParameters=SiteSimpleUpdateParameters>
@@ -233,7 +233,7 @@ protected:
 
 template<typename T, typename ModelParameters, typename UpdateFormalismParameters, typename SiteUpdateFormalismParameters>
 void SiteSystem<T, ModelParameters, UpdateFormalismParameters, SiteUpdateFormalismParameters>::initialize_site() {
-    site = model->template random_state<T>();
+    site = update_formalism->template random_state<T>();
 }
 
 template<typename T, typename ModelParameters, typename UpdateFormalismParameters, typename SiteUpdateFormalismParameters>

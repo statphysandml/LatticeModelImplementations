@@ -9,28 +9,25 @@
 #include "mcmc_simulation/util/random.hpp"
 #include "param_helper/json.hpp"
 
-template<typename SamplerCl>
+
 class ComplexAnharmonicOscillator;
 
-template<typename SamplerCl>
+
 class ComplexAnharmonicOscillatorParameters : public LatticeModelParameters {
 public:
     explicit ComplexAnharmonicOscillatorParameters(const json params_) : LatticeModelParameters(params_),
                                                                          dt(get_value_by_key<double>("dt")),
                                                                          m(get_value_by_key<std::complex<double>>("m")),
                                                                          omega_sq(get_value_by_key<std::complex<double>>("omega_sq")),
-                                                                         lambda(get_value_by_key<std::complex<double>>("lambda")),
-                                                                         eps(get_value_by_key<double>("eps", 0.1))
+                                                                         lambda(get_value_by_key<std::complex<double>>("lambda"))
     {}
 
     explicit ComplexAnharmonicOscillatorParameters(
             const double dt_,
             const std::complex<double> m_,
             const std::complex<double> omega_sq_,
-            const std::complex<double> lambda_,
-            const double eps_) :
+            const std::complex<double> lambda_) :
             ComplexAnharmonicOscillatorParameters(json{
-                    {"eps", eps_},
                     {"dt", dt_},
                     {"m", m_},
                     {"omega_sq", omega_sq_},
@@ -42,39 +39,26 @@ public:
         return "ComplexAnharmonicOscillator";
     }
 
-    typedef ComplexAnharmonicOscillator<SamplerCl> Model;
+    typedef ComplexAnharmonicOscillator Model;
 
 private:
-    friend class ComplexAnharmonicOscillator<SamplerCl>;
+    friend class ComplexAnharmonicOscillator;
 
-    const double eps;
     const double dt;
     const std::complex<double> m;
     const std::complex<double> omega_sq;
     const std::complex<double> lambda;
 };
 
-template<typename SamplerCl>
-class ComplexAnharmonicOscillator : public LatticeModel< ComplexAnharmonicOscillator<SamplerCl> >
+
+class ComplexAnharmonicOscillator : public LatticeModel< ComplexAnharmonicOscillator >
 {
 public:
-    explicit ComplexAnharmonicOscillator(const ComplexAnharmonicOscillatorParameters<SamplerCl> &mp_) :
-            mp(mp_), sampler(SamplerCl(mp.eps))
+    explicit ComplexAnharmonicOscillator(const ComplexAnharmonicOscillatorParameters &mp_) :
+            mp(mp_)
     {}
 
-    template<typename T>
-    T random_state()
-    {
-        return sampler.template random_state<T>();
-    }
-
-    template<typename T>
-    T propose_state(T site)
-    {
-        return sampler.template propose_state<T>(site);
-    }
-
-    std::complex<double> get_potential(const std::complex<double> site, const std::vector<std::complex<double>*> neighbours)
+std::complex<double> get_potential(const std::complex<double> site, const std::vector<std::complex<double>*> neighbours)
     {
         // neighbour[0] corresponds to the right neighbour, neighbour[1] to the left one
         return 0.5 * mp.m * (std::pow(*neighbours[0] - site, 2.0) + std::pow(site - *neighbours[1], 2.0)) / mp.dt +
@@ -122,15 +106,8 @@ public:
 
     // ]
 
-    const SamplerCl& get_sampler() const
-    {
-        return sampler;
-    }
-
 private:
-    const ComplexAnharmonicOscillatorParameters<SamplerCl> &mp;
-
-    SamplerCl sampler;
+    const ComplexAnharmonicOscillatorParameters &mp;
 };
 
 #endif //LATTICEMODELIMPLEMENTATIONS_COMPLEX_ANHARMONIC_OSCILLATOR_HPP

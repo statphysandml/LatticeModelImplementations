@@ -9,11 +9,11 @@
 #include "../../mcmc_update_base.hpp"
 
 
-template<typename ModelParameters>
+template<typename ModelParameters, typename SamplerCl>
 class LangevinUpdate;
 
 
-template<typename ModelParameters>
+template<typename ModelParameters, typename SamplerCl>
 class LangevinUpdateParameters : public MCMCUpdateBaseParameters {
 public:
     explicit LangevinUpdateParameters(const json params_) : MCMCUpdateBaseParameters(params_),
@@ -24,7 +24,8 @@ public:
     explicit LangevinUpdateParameters(
             const double epsilon_
     ) : LangevinUpdateParameters(json{
-            {"epsilon", epsilon_}
+            {"epsilon", epsilon_},
+            {"eps", epsilon_}
     })
     {}
 
@@ -32,21 +33,22 @@ public:
         return "LangevinUpdate";
     }
 
-    typedef LangevinUpdate<ModelParameters> MCMCUpdate;
+    typedef LangevinUpdate<ModelParameters, SamplerCl> MCMCUpdate;
 
 protected:
-    friend class LangevinUpdate<ModelParameters>;
+    friend class LangevinUpdate<ModelParameters, SamplerCl>;
 
     const double epsilon;
     const double sqrt2epsilon;
 };
 
 
-template<typename ModelParameters>
-class LangevinUpdate : public MCMCUpdateBase< LangevinUpdate<ModelParameters> >
+template<typename ModelParameters, typename SamplerCl>
+class LangevinUpdate : public MCMCUpdateBase< LangevinUpdate<ModelParameters, SamplerCl>, SamplerCl >
 {
 public:
-    explicit LangevinUpdate(const LangevinUpdateParameters<ModelParameters> &up_, typename ModelParameters::Model & model_) : up(up_), model(model_)
+    explicit LangevinUpdate(const LangevinUpdateParameters<ModelParameters, SamplerCl> &up_, typename ModelParameters::Model & model_) :
+        MCMCUpdateBase<LangevinUpdate<ModelParameters, SamplerCl>, SamplerCl>(up_.eps), up(up_), model(model_)
     {
         normal = std::normal_distribution<double> (0,1);
     }
@@ -84,7 +86,7 @@ public:
     }
 
 protected:
-    const LangevinUpdateParameters<ModelParameters> & up;
+    const LangevinUpdateParameters<ModelParameters, SamplerCl> & up;
     typename ModelParameters::Model & model;
 
     std::normal_distribution<double> normal;

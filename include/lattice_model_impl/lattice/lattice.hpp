@@ -7,7 +7,7 @@
 
 #include "mcmc_simulation/header.hpp"
 
-#include "../measures/lattice_measures.hpp"
+#include "../util/measures/lattice_measures.hpp"
 
 
 template<typename T, typename ModelParameters, typename UpdateFormalismParameters, typename LatticeUpdateFormalismParameters>
@@ -292,7 +292,7 @@ template<typename T, typename ModelParameters, typename UpdateFormalismParameter
 void LatticeSystem<T, ModelParameters, UpdateFormalismParameters, LatticeUpdateFormalismParameters>::initialize_lattice() {
     lattice = std::vector<T> (get_size(), T(0));
     for(auto &site : lattice)
-        site = model->template random_state<T>();
+        site = update_formalism->template random_state<T>();
 }
 
 

@@ -12,7 +12,9 @@
 
 class MCMCUpdateBaseParameters : public Parameters {
 public:
-    using Parameters::Parameters;
+    MCMCUpdateBaseParameters(const json params_) : Parameters(params_),
+                                                   eps(get_value_by_key<double>("eps"))
+    {}
 
     void write_to_file(const std::string& root_dir) {
         Parameters::write_to_file(root_dir, param_file_name());
@@ -22,11 +24,16 @@ public:
     {
         return "mcmc_update_params";
     }
+
+    const double eps;
 };
 
-template <typename MCMCUpdate>
+template <typename MCMCUpdate, typename SamplerCl>
 class MCMCUpdateBase {
 public:
+    MCMCUpdateBase(const double eps) : sampler(SamplerCl(eps))
+    {}
+
     template<typename Site>
     void initialize (const Site &site)
     {
@@ -36,6 +43,15 @@ public:
     template<typename Site>
     void initialize_mcmc_update(const Site &site)
     {}
+
+    template<typename T>
+    T random_state()
+    {
+        return sampler.template random_state<T>();
+    };
+
+protected:
+    SamplerCl sampler;
 
 private:
     MCMCUpdate& mcmc_update_update() {

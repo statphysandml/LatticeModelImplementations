@@ -30,11 +30,11 @@ protected:
 };
 
 
-class DummyMCMCUpdate : public MCMCUpdateBase< DummyMCMCUpdate >
+class DummyMCMCUpdate : public MCMCUpdateBase< DummyMCMCUpdate, DummySampler>
 {
 public:
     template<typename Model>
-    explicit DummyMCMCUpdate(const DummyMCMCUpdateParameters &up_, Model & model_) : up(up_)
+    explicit DummyMCMCUpdate(const DummyMCMCUpdateParameters &up_, Model & model_) : MCMCUpdateBase<DummyMCMCUpdate, DummySampler>(0.0), up(up_)
     {}
 
     template<typename T>

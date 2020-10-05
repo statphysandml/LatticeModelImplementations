@@ -9,14 +9,13 @@
 #include "mcmc_simulation/util/random.hpp"
 
 
-template<typename SamplerCl>
+
 class ComplexPolynomialModel;
 
-template<typename SamplerCl>
+
 class ComplexPolynomialModelParameters : public SiteModelParameters {
 public:
-    explicit ComplexPolynomialModelParameters<SamplerCl>(const json params_) : SiteModelParameters(params_),
-                                                                               eps(get_value_by_key<double>("eps", 0.1)),
+    explicit ComplexPolynomialModelParameters(const json params_) : SiteModelParameters(params_),
                                                                                sigma_real(get_value_by_key< double >("sigma_real", 0.0)),
                                                                                sigma_imag(get_value_by_key< double >("sigma_imag", 0.0)),
                                                                                sigma(get_value_by_key< std::complex<double> >("sigma", {sigma_real, sigma_imag})),
@@ -24,21 +23,19 @@ public:
                                                                                h(get_value_by_key< std::complex<double> >("h", 0.0))
     {}
 
-    explicit ComplexPolynomialModelParameters<SamplerCl>(std::complex<double> lambda_, std::complex<double> sigma_, std::complex<double> h_, double eps_) : ComplexPolynomialModelParameters(json {
+    explicit ComplexPolynomialModelParameters(std::complex<double> lambda_, std::complex<double> sigma_, std::complex<double> h_) : ComplexPolynomialModelParameters(json {
             {"lambda", lambda_},
             {"sigma", sigma_},
-            {"h", h_},
-            {"eps", eps_}
+            {"h", h_}
     })
     {}
 
-    explicit ComplexPolynomialModelParameters<SamplerCl>(std::complex<double> lambda_, double sigma_real_, double sigma_imag_, std::complex<double> h_, double eps_) : ComplexPolynomialModelParameters(json {
+    explicit ComplexPolynomialModelParameters(std::complex<double> lambda_, double sigma_real_, double sigma_imag_, std::complex<double> h_) : ComplexPolynomialModelParameters(json {
             {"lambda", lambda_},
             {"sigma_real", sigma_real_},
             {"sigma_imag", sigma_imag_},
             {"sigma", {sigma_real_, sigma_imag_}},
-            {"h", h_},
-            {"eps", eps_}
+            {"h", h_}
     })
     {}
 
@@ -46,12 +43,11 @@ public:
         return "ComplexPolynomialModel";
     }
 
-    typedef ComplexPolynomialModel<SamplerCl> Model;
+    typedef ComplexPolynomialModel Model;
 
 private:
-    friend class ComplexPolynomialModel<SamplerCl>;
+    friend class ComplexPolynomialModel;
 
-    const double eps;
     const std::complex<double> lambda;
     const double sigma_real;
     const double sigma_imag;
@@ -59,25 +55,13 @@ private:
     const std::complex<double> h;
 };
 
-template<typename SamplerCl>
-class ComplexPolynomialModel : public SiteModel< ComplexPolynomialModel<SamplerCl> >
+
+class ComplexPolynomialModel : public SiteModel< ComplexPolynomialModel >
 {
 public:
-    explicit ComplexPolynomialModel(const ComplexPolynomialModelParameters<SamplerCl> &mp_) : mp(mp_), sampler(SamplerCl(mp.eps)) {}
+    explicit ComplexPolynomialModel(const ComplexPolynomialModelParameters &mp_) : mp(mp_) {}
 
-    template<typename T>
-    T random_state()
-    {
-        return sampler.template random_state<T>();
-    }
-
-    template<typename T>
-    T propose_state(T site)
-    {
-        return sampler.template propose_state<T>(site);
-    }
-
-    /* std::complex<double> propose_state(const std::complex<double> site, const double KMax, const double KExpectation)
+/* std::complex<double> propose_state(const std::complex<double> site, const double KMax, const double KExpectation)
     {
         double eps = std::min(mp.eps, mp.eps * KExpectation / KMax);
         std::complex<double> state = site + eps * std::complex<double>(propose_normal(gen), propose_normal(gen));
@@ -100,7 +84,7 @@ public:
                     mp.lambda.imag() * std::pow(site.real(), 3) - 3.0 * mp.lambda.imag() * std::pow(site.imag(), 2) * site.real()}; */
     }
 
-    std::complex<double> get_second_order_drift_term(const std::complex<double> site)
+    std::complex<double> get_second_order_drift_term(const std::complex<double> site) const
     {
         return 3.0 * mp.lambda * std::pow(site, 2) + mp.sigma;
     }
@@ -136,6 +120,45 @@ public:
 
     // ]
 
+    // [
+    // For Complex Monte Carlo
+
+    double get_real_const_imag_drift_term(const std::complex<double> site)
+    {
+        /* auto derivative_real = mp.h + std::pow(site, 3) * mp.lambda + site * mp.sigma;
+        auto derivative_imag = std::complex<double>{0.0, 1.0} * (mp.h + std::pow(site, 3) * mp.lambda + site * mp.sigma); */
+        return get_drift_term(site).imag();
+    }
+
+    double get_imag_const_imag_drift_term(const std::complex<double> site)
+    {
+        /* auto derivative_real = mp.h + std::pow(site, 3) * mp.lambda + site * mp.sigma;
+        auto derivative_imag = std::complex<double>{0.0, 1.0} * (mp.h + std::pow(site, 3) * mp.lambda + site * mp.sigma); */
+        return get_drift_term(site).real();
+    }
+
+    // ]
+
+    // [
+    // For Complex Hybrid Monte Carlo
+
+    std::complex<double> get_complex_hybrid_drift_term(const std::complex<double> site)
+    {
+        return mp.lambda.imag() * std::pow(site, 3.0) + mp.sigma.imag() * site;
+    }
+
+    std::complex<double> get_complex_hybrid_potential(const std::complex<double> site) const
+    {
+        return 0.5 * mp.sigma.imag() * std::pow(site, 2) + 0.25 * mp.lambda.imag() * std::pow(site, 4) + mp.h.imag() * site;
+    }
+
+    std::complex<double> get_real_complex_hybrid_potential(const std::complex<double> site) const
+    {
+        return 0.5 * mp.sigma.real() * std::pow(site, 2) + 0.25 * mp.lambda.real() * std::pow(site, 4) + mp.h.real() * site;
+    }
+
+    // ]
+
     /* template<typename func>
     std::complex<double> get_potential(const std::complex<double> site, func& transformer) const
     {
@@ -161,15 +184,8 @@ public:
         };
     } */
 
-    const SamplerCl& get_sampler() const
-    {
-        return sampler;
-    }
-
 private:
-    const ComplexPolynomialModelParameters<SamplerCl> &mp;
-
-    SamplerCl sampler;
+    const ComplexPolynomialModelParameters &mp;
 };
 
 #endif //LATTICEMODELIMPLEMENTATIONS_COMPLEX_POLYNOMIAL_MODEL_HPP

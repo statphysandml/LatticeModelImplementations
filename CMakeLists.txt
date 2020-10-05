@@ -46,10 +46,12 @@ find_library(MCMCSimulationLib NAMES libmcmcsimulationlib.a PATHS /home/lukas/MC
 message("MCMCSimulationLib = ${MCMCSimulationLib}")
 include_directories(/home/lukas/MCMCSimulationLib/include/)
 
+SET(CudaUsage "None" CACHE STRING "Some user-specified option")
 
-option( GPU "Enable GPU" OFF )
+if( CudaUsage MATCHES "GPU" OR CudaUsage MATCHES "CPU" )
+    option( THRUST "Enable Thrust" ON)
+    message("Thrust = ${THRUST}")
 
-if( GPU )
     # Cuda
     # set(CUDA_TOOLKIT_ROOT_DIR "/opt/cuda-10.1")
     FIND_PACKAGE(CUDA QUIET REQUIRED)
@@ -58,37 +60,36 @@ if( GPU )
     endif()
 
     file(GLOB CUDA_FILES "src/" *.cu)
-    list( APPEND CUDA_NVCC_FLAGS "-gencode arch=compute_75,code=sm_75; --expt-extended-lambda; --expt-relaxed-constexpr") #  -Xcompiler -fopenmp -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_OMP -lgomp"
-    # list( APPEND CUDA_NVCC_FLAGS "-gencode arch=compute_60,code=sm_60; --expt-extended-lambda; --expt-relaxed-constexpr") #  -Xcompiler -fopenmp -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_OMP -lgomp"
+
     CUDA_COMPILE(CU_O ${CUDA_FILES})
 
-    # -fopenmp -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_OMP -lgomp
 
+    if( CudaUsage MATCHES "GPU" )
+        option( GPU "Enable GPU" ON )
+        message("GPU = ${GPU}")
+        list( APPEND CUDA_NVCC_FLAGS "-gencode arch=compute_75,code=sm_75; --expt-extended-lambda; --expt-relaxed-constexpr") #  -Xcompiler -fopenmp -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_OMP -lgomp"
+    else()
+        option( GPU "Enable GPU" OFF )
+        message("GPU = ${GPU}")
+        list( APPEND CUDA_NVCC_FLAGS "-Xcompiler -fopenmp -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_OMP -lgomp; --expt-extended-lambda; --expt-relaxed-constexpr") #  -Xcompiler -fopenmp -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_OMP -lgomp"
+    endif()
     # ToDo: Add -O3 for release!!
 
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -static-libstdc++")
 
-    # set(CUDA_LIBRARIES PUBLIC ${CUDA_LIBRARIES})
-
-    # SET(CUDA_SEPARABLE_COMPILATION ON)
-endif()
-
-
-
-if( GPU )
-    cuda_add_executable(
-            LatticeModelImplementations
-            #             ./../src/thrust/thrust_integration.cu
-            #             ./../src/thrust/thrust_finite_intergration.cu
-            ./../../src/main.cpp
-            ./../src/simulation_header.cpp
+    cuda_add_library(
+            latticemodelimplementations STATIC src/main.cpp
+            src/lattice_model_impl/distribution/thrust_complex_gaussian_distribution.cu
+            src/lattice_model_impl/thrust/thrust_header.cu
+            src/lattice_model_impl/thrust/thrust_finite_integration.cu
+            src/lattice_model_impl/thrust/thrust_integration.cu
     )
-    set_property(TARGET LatticeModelImplementations PROPERTY CUDA_STANDARD 14)
+    set_property(TARGET latticemodelimplementations PROPERTY CUDA_STANDARD 14)
 
-    target_link_libraries( LatticeModelImplementations ${MCMCSimulationLib} ${ParamHelper} ${Boost_LIBRARIES} ${CERES_LIBRARIES} ${PYTHON_LIBRARIES})
+    target_link_libraries( latticemodelimplementations ${MCMCSimulationLib} ${ParamHelper} ${Boost_LIBRARIES} ${CERES_LIBRARIES} ${PYTHON_LIBRARIES} )
 
-    target_compile_definitions(LatticeModelImplementations PUBLIC -D GPU)
-    set_target_properties(LatticeModelImplementations PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
+    target_compile_definitions(latticemodelimplementations PUBLIC -D GPU -D THRUST)
+    set_target_properties(latticemodelimplementations PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
 else()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -static-libstdc++")
 

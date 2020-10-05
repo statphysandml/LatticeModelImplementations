@@ -10,7 +10,7 @@
 
 #include "../../mcmc_update_base.hpp"
 
-#include "../../../distribution/imaginary_gaussian_distribution.hpp"
+#include "../../../util/distribution/imaginary_gaussian_distribution.hpp"
 
 
 template<typename T, typename ModelParameters>
@@ -60,7 +60,7 @@ class CobridMonteCarloUpdate : public MCMCUpdateBase< CobridMonteCarloUpdate<T, 
 {
 public:
     explicit CobridMonteCarloUpdate(const CobridMonteCarloUpdateParameters<T, ModelParameters> &up_, typename ModelParameters::Model & model_) :
-            up(up_), model(model_), imag_gaussian_dist({up_.dist_sigma_real, 1.0}, {0.0, 0.0}, up_.dist_sampler_n_autocorrelation, up_.dist_sampler_n_initialization, up_.dist_sampler_epsilon)
+            up(up_), model(model_), imag_gaussian_dist({up_.dist_sigma_real, 1.0}, up_.dist_sampler_n_autocorrelation, up_.dist_sampler_n_initialization, up_.dist_sampler_epsilon)
     {
         rand = std::uniform_real_distribution<double> (0,1);
     }

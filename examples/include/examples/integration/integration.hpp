@@ -1,0 +1,12 @@
+//
+// Created by lukas on 28.09.20.
+//
+
+#ifndef LATTICEMODELIMPLEMENTATIONSEXAMPLES_INTEGRATION_HPP
+#define LATTICEMODELIMPLEMENTATIONSEXAMPLES_INTEGRATION_HPP
+
+#include "lattice_model_impl/util/integration_header.hpp"
+
+void integrate();
+
+#endif //LATTICEMODELIMPLEMENTATIONSEXAMPLES_INTEGRATION_HPP

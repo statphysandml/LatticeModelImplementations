@@ -9,28 +9,25 @@
 #include "mcmc_simulation/util/random.hpp"
 #include "param_helper/json.hpp"
 
-template<typename SamplerCl>
+
 class AnharmonicOscillator;
 
-template<typename SamplerCl>
+
 class AnharmonicOscillatorParameters : public LatticeModelParameters {
 public:
     explicit AnharmonicOscillatorParameters(const json params_) : LatticeModelParameters(params_),
                                                                   dt(get_value_by_key<double>("dt")),
                                                                   m(get_value_by_key<double>("m")),
                                                                   omega_sq(get_value_by_key<double>("omega_sq")),
-                                                                  lambda(get_value_by_key<double>("lambda")),
-                                                                  eps(get_value_by_key<double>("eps", 0.1))
+                                                                  lambda(get_value_by_key<double>("lambda"))
     {}
 
     explicit AnharmonicOscillatorParameters(
-            const double eps_,
             const double dt_,
             const double m_,
             const double omega_sq_,
             const double lambda_) :
             AnharmonicOscillatorParameters(json{
-                    {"eps", eps_},
                     {"dt", dt_},
                     {"m", m_},
                     {"omega_sq", omega_sq_},
@@ -42,37 +39,24 @@ public:
         return "AnharmonicOscillator";
     }
 
-    typedef AnharmonicOscillator<SamplerCl> Model;
+    typedef AnharmonicOscillator Model;
 
 private:
-    friend class AnharmonicOscillator<SamplerCl>;
+    friend class AnharmonicOscillator;
 
-    const double eps;
     const double dt;
     const double m;
     const double omega_sq;
     const double lambda;
 };
 
-template<typename SamplerCl>
-class AnharmonicOscillator : public LatticeModel< AnharmonicOscillator<SamplerCl> >
+
+class AnharmonicOscillator : public LatticeModel< AnharmonicOscillator >
 {
 public:
-    explicit AnharmonicOscillator(const AnharmonicOscillatorParameters<SamplerCl> &mp_) :
-            mp(mp_), sampler(SamplerCl(mp.eps))
+    explicit AnharmonicOscillator(const AnharmonicOscillatorParameters &mp_) :
+            mp(mp_)
     {}
-
-    template<typename T>
-    T random_state()
-    {
-        return sampler.template random_state<T>();
-    }
-
-    template<typename T>
-    T propose_state(T site)
-    {
-        return sampler.template propose_state<T>(site);
-    }
 
     template<typename T>
     T get_drift_term(const T site, const std::vector<T*> neighbours)
@@ -96,15 +80,8 @@ public:
 
     }
 
-    const SamplerCl& get_sampler() const
-    {
-        return sampler;
-    }
-
 private:
-    const AnharmonicOscillatorParameters<SamplerCl> &mp;
-
-    SamplerCl sampler;
+    const AnharmonicOscillatorParameters &mp;
 };
 
 #endif //LATTICEMODELIMPLEMENTATIONS_ANHARMONIC_OSCILLATOR_HPP

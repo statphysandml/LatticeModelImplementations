@@ -11,24 +11,22 @@
 #include "param_helper/json.hpp"
 
 
-template<typename SamplerCl>
+
 class ComplexXYModel;
 
 
-template<typename SamplerCl>
+
 class ComplexXYModelParameters : public LatticeModelParameters {
 public:
     explicit ComplexXYModelParameters(const json params_) : LatticeModelParameters(params_),
                                                      beta(get_value_by_key<double>("beta")),
-                                                     mu(get_value_by_key<double>("mu")),
-                                                     eps(get_value_by_key<double>("eps", 0.1))
+                                                     mu(get_value_by_key<double>("mu"))
     //mu(complex_to_json(get_value_by_key("mu")))
     {}
 
     explicit ComplexXYModelParameters(double beta_, double mu_, double eps_=0.1) : ComplexXYModelParameters(json{
             {"beta", beta_},
-            {"mu", mu_},
-            {"eps", eps_}
+            {"mu", mu_}
     })
     {}
 
@@ -36,35 +34,21 @@ public:
         return "ComplexXYModel";
     }
 
-    typedef ComplexXYModel<SamplerCl> Model;
+    typedef ComplexXYModel Model;
 
 private:
-    friend class ComplexXYModel<SamplerCl>;
+    friend class ComplexXYModel;
 
     const double beta;
     const double mu;
-    const double eps;
 };
 
-template<typename SamplerCl>
-class ComplexXYModel : public LatticeModel< ComplexXYModel<SamplerCl> >
+
+class ComplexXYModel : public LatticeModel< ComplexXYModel >
 {
 public:
-    explicit ComplexXYModel(const ComplexXYModelParameters<SamplerCl> &mp_) :
-        mp(mp_), sampler(SamplerCl(mp.eps)) {
-    }
-
-    // These might be the wrong distributions
-    template<typename T>
-    T random_state()
-    {
-        return normalize(sampler.template random_state<T>());
-    }
-
-    template<typename T>
-    T propose_state(T site)
-    {
-        return normalize(sampler.template propose_state<T>(site));
+    explicit ComplexXYModel(const ComplexXYModelParameters &mp_) :
+        mp(mp_) {
     }
 
     /* std::complex<double> random_state()
@@ -158,15 +142,10 @@ public:
         return (mp.beta * S).imag();
     }
 
-    const SamplerCl& get_sampler() const
-    {
-        return sampler;
-    }
+
 
 private:
-    const ComplexXYModelParameters<SamplerCl> &mp;
-
-    SamplerCl sampler;
+    const ComplexXYModelParameters &mp;
 };
 
 

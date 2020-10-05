@@ -17,7 +17,7 @@ void example_complex_polynomial_model_cobrid_monte_carlo()
 {
     typedef double BasicType;
     typedef ComplexPolynomialModelParameters<GaussianSampler> ModelParams;
-    typedef SingleSiteCobridMonteCarloUpdateParameters<BasicType, ModelParams> MCMCUpdateParams;
+    typedef SingleSiteCobridMonteCarloUpdateParameters<BasicType, ModelParams, complex_gaussian_distribution_from_file> MCMCUpdateParams;
     typedef SiteParameters< BasicType, ModelParams, MCMCUpdateParams> SystemBaseParams;
 
     std::string model_name = "PolySiteModelCobridMonteCarlo";

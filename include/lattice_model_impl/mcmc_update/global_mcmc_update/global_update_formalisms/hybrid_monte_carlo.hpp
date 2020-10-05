@@ -11,11 +11,11 @@
 #include "../../mcmc_update_base.hpp"
 
 
-template<typename T, typename ModelParameters>
+template<typename T, typename ModelParameters, typename SamplerCl>
 class HybridMonteCarloUpdate;
 
 
-template<typename T, typename ModelParameters>
+template<typename T, typename ModelParameters, typename SamplerCl>
 class HybridMonteCarloUpdateParameters : public MCMCUpdateBaseParameters {
 public:
     explicit HybridMonteCarloUpdateParameters(const json params_) : MCMCUpdateBaseParameters(params_),
@@ -34,22 +34,23 @@ public:
         return "HybridMonteCarloUpdate";
     }
 
-    typedef HybridMonteCarloUpdate<T, ModelParameters> MCMCUpdate;
+    typedef HybridMonteCarloUpdate<T, ModelParameters, SamplerCl> MCMCUpdate;
     typedef typename ModelParameters::Model Model;
 
 protected:
-    friend class HybridMonteCarloUpdate<T, ModelParameters>;
+    friend class HybridMonteCarloUpdate<T, ModelParameters, SamplerCl>;
 
     const double dt;
     const int n;
 };
 
 
-template<typename T, typename ModelParameters>
-class HybridMonteCarloUpdate : public MCMCUpdateBase< HybridMonteCarloUpdate<T, ModelParameters> >
+template<typename T, typename ModelParameters, typename SamplerCl>
+class HybridMonteCarloUpdate : public MCMCUpdateBase< HybridMonteCarloUpdate<T, ModelParameters, SamplerCl>, SamplerCl >
 {
 public:
-    explicit HybridMonteCarloUpdate(const HybridMonteCarloUpdateParameters<T, ModelParameters> &up_, typename ModelParameters::Model & model_) : up(up_), model(model_)
+    explicit HybridMonteCarloUpdate(const HybridMonteCarloUpdateParameters<T, ModelParameters, SamplerCl> &up_, typename ModelParameters::Model & model_)
+        : MCMCUpdateBase<HybridMonteCarloUpdate<T, ModelParameters, SamplerCl>, SamplerCl>(up_.eps), up(up_), model(model_)
     {
         normal = std::normal_distribution<double> (0.0, 1.0);
         rand = std::uniform_real_distribution<double> (0,1);
@@ -107,7 +108,7 @@ protected:
         const std::vector< std::vector < T* > > &hmc_neighbours;
     };
 
-    const HybridMonteCarloUpdateParameters<T, ModelParameters> & up;
+    const HybridMonteCarloUpdateParameters<T, ModelParameters, SamplerCl> & up;
     typename ModelParameters::Model & model;
 
     std::vector<double> momenta;

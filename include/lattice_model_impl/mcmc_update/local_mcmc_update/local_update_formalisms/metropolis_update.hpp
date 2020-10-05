@@ -29,36 +29,37 @@ namespace detail {
             : std::true_type {};
 }
 
-
-template<typename ModelParameters>
+template<typename ModelParameters, typename SamplerCl>
 class MetropolisUpdate;
 
 
-template<typename ModelParameters>
+template<typename ModelParameters, typename SamplerCl>
 class MetropolisUpdateParameters : public MCMCUpdateBaseParameters {
 public:
     explicit MetropolisUpdateParameters(const json params_) : MCMCUpdateBaseParameters(params_)
     {}
 
-    explicit MetropolisUpdateParameters() : MetropolisUpdateParameters(json{})
+    explicit MetropolisUpdateParameters(const double eps)
+        : MetropolisUpdateParameters(json {{"eps", eps}})
     {}
 
     static std::string name() {
         return "MetropolisUpdate";
     }
 
-    typedef MetropolisUpdate<ModelParameters> MCMCUpdate;
+    typedef MetropolisUpdate<ModelParameters, SamplerCl> MCMCUpdate;
 
 protected:
-    friend class MetropolisUpdate<ModelParameters>;
+    friend class MetropolisUpdate<ModelParameters, SamplerCl>;
 };
 
 
-template<typename ModelParameters>
-class MetropolisUpdate : public MCMCUpdateBase< MetropolisUpdate<ModelParameters> >
+template<typename ModelParameters, typename SamplerCl>
+class MetropolisUpdate : public MCMCUpdateBase< MetropolisUpdate<ModelParameters, SamplerCl>, SamplerCl >
 {
 public:
-    explicit MetropolisUpdate(const MetropolisUpdateParameters<ModelParameters> &up_, typename ModelParameters::Model & model_) : up(up_), model(model_)
+    explicit MetropolisUpdate(const MetropolisUpdateParameters<ModelParameters, SamplerCl> &up_, typename ModelParameters::Model & model_) :
+        MCMCUpdateBase< MetropolisUpdate<ModelParameters, SamplerCl>, SamplerCl >(up_.eps), up(up_), model(model_)
     {
         rand = std::uniform_real_distribution<double> (0,1);
     }
@@ -66,7 +67,7 @@ public:
     template<typename T>
     T operator() (const T site)
     {
-        T proposed_site = model.propose_state(site);
+        T proposed_site = this->sampler.propose_state(site);
         if(rand(gen) < std::min(1.0, std::exp(-1.0 * (model.get_potential(proposed_site) - model.get_potential(site)))))
             return proposed_site;
         else
@@ -76,7 +77,7 @@ public:
     template<typename T>
     T operator() (const T site, const std::vector< T* > neighbours)
     {
-        T proposed_site = model.propose_state(site);
+        T proposed_site = this->sampler.propose_state(site);
         if(rand(gen) < std::min(1.0, std::exp(-1.0 * (model.get_potential(proposed_site, neighbours) - model.get_potential(site, neighbours)))))
             return proposed_site;
         else
@@ -84,7 +85,7 @@ public:
     }
 
 protected:
-    const MetropolisUpdateParameters<ModelParameters> & up;
+    const MetropolisUpdateParameters<ModelParameters, SamplerCl> & up;
     typename ModelParameters::Model & model;
 
     std::uniform_real_distribution<double> rand;

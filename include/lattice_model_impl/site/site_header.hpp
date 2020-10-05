@@ -10,5 +10,6 @@
 #include "site_models/complex_cubic_model.hpp"
 #include "site_models/complex_polynomial_model.hpp"
 #include "site_models/complex_scalar_gaussian_model.hpp"
+#include "site_models/nvec_polynomial_model.hpp"
 
 #endif //LATTICEMODELIMPLEMENTATIONS_SITE_HEADER_HPP

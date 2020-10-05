@@ -26,9 +26,9 @@ void example_complex_scalar_gaussian_model()
     });
 
     // ModelParams model_parameters({0.5, -1.0}, 0.0, 0.1);
-    ModelParams model_parameters({1.0, 1.0}, 0.0, 0.1);
+    ModelParams model_parameters({0.2, 0.2}, 0.0, 0.1);
 
-    SystemBaseParams lattice_parameters(
+    SystemBaseParams site_parameters(
             json {
                     {"measures", {"Mean", "ComplexConfig"}},
                     {ModelParams::param_file_name(), model_parameters.get_json()},
@@ -41,10 +41,24 @@ void example_complex_scalar_gaussian_model()
                                          {"2ndMoment"}); // Meausures which will be evaluated in terms of mean and error evaluation
     execution_parameters.write_to_file(rel_data_path);
 
-    auto simparams = SimulationParameters< SystemBaseParams , ExecutionParams >::generate_traceable_simulation(
-            lattice_parameters, execution_parameters, rel_config_path, rel_data_path);
+    SimulationParameters< SystemBaseParams , ExecutionParams >::generate_traceable_simulation(
+            site_parameters, execution_parameters, rel_config_path, rel_data_path);
 
     execute< SystemBaseParams > (ExecutionParams::name(), model_name);
+
+    PlotSiteDistributionParameters site_distribution_parameters(
+            json {{"xkey", "StateReal"},
+                  {"ykey", "StateImag"},
+                  {"rmin_x", -5.0},
+                  {"rmax_x", 5.0},
+                  {"rmin_y", -5.0},
+                  {"rmax_y", 5.0}});
+    site_distribution_parameters.write_to_file(rel_data_path);
+
+    SimulationParameters< SystemBaseParams , PlotSiteDistributionParameters >::generate_traceable_simulation(
+            site_parameters, site_distribution_parameters, rel_config_path, rel_data_path);
+
+    execute< SystemBaseParams > (PlotSiteDistributionParameters::name(), model_name);
 }
 
 
