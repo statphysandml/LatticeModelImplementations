@@ -20,7 +20,7 @@
 
 // #include "mcmc_simulation/simulation.hpp"
 
-#include "glog/logging.h"
+// #include "glog/logging.h"
 
 #endif
 
@@ -48,7 +48,7 @@ struct meow
 // ToDo: Generate own structs for datatype bases?
 
 int main(int argc, char **argv) {
-    google::InitGoogleLogging(argv[0]);
+    // google::InitGoogleLogging(argv[0]);
 
     std::cout << (can_update<double>::value) << std::endl;
     std::cout << (can_update<int>::value) << std::endl;
