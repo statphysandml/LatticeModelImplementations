@@ -17,6 +17,9 @@
 #include "../../mcmc_update_base.hpp"
 
 
+// HMC without momentum, just keep the imaginary part of the action constant - with initial shift
+
+
 template<typename ModelParameters, typename SamplerCl>
 class SingleSiteComplexMonteCarloUpdate;
 

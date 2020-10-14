@@ -20,6 +20,8 @@
 #include "../../../util/distribution/complex_gaussian_distribution_from_file.hpp"
 
 
+// Pure real approach for the outcome of x - fails
+
 template<typename T, typename ModelParameters, typename MomentumDistribution>
 class SingleSiteCobridMonteCarloUpdate;
 

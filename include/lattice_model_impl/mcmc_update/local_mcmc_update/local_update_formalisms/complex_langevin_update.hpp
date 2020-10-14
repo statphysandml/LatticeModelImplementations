@@ -17,7 +17,7 @@ template<typename ModelParameters, typename SamplerCl>
 class ComplexLangevinUpdateParameters : public MCMCUpdateBaseParameters {
 public:
     explicit ComplexLangevinUpdateParameters(const json params_) : MCMCUpdateBaseParameters(params_),
-        epsilon(get_value_by_key<double>("epsilon")), sqrt2epsilon(sqrt(2 * get_value_by_key<double>("epsilon")))
+        epsilon(get_value_by_key<double>("epsilon", eps)), sqrt2epsilon(sqrt(2 * get_value_by_key<double>("epsilon", eps)))
     {}
 
     explicit ComplexLangevinUpdateParameters(
@@ -104,10 +104,6 @@ private:
         T new_site = {site.real(), site.imag()};
         new_site.real(site.real() - epsilon * drift_term.real() + sqrt2epsilon * normal(gen));
         new_site.imag(site.imag() - epsilon * drift_term.imag());
-
-        /* new_site.imag(site.imag() - epsilon * drift_term.imag()); // Mixed
-        T drift_term_ = model.get_drift_term(new_site);
-        new_site.real(site.real() - epsilon * drift_term.real() + sqrt2epsilon * normal(gen)); */
 
         return model.normalize(new_site);
     }

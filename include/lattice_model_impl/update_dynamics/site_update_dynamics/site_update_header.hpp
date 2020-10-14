@@ -5,6 +5,7 @@
 #ifndef LATTICEMODELIMPLEMENTATIONS_SITE_UPDATE_HEADER_HPP
 #define LATTICEMODELIMPLEMENTATIONS_SITE_UPDATE_HEADER_HPP
 
+#include "site_update_formalisms/memory_simple_update.hpp"
 #include "site_update_formalisms/simple_update.hpp"
 #include "site_update_formalisms/update_with_adpative_step_size.hpp"
 

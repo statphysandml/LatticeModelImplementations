@@ -40,7 +40,9 @@ public:
     explicit ComplexMetropolisLangevinUpdate(
             const ComplexMetropolisLangevinUpdateParameters<TransitionRate, ModelParameters, SamplerCl> &up_,
             typename ModelParameters::Model & model_
-    ) : MCMCUpdateBase< ComplexMetropolisLangevinUpdate<TransitionRate, ModelParameters, SamplerCl>, SamplerCl>(up_.eps), up(up_), model(model_), transition_rate(TransitionRate(model, this->sampler, std::complex<double>{0.0, 0.0}, 1.0, "full")), integrator(readdy::util::integration::integrator())
+    ) : MCMCUpdateBase< ComplexMetropolisLangevinUpdate<TransitionRate, ModelParameters, SamplerCl>, SamplerCl>(up_.eps),
+            up(up_), model(model_), transition_rate(TransitionRate(model, this->sampler, std::complex<double>{0.0, 0.0}, 1.0, "full")),
+            integrator(readdy::util::integration::integrator())
     {
         rand = std::uniform_real_distribution<double>(0.0, 1.0);
     }
@@ -76,18 +78,6 @@ private:
 
     readdy::util::integration::integrator integrator;
     std::uniform_real_distribution<double> rand;
-
-    double compute_normalization_factor(TransitionRate &integrand)
-    {
-        auto normalization = integrand.compute_normalization_factor(integrator);
-        if(normalization.second > 1e-10)
-        {
-            auto state = integrand.get_state();
-            std::cout << "Large error estimation in normalization factor detected: " << normalization.second
-                      << " for state " << state.real() << " + i" << state.imag() << std::endl;
-        }
-        return normalization.first;
-    }
 };
 
 #endif //COMPLEXMONTECARLO_COMPLEX_METROPOLIS_LANGEVIN_UPDATE_HPP

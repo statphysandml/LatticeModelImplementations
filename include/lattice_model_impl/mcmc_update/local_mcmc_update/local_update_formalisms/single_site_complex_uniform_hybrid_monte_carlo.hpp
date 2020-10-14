@@ -23,6 +23,9 @@
 
 #include "single_site_complex_hybrid_monte_carlo.hpp"
 
+// Full evolution for real x and real momentum with uniform imag update for imag x and imag momentum
+
+
 template<typename ModelParameters, typename MomentumDistribution>
 class SingleSiteComplexUniformHybridMonteCarlo;
 

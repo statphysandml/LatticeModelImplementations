@@ -65,7 +65,7 @@ struct ceres_solver
 
         auto outcome = integrator.integrate(func, lower_bound, current_guess, true);
 
-        if(abs(outcome.first - target) > 0.001)
+        if(abs(outcome.first - target) > 0.0001)
             std::cout << "Large difference between target value and integral: " << outcome.first - target << " with target " << target << " and current guess " << current_guess << std::endl;
 
         return current_guess;

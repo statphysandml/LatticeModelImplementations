@@ -17,7 +17,7 @@ template<typename ModelParameters, typename SamplerCl>
 class ComplexLangevinSecondOrderUpdateParameters : public MCMCUpdateBaseParameters {
 public:
     explicit ComplexLangevinSecondOrderUpdateParameters(const json params_) : MCMCUpdateBaseParameters(params_),
-                                                                              epsilon(get_value_by_key<double>("epsilon")), sqrt2epsilon(sqrt(2 * get_value_by_key<double>("epsilon")))
+                                                                              epsilon(get_value_by_key<double>("epsilon", eps)), sqrt2epsilon(sqrt(2 * get_value_by_key<double>("epsilon", eps)))
     {}
 
     explicit ComplexLangevinSecondOrderUpdateParameters(

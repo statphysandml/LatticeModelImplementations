@@ -45,10 +45,10 @@ struct HatFunctionTransitionRate : TransitionRateBase<T, ModelCl, SamplerCl>
         /* double sampler_imag_contribution = 1.0/eps * (1.0 - sign * (x.real() - state.real()) / eps) * sin(imag_arg) -
                                            1.0/eps * sign * (new_imag_state - state.imag()) / eps * cos(imag_arg); */
 
-        /* if(sampler_real_contribution < 0.0) {
+        if(sampler_real_contribution < 0.0) {
             std::cout << "Not real" << std::endl;
-            std::exit(EXIT_FAILURE);
-        } */
+            // std::exit(EXIT_FAILURE);
+        }
         return sampler_real_contribution * std::exp(real_arg) / this->normalization_factor;
     }
 
@@ -96,23 +96,10 @@ struct HatFunctionTransitionRate : TransitionRateBase<T, ModelCl, SamplerCl>
             return (x.real() - this->state.real()) / std::abs(x.real() - this->state.real());
     }
 
-    struct transformer_func
-    {
-#ifdef THRUST
-        __host__ __device__
-#endif
-        double operator() (const double val)
-        {
-            return val;
-        }
-    };
-
     static std::string required_sampler()
     {
         return "HatFunctionSampler";
     }
-
-    transformer_func transformer;
 };
 
 #endif //LATTICEMODELIMPLEMENTATIONS_HAT_FUNCTION_TRANSITION_RATE_HPP

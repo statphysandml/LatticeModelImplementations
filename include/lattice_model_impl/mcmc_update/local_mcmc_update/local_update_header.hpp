@@ -12,6 +12,7 @@
 #include "local_update_formalisms/langevin_update.hpp"
 #include "local_update_formalisms/metropolis_update.hpp"
 #include "local_update_formalisms/nvec_langevin_update.hpp"
+#include "local_update_formalisms/single_site_complex_hybrid_monte_carlo_pure_real_sampling.hpp"
 /* #include "local_update_formalisms/single_site_cobrid_monte_carlo.hpp"
 #include "local_update_formalisms/single_site_complex_hybrid_monte_carlo.hpp"
 #include "local_update_formalisms/single_site_complex_monte_carlo.hpp"

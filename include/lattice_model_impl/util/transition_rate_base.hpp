@@ -14,6 +14,10 @@ struct TransitionRateBase
     TransitionRateBase<T, ModelCl, SamplerCl>(const ModelCl &model_, SamplerCl& sampler_, T state_= T(0.0, 0.0), double normalization_factor_ = 1.0, const std::string expansion_="full"):
             model(model_), sampler(sampler_), current_potential(model.get_potential(state_)), eps(sampler.get_eps()), state(state_), normalization_factor(normalization_factor_), expansion(expansion_)
     {
+        auto integration_bounds = sampler.get_integration_bounds(state);
+        lower_bound = integration_bounds.first;
+        upper_bound = integration_bounds.second;
+
         if(expansion == "first") {
             current_drift = model.get_drift_term(state_);
             function_ptr_on_expansion = &TransitionRateBase<T, ModelCl, SamplerCl>::get_first_order_action_diff;
@@ -27,11 +31,15 @@ struct TransitionRateBase
             function_ptr_on_expansion = &TransitionRateBase<T, ModelCl, SamplerCl>::get_action_diff;
     }
 
-    void update_config(T state_, double normalization_factor_ = 1.0)
+    virtual void update_config(T state_, double normalization_factor_ = 1.0)
     {
         state = state_;
         current_potential = model.get_potential(state_);
         normalization_factor = normalization_factor_;
+
+        auto integration_bounds = sampler.get_integration_bounds(state);
+        lower_bound = integration_bounds.first;
+        upper_bound = integration_bounds.second;
 
         if(expansion == "first" or expansion == "second")
             current_drift = model.get_drift_term(state_);
@@ -42,10 +50,15 @@ struct TransitionRateBase
 #ifdef THRUST
     __host__ __device__
 #endif
+    virtual double operator() (double x_real) = 0;
+
+#ifdef THRUST
+    __host__ __device__
+#endif
     T get_action_diff(T &proposed_site)
     {
-        auto new_potential = model.get_potential({proposed_site.real(), proposed_site.imag()});
-        return -0.5 * (new_potential - current_potential);
+        auto new_potential = this->model.get_potential({transform(proposed_site.real()), proposed_site.imag()});
+        return -0.5 * (new_potential - this->current_potential);
     }
 
 #ifdef THRUST
@@ -53,8 +66,7 @@ struct TransitionRateBase
 #endif
     T get_first_order_action_diff(T &proposed_site)
     {
-        auto drift_term = model.get_drift_term({proposed_site.real(), proposed_site.imag()});
-        return -0.5 * (proposed_site.real() - state.real()) * (drift_term - current_drift);
+        return -0.5 * (transform(proposed_site.real()) - state.real()) * current_drift;
     }
 
 #ifdef THRUST
@@ -62,16 +74,14 @@ struct TransitionRateBase
 #endif
     T get_second_order_action_diff(T &proposed_site)
     {
-        auto drift_term = model.get_drift_term({proposed_site.real(), proposed_site.imag()});
-        auto second_order_drift_term = model.get_second_order_drift_term({proposed_site.real(), proposed_site.imag()});
-        return -0.5 * (proposed_site.real() - state.real()) * (drift_term - current_drift) - 0.25 * std::pow(proposed_site.real() - state.real(), 2.0) * (second_order_drift_term - current_second_order_drift);
+        return -0.5 * (transform(proposed_site.real()) - state.real()) * current_drift - 0.25 * std::pow(transform(proposed_site.real()) - state.real(), 2.0) * current_second_order_drift;
     }
 
 
-    template<typename Integrator>
-    auto compute_normalization_factor(Integrator& integrator)
+    template<typename Integrator, typename Integrand>
+    auto compute_normalization_factor(Integrator& integrator, Integrand& integrand)
     {
-        return integrator.integrate(*this, lower_bound, upper_bound, true);
+        return integrator.integrate(integrand, lower_bound, upper_bound, true);
     }
 
     void set_normalization(const double normalization_factor_)
@@ -92,6 +102,11 @@ struct TransitionRateBase
     const double get_upper_bound() const
     {
         return upper_bound;
+    }
+
+    const double transform(const double val)
+    {
+        return sampler.transformer(val);
     }
 
     const ModelCl &model;

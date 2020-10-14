@@ -21,6 +21,9 @@
 #include "../../../util/distribution/complex_gaussian_distribution_from_file.hpp"
 
 
+// Variants for sampling a momentum distribution while keeping different parts of the action constant.
+
+
 template<typename ModelParameters, typename MomentumDistribution>
 class SingleSiteComplexHybridMonteCarloUpdate;
 

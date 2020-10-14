@@ -13,7 +13,7 @@
 class MCMCUpdateBaseParameters : public Parameters {
 public:
     MCMCUpdateBaseParameters(const json params_) : Parameters(params_),
-                                                   eps(get_value_by_key<double>("eps"))
+                                                   eps(get_value_by_key<double>("eps", 0.0))
     {}
 
     void write_to_file(const std::string& root_dir) {

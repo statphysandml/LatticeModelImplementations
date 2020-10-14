@@ -45,7 +45,8 @@ public:
     explicit ComplexImplicitUpdate(
             const ComplexImplicitUpdateParameters<Integrator, ImplicitIntegralSolver, TransitionRate, ModelParameters, SamplerCl> &up_,
             typename ModelParameters::Model & model_
-    ) : MCMCUpdateBase<ComplexImplicitUpdate<Integrator, ImplicitIntegralSolver, TransitionRate, ModelParameters, SamplerCl>, SamplerCl>(up_.eps), up(up_), model(model_), integrator(Integrator(up.n_grid_points)), implicit_integral_solver(ImplicitIntegralSolver(-1.0, 1.0))
+    ) : MCMCUpdateBase<ComplexImplicitUpdate<Integrator, ImplicitIntegralSolver, TransitionRate, ModelParameters, SamplerCl>, SamplerCl>(up_.eps),
+            up(up_), model(model_), integrator(Integrator(up.n_grid_points)), implicit_integral_solver(ImplicitIntegralSolver(-1.0, 1.0))
     {
         uniform = std::uniform_real_distribution<double>(0.0, 1.0);
     }
@@ -67,7 +68,7 @@ public:
         auto new_real_site = implicit_integral_solver.solve(uniform(gen), integrand, integrator);
 
         // Back transform
-        new_real_site = integrand.transformer(new_real_site);
+        new_real_site = integrand.transform(new_real_site);
 
         // Compute imaginary site
         double new_imag_site = integrand.get_new_imag_state({new_real_site, site.imag()});
@@ -93,8 +94,8 @@ protected:
     template<typename T>
     double compute_normalization_factor(TransitionRate &integrand)
     {
-        auto normalization = integrand.compute_normalization_factor(integrator);
-        if(normalization.second > 1e-10)
+        auto normalization = integrand.compute_normalization_factor(integrator, integrand);
+        if(normalization.second > 0.02)
         {
             auto state = integrand.get_state();
             std::cout << "Large error estimation in normalization factor detected: " << normalization.second
