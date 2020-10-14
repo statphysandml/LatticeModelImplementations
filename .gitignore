@@ -19,3 +19,6 @@ lib/
 libgpu/
 __pychache__/
 .ipynb_checkpoints/
+CMakeLists.txt
+build/config.sh
+

@@ -5,7 +5,7 @@
 #ifndef LATTICEMODELIMPLEMENTATIONS_MEMORY_PARALLEL_UPDATE_HPP
 #define LATTICEMODELIMPLEMENTATIONS_MEMORY_PARALLEL_UPDATE_HPP
 
-#include "lattice_model_impl/update_dynamics/update_dynamics_base.hpp"
+#include "../../update_dynamics_base.hpp"
 
 template<typename SiteType>
 struct MemoryParallelUpdate;
