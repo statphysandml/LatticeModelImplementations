@@ -16,7 +16,7 @@ if test -d "$project_path"; then
 fi
 
 mkdir -p "../projects/"
-mkdir "$project_path"
+mkdir $project_path
 
 include_path=$project_path
 src_path=$project_path
