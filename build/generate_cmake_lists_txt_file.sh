@@ -10,13 +10,16 @@ if [ -v path_to_boost ]; then
 cat >>../CMakeLists.txt <<EOL
 set(BOOST_ROOT "${path_to_boost}")
 EOL
-fi
+else
 cat >>../CMakeLists.txt <<EOL
 FIND_PACKAGE( Boost 1.67 REQUIRED COMPONENTS filesystem)
 if(Boost_FOUND)
     include_directories(\${Boost_INCLUDE_DIRS})
     message("Boost = \${Boost_INCLUDE_DIRS}")
 endif()
+EOL
+fi
+cat >>../CMakeLists.txt <<EOL
 
 # Ceres -> not needed at the moment
 # find_package(Ceres REQUIRED)
@@ -77,14 +80,14 @@ cat >>../CMakeLists.txt <<EOL
         list( APPEND CUDA_NVCC_FLAGS "-Xcompiler -fopenmp -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_OMP -lgomp; --expt-extended-lambda; --expt-relaxed-constexpr") #  -Xcompiler -fopenmp -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_OMP -lgomp"
     endif()
 
-    set(CMAKE_CXX_FLAGS "\${CMAKE_CXX_FLAGS} -std=c++14 -static-libstdc++")
+    set(CMAKE_CXX_FLAGS "\${CMAKE_CXX_FLAGS} -std=c++14 -static-libstdc++ -lboost_system")
 
     if(CMAKE_COMPILER_IS_GNUCXX)
       set(CMAKE_CXX_FLAGS_DEBUG "\${CMAKE_CXX_FLAGS_DEBUG} -O0 -g -Wall -Werror")
       set(CMAKE_CXX_FLAGS_RELEASE "\${CMAKE_CXX_FLAGS_RELEASE} -O3")
       set(CMAKE_EXE_LINKER_FLAGS "-s")  # Strip binary
     endif()
-
+        
     cuda_add_library(
             latticemodelimplementations STATIC src/main.cpp
             src/lattice_model_impl/distribution/thrust_complex_gaussian_distribution.cu
@@ -99,7 +102,7 @@ cat >>../CMakeLists.txt <<EOL
     target_compile_definitions(latticemodelimplementations PUBLIC -D GPU -D THRUST)
     set_target_properties(latticemodelimplementations PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
 else()
-    set(CMAKE_CXX_FLAGS "\${CMAKE_CXX_FLAGS} -std=c++14 -static-libstdc++")
+    set(CMAKE_CXX_FLAGS "\${CMAKE_CXX_FLAGS} -std=c++14 -static-libstdc++ -lboost_system")
     
     if(CMAKE_COMPILER_IS_GNUCXX)
       set(CMAKE_CXX_FLAGS_DEBUG "\${CMAKE_CXX_FLAGS_DEBUG} -O0 -g -Wall -Werror")
@@ -111,5 +114,13 @@ else()
 
     target_link_libraries( latticemodelimplementations \${MCMCSimulationLib} \${ParamHelper} \${Boost_LIBRARIES} \${CERES_LIBRARIES} \${PYTHON_LIBRARIES})
 endif()
+
+SET( APP_EXE StaticTest )
+
+ADD_EXECUTABLE( \${APP_EXE}
+        src/main.cpp )
+        
+TARGET_LINK_LIBRARIES( \${APP_EXE}
+        latticemodelimplementations)
 
 EOL

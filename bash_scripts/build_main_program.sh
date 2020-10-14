@@ -14,6 +14,8 @@ if test -d "$project_path/include"; then
 	echo "Main project already build. Only the cmake lists file is rebuild."
 
 	mkdir -p "$project_path/cmake"
+	mkdir -p "$project_path/debug"
+	mkdir -p "$project_path/release"
 	# Generate CMakeLists.txt file
 	source "${path_to_lattice_model_implementations}bash_scripts/write_cmake_lists_file_main_project.sh"
 else

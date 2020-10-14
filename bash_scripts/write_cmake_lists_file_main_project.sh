@@ -4,12 +4,12 @@ project(${project_name})
 
 set(CMAKE_CXX_STANDARD 14)
 
-
 # Boost
 EOL
 if [ -v path_to_boost ]; then
 cat >>$project_path/cmake/CMakeLists.txt <<EOL
 set(BOOST_ROOT "${path_to_boost}")
+FIND_PACKAGE( Boost REQUIRED COMPONENTS filesystem)
 EOL
 else
 cat >>$project_path/cmake/CMakeLists.txt <<EOL
@@ -21,8 +21,6 @@ endif()
 EOL
 fi
 cat >>$project_path/cmake/CMakeLists.txt <<EOL
-message("\${BOOST_ROOT}")
-
 
 # Ceres -> not needed at the moment
 # find_package(Ceres REQUIRED)
@@ -33,7 +31,7 @@ set(PYTHON_LIBRARIES "${path_to_python3}lib/libpython3.7m.so")
 set(PYTHON_EXECUTABLE "${path_to_python3}bin/python3.7m")
 set(Python3_ROOT_DIR "$path_to_python3")
 include_directories("${path_to_python3}include/python3.7m")
-find_package(PythonInterp 3 REQUIRED)
+# find_package(PythonInterp 3 REQUIRED)
 find_package(PythonLibs 3 REQUIRED)
 find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
 include_directories(\${PYTHON_INCLUDE_DIRS})
@@ -116,7 +114,7 @@ cat >>$project_path/cmake/CMakeLists.txt <<EOL
         list( APPEND CUDA_NVCC_FLAGS "-Xcompiler -fopenmp -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_OMP -lgomp; --expt-extended-lambda; --expt-relaxed-constexpr") #  -Xcompiler -fopenmp -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_OMP -lgomp"
     endif()
 
-    set(CMAKE_CXX_FLAGS "\${CMAKE_CXX_FLAGS} -std=c++14 -static-libstdc++")
+    set(CMAKE_CXX_FLAGS "\${CMAKE_CXX_FLAGS} -std=c++14 -static-libstdc++ -lboost_system")
 
     if(CMAKE_COMPILER_IS_GNUCXX)
       set(CMAKE_CXX_FLAGS_DEBUG "\${CMAKE_CXX_FLAGS_DEBUG} -O0 -g -Wall -Werror")
@@ -145,11 +143,11 @@ cat >>$project_path/cmake/CMakeLists.txt <<EOL
     target_compile_definitions(${project_name} PUBLIC -D GPU -D THRUST)
     set_target_properties(${project_name} PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
 else()
+    set(CMAKE_CXX_FLAGS "\${CMAKE_CXX_FLAGS} -std=c++14 -static-libstdc++ -lboost_system -lboost_filesystem")
+
     find_library(LatticeModelImplementations NAMES liblatticemodelimplementations.a PATHS ${path_to_lattice_model_implementations}lib)
     message("LatticeModelImplementations = \${LatticeModelImplementations}")
     include_directories(${path_to_lattice_model_implementations}include/)
-
-    set(CMAKE_CXX_FLAGS "\${CMAKE_CXX_FLAGS} -std=c++14 -static-libstdc++")
 
     if(CMAKE_COMPILER_IS_GNUCXX)
       set(CMAKE_CXX_FLAGS_DEBUG "\${CMAKE_CXX_FLAGS_DEBUG} -O0 -g -Wall -Werror")
@@ -172,7 +170,7 @@ fi
 cat >>$project_path/cmake/CMakeLists.txt <<EOL
     )
 
-    target_link_libraries( ${project_name} \${LatticeModelImplementations} \${MCMCSimulationLib} \${ParamHelper} \${Boost_LIBRARIES} \${CERES_LIBRARIES} \${PYTHON_LIBRARIES})
+    target_link_libraries( ${project_name} \${LatticeModelImplementations} \${MCMCSimulationLib} \${ParamHelper} \${Boost_LIBRARIES}  \${CERES_LIBRARIES} \${PYTHON_LIBRARIES})
 endif()
 
 # Go to build directory and call
