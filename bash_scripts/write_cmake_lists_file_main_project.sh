@@ -24,8 +24,9 @@ cat >>$project_path/cmake/CMakeLists.txt <<EOL
 message("\${BOOST_ROOT}")
 
 
-find_package(Ceres REQUIRED)
-include_directories(\${CERES_INCLUDE_DIRS})
+# Ceres -> not needed at the moment
+# find_package(Ceres REQUIRED)
+# include_directories(\${CERES_INCLUDE_DIRS})
 
 
 set(PYTHON_LIBRARIES "${path_to_python3}lib/libpython3.7m.so")
