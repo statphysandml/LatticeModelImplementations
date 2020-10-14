@@ -18,9 +18,9 @@ if(Boost_FOUND)
     message("Boost = \${Boost_INCLUDE_DIRS}")
 endif()
 
-# Ceres
-find_package(Ceres REQUIRED)
-include_directories(\${CERES_INCLUDE_DIRS})
+# Ceres -> not needed at the moment
+# find_package(Ceres REQUIRED)
+# include_directories(\${CERES_INCLUDE_DIRS})
 
 # Python
 set(PYTHON_LIBRARIES "${path_to_python3}lib/libpython${python_version}m.so")
