@@ -11,7 +11,9 @@ fi
 project_path="../"
 
 if test -d "$project_path/include"; then
-	echo "Main project already build."
+	echo "Main project already build. Only the cmake lists file is rebuild."
+	# Generate CMakeLists.txt file
+	source "${path_to_lattice_model_implementations}bash_scripts/write_cmake_lists_file_main_project.sh"
 	exit 1
 fi
 
