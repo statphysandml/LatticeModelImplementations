@@ -116,8 +116,8 @@ private:
             dxdt[0] = -1.0 * hmc_model.get_drift_term(std::complex<double>{x[0], current_imag_state}).imag();
         }
 
-        const double current_imag_state;
         typename ModelParameters::Model & hmc_model;
+        const double current_imag_state;
     };
 
     double compute_new_imag_state(const double current_imag, double imag_proposal_energy, double imag_energy)

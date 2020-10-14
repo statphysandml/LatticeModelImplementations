@@ -44,7 +44,7 @@ struct MemorySiteSimpleUpdate : public UpdateDynamicsBase<MemorySiteSimpleUpdate
     template<typename Site>
     void update (Site& site, uint measure_interval=1)
     {
-        for(auto k = 0; k < measure_interval - 1; k++)
+        for(size_t k = 0; k < measure_interval - 1; k++)
         {
             site.get_system_representation() = update_lattice_site(site.get_update_formalism(), site.get_system_representation());
         }

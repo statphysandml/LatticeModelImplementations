@@ -48,10 +48,10 @@ public:
 private:
     friend class ComplexPolynomialModel;
 
-    const std::complex<double> lambda;
     const double sigma_real;
     const double sigma_imag;
     const std::complex<double> sigma;
+    const std::complex<double> lambda;
     const std::complex<double> h;
 };
 

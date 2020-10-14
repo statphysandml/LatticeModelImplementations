@@ -308,7 +308,7 @@ int LatticeSystem<T, ModelParameters, UpdateFormalismParameters, LatticeUpdateFo
 
 template<typename T, typename ModelParameters, typename UpdateFormalismParameters, typename LatticeUpdateFormalismParameters>
 void LatticeSystem<T, ModelParameters, UpdateFormalismParameters, LatticeUpdateFormalismParameters>::set_nearest_neighbours() {
-    int offset;
+    // int offset;
     for(uint i = 0; i < get_size(); i++) {
         // offset = 1;
         std::vector < T* > nn_of_site;

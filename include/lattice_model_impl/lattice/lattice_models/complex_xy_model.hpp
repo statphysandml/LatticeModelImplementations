@@ -81,7 +81,7 @@ public:
     {
         double S_re = 0;
         double S_im = 0;
-        for(auto i = 0; i < neighbours.size(); i += 2) {
+        for(size_t i = 0; i < neighbours.size(); i += 2) {
             S_re += std::cos(site.real() - neighbours[i]->real()) * std::cosh(site.imag() - neighbours[i]->imag() - mp.mu * int(i == 0)) +
                     std::cos(neighbours[i+1]->real() - site.real()) * std::cosh(neighbours[i+1]->imag() - site.imag() - mp.mu * int(i == 0));
             S_im += std::sin(site.real() - neighbours[i]->real()) * std::sinh(site.imag() - neighbours[i]->imag() - mp.mu * int(i == 0)) +
@@ -94,7 +94,7 @@ public:
     {
         double S_re = 0;
         double S_im = 0;
-        for(auto i = 0; i < neighbours.size(); i += 2) {
+        for(size_t  i = 0; i < neighbours.size(); i += 2) {
             S_re += std::sin(site.real() - neighbours[i]->real()) * std::cosh(site.imag() - neighbours[i]->imag() - mp.mu * int(i == 0)) +
                     std::sin(site.real() - neighbours[i+1]->real()) * std::cosh(site.imag() - neighbours[i+1]->imag() + mp.mu * int(i==0));
             S_im += std::cos(site.real() - neighbours[i]->real()) * std::sinh(site.imag() - neighbours[i]->imag() - mp.mu * int(i == 0)) +
@@ -109,7 +109,7 @@ public:
     double get_potential(const double site, const std::vector<double*> neighbours)
     {
         std::complex<double> S = 0;
-        for(auto i = 0; i < neighbours.size(); i += 2) {
+        for(size_t  i = 0; i < neighbours.size(); i += 2) {
             S += std::cos(std::complex<double>(site - *neighbours[i], -1.0 * mp.mu * int(i == 0))) + std::cos(std::complex<double>(*neighbours[i + 1] - site, -1.0 * mp.mu * int(i == 0)));
         }
         return (-1.0 * mp.beta * S).real(); // 0.5
@@ -118,7 +118,7 @@ public:
     double get_imag_potential(const double site, const std::vector<double*> neighbours)
     {
         std::complex<double> S = 0;
-        for(auto i = 0; i < neighbours.size(); i += 2) {
+        for(size_t  i = 0; i < neighbours.size(); i += 2) {
             S += std::cos(std::complex<double>(site - *neighbours[i], -1.0 * mp.mu * int(i == 0))) + std::cos(std::complex<double>(*neighbours[i + 1] - site, -1.0 * mp.mu * int(i == 0)));
         }
         return (-1.0 * mp.beta * S).imag(); // 0.5
@@ -126,7 +126,7 @@ public:
 
     double get_drift_term(const double site, const std::vector<double*> neighbours) {
         std::complex<double> S = 0;
-        for (auto i = 0; i < neighbours.size(); i += 2) {
+        for (size_t  i = 0; i < neighbours.size(); i += 2) {
             S += std::sin(std::complex<double>(site - *neighbours[i], mp.mu * int(i == 0))) +
                  std::sin(std::complex<double>(site - *neighbours[i + 1], -1.0 * mp.mu * int(i == 0)));
         }
@@ -135,7 +135,7 @@ public:
 
     double get_imag_drift_term(const double site, const std::vector<double*> neighbours) {
         std::complex<double> S = 0;
-        for (auto i = 0; i < neighbours.size(); i += 2) {
+        for (size_t  i = 0; i < neighbours.size(); i += 2) {
             S += std::sin(std::complex<double>(site - *neighbours[i], mp.mu * int(i == 0))) +
                  std::sin(std::complex<double>(site - *neighbours[i + 1], -1.0 * mp.mu * int(i == 0)));
         }

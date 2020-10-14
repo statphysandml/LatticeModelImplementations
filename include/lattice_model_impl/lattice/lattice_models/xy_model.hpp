@@ -88,7 +88,7 @@ public:
     T get_potential(const T site, const std::vector<T*> neighbours)
     {
         double S = 0;
-        for(auto i = 0; i < neighbours.size(); i += 2) {
+        for(size_t i = 0; i < neighbours.size(); i += 2) {
             S += mp.J * std::cos(site - *neighbours[i]) + mp.J * std::cos(*neighbours[i + 1] - site) + mp.h * std::cos(site);
         }
         return -1.0 * mp.beta * S; // 0.5
@@ -98,7 +98,7 @@ public:
     T get_drift_term(const T site, const std::vector<T*> neighbours)
     {
         double S = 0;
-        for(auto i = 0; i < neighbours.size(); i += 2) {
+        for(size_t i = 0; i < neighbours.size(); i += 2) {
             S += mp.J * std::sin(site - *neighbours[i]) +
                     mp.J * std::sin(site - *neighbours[i+1]) + mp.h * std::cos(site);
         }

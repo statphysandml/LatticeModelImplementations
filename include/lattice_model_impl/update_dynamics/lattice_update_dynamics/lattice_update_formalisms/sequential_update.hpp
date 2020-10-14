@@ -40,7 +40,7 @@ struct SequentialUpdate : public UpdateDynamicsBase<SequentialUpdate>
     template<typename Lattice>
     void update (Lattice& lattice, uint measure_interval=1)
     {
-        for(auto k = 0; k < measure_interval; k++)
+        for(size_t k = 0; k < measure_interval; k++)
         {
             for (uint j = 0; j < lattice.get_size(); j++)
             {
