@@ -50,6 +50,12 @@ public:
         return sampler.template random_state<T>();
     };
 
+    template<typename T>
+    T cold_state()
+    {
+        return T(0);
+    };
+
 protected:
     SamplerCl sampler;
 

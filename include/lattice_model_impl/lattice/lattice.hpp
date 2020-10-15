@@ -170,6 +170,12 @@ public:
         lattice_update->operator()(*this, measure_interval);
     }
 
+    void initialize(std::string starting_mode)
+    {
+        std::cout << "Inializte lattice not implemented" << std::endl;
+        std::exit(EXIT_FAILURE);
+    }
+
     const T energy() const {
         T energy(0);
         for(uint i = 0; i < get_size(); i++) {

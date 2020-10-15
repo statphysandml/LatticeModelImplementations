@@ -132,9 +132,9 @@ namespace site_execution_templates
     
     template<typename ModelParameters, typename Algorithm>
     void run_complex_step_size_estimation(const std::string target_name, ModelParameters model_parameters, const json mcmc_update_params,
-            uint number_of_measurements=200000, uint start_measuring=100000)
+            uint number_of_measurements=200000, uint start_measuring=100000, Executer::RunningMode running_mode = Executer::local, bool execute=true, std::vector<std::string> additional_args={})
     {
-        run_expectation_value<ModelParameters, Algorithm>(target_name, model_parameters, mcmc_update_params, Executer::local, true, {}, 1, number_of_measurements, start_measuring,
+        run_expectation_value<ModelParameters, Algorithm>(target_name, model_parameters, mcmc_update_params, running_mode, execute, additional_args, 1, number_of_measurements, start_measuring,
                               {"ComplexStepSize", "RealStepSize", "ImagStepSize"}, {});
     }
 }

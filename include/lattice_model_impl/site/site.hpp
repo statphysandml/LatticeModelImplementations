@@ -109,10 +109,10 @@ public:
     explicit SiteSystem(const SiteParameters<T, ModelParameters, UpdateFormalismParameters, SiteUpdateFormalismParameters> &sp_) : sp(sp_) {
         model = std::make_unique<typename ModelParameters::Model>(*sp.model_parameters);
         update_formalism = std::make_unique<typename UpdateFormalismParameters::MCMCUpdate>(*sp.update_parameters, *model);
-
-        initialize_site();
-
         site_update = std::make_unique<typename SiteUpdateFormalismParameters::UpdateDynamics>(*sp.site_update_parameters);
+
+        // Needs to stay here since other site_update or update_formalism use site as reference
+        initialize_site();
 
         update_formalism->initialize(*this);
         site_update->initialize(*this);
@@ -130,6 +130,14 @@ public:
     void update_step(uint measure_interval)
     {
         site_update->operator()(*this, measure_interval);
+    }
+
+    void initialize(std::string starting_mode)
+    {
+        if(starting_mode == "hot")
+            site = update_formalism->template random_state<T>();
+        else
+            site = update_formalism->template cold_state<T>();
     }
 
     T energy() const {
