@@ -17,8 +17,7 @@ namespace complex_monte_carlo_measures
     public:
         // ToDo: Introduce possibility to use this also without defining model_params_path
         explicit MeasureDetailedBalanceAccuracyPolicy(const json &system_repr_params_, const typename SB::SiteType &prev_site_) :
-            prev_site(prev_site_), system_repr(
-                    SiteSystem<typename SB::SiteType, typename SB::ModelType, DummyMCMCUpdateParameters, DummyUpdateDynamicsParameters>::from_json(
+            prev_site(prev_site_), system_repr(SiteSystem<typename SB::SiteType, typename SB::ModelType, DummyMCMCUpdateParameters, DummyUpdateDynamicsParameters>::from_json(
                             json {{"mcmc_update_params", {{"eps", 0.0}}}, {"model_params_path", system_repr_params_["model_params_path"]}}, "None"))
         {}
 

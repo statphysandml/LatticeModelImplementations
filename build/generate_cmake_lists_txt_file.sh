@@ -106,9 +106,12 @@ else()
     set(CMAKE_CXX_FLAGS "\${CMAKE_CXX_FLAGS} -std=c++14 -static-libstdc++ -lboost_system -lboost_filesystem")
     
     if(CMAKE_COMPILER_IS_GNUCXX)
-      set(CMAKE_CXX_FLAGS_DEBUG "\${CMAKE_CXX_FLAGS_DEBUG} -O0 -g -Wall -Werror")
-      set(CMAKE_CXX_FLAGS_RELEASE "\${CMAKE_CXX_FLAGS_RELEASE} -O3")
-      set(CMAKE_EXE_LINKER_FLAGS "-s")  # Strip binary
+      set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0 -g -Wall -Werror")
+      set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")
+    endif()
+
+    if( CMAKE_BUILD_TYPE MATCHES "RELEASE" )
+        set(CMAKE_EXE_LINKER_FLAGS "-s")  # Strip binary
     endif()
     
     add_library(latticemodelimplementations STATIC src/main.cpp)

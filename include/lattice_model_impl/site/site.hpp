@@ -33,6 +33,27 @@ public:
                         *this, site_update_parameters->param_file_name(), rel_config_path_));
     }
 
+    // Move constructor
+    SiteParameters(SiteParameters&& site_parameters) :
+            measures(site_parameters.measures),
+            model_parameters(std::move(site_parameters.model_parameters)),
+            update_parameters(std::move(site_parameters.update_parameters)),
+            site_update_parameters(std::move(site_parameters.site_update_parameters))
+    { /* std::cout << "Move cosntructor is called" << std::endl;*/ }
+
+    // Move assignment
+    SiteParameters & operator=(SiteParameters &site_parameters ) // Changed on my own from no & to && (from DevDat other to &&other)
+    {
+
+        // std::cout << "Move assignment operator is called" << std::endl;
+        using std::swap;
+        swap(measures, site_parameters.measures);
+        model_parameters = std::move(site_parameters.model_parameters);
+        update_parameters = std::move(site_parameters.update_parameters);
+        site_update_parameters = std::move(site_parameters.site_update_parameters);
+        return *this;
+    }
+
     typedef SiteSystem<T, ModelParameters, UpdateFormalismParameters, SiteUpdateFormalismParameters> System;
 
     const static std::string name() {
@@ -121,10 +142,37 @@ public:
         this->generate_measures();
     }
 
+    SiteSystem(std::unique_ptr< SiteParameters<T, ModelParameters, UpdateFormalismParameters, SiteUpdateFormalismParameters> > sp_ptr_)
+        : SiteSystem(*(sp_ptr_.release())) {}
+
+    // Move constructor
+    SiteSystem(SiteSystem&& site_system) :
+        // sp_ptr(std::move(site_system.sp_ptr)),
+        sp(site_system.sp),
+        site(site_system.site),
+        model(std::move(site_system.model)),
+        update_formalism(std::move(site_system.update_formalism)),
+        site_update(std::move(site_system.site_update))
+        { /* std::cout << "Move cosntructor is called" << std::endl; */ }
+
+    // Move assignment
+    SiteSystem & operator=(SiteSystem &site_system ) // Changed on my own from no & to && (from DevDat other to &&other)
+    {
+        // std::cout << "Move assignment operator is called" << std::endl;
+        using std::swap;
+        swap(sp, site_system.sp);
+        swap(site, site_system.site);
+        model = std::move(site_system.model);
+        update_formalism = std::move(site_system.update_formalism);
+        site_update = std::move(site_system.site_update);
+        return *this;
+    }
+
     static SiteSystem from_json(const json params_, const std::string rel_config_path_)
     {
-        SiteParameters<T, ModelParameters, UpdateFormalismParameters, SiteUpdateFormalismParameters> sp_(params_, rel_config_path_);
-        return SiteSystem<T, ModelParameters, UpdateFormalismParameters, SiteUpdateFormalismParameters>(sp_);
+        // Object is generated on the heap
+        auto sp_ptr_ = std::make_unique<SiteParameters<T, ModelParameters, UpdateFormalismParameters, SiteUpdateFormalismParameters>>(params_, rel_config_path_);
+        return SiteSystem<T, ModelParameters, UpdateFormalismParameters, SiteUpdateFormalismParameters>(*(sp_ptr_.release()));
     }
 
     void update_step(uint measure_interval)
