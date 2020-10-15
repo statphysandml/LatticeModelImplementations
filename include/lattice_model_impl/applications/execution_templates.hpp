@@ -14,7 +14,8 @@ namespace site_execution_templates
     void run_expectation_value(const std::string target_name, ModelParameters model_parameters, const json mcmc_update_params,
                                Executer::RunningMode running_mode=Executer::local, bool execute_code=true, const std::vector<std::string> additional_args={},
                                uint measure_interval=0, uint number_of_measurements=100000, uint start_measuring=10000,
-                      json measures={"Mean", "ComplexConfig", "AbsoluteDetailedBalanceAccuracy", "DetailedBalanceAccuracy", "RealStepSize", "ImagStepSize"}, json post_measures={"2ndMoment"}) {
+                      json measures={"Mean", "ComplexConfig", "AbsoluteDetailedBalanceAccuracy", "DetailedBalanceAccuracy",
+                                     "RealStepSize", "ImagStepSize", "Energy", "EnergyImag", "Drift", "DriftImag"}, json post_measures={"2ndMoment"}) {
 
         std::string rel_config_path = "/configs/" + target_name + "/";
         std::string rel_data_path = "/data/" + target_name + "/";

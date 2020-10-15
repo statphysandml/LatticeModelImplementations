@@ -311,7 +311,9 @@ SiteSystem<T, ModelParameters, UpdateFormalismParameters, SiteUpdateFormalismPar
         else if(measure_name == "EnergyImag")
             site_measures.push_back(std::make_unique<lattice_model_measures::MeasureEnergyImagPolicy<SiteSys>>());
         else if(measure_name == "Drift")
-            site_measures.push_back(std::make_unique<lattice_model_measures::MeasureDriftTermPolicy<SiteSys>>());
+            site_measures.push_back(std::make_unique<lattice_model_measures::MeasureDriftPolicy<SiteSys>>());
+        else if(measure_name == "DriftImag")
+            site_measures.push_back(std::make_unique<lattice_model_measures::MeasureDriftImagPolicy<SiteSys>>());
         else if(measure_name == "WilsonAction")
             site_measures.push_back(std::make_unique<lattice_model_measures::MeasureWilsonActionPolicy<SiteSys>>());
     return site_measures;

@@ -37,16 +37,26 @@ namespace lattice_model_measures {
     };
 
     template<typename SB>
-    struct MeasureDriftTermPolicy : public common_measures::MeasurePolicy<SB> {
+    struct MeasureDriftPolicy : public common_measures::MeasurePolicy<SB> {
     public:
         std::string measure(const SB &system) override {
-            auto drift_term = system.drift_term();
-            return std::to_string(common_measures::TypePolicy<decltype(drift_term)>::realv(drift_term)) + " " +
-                   std::to_string(common_measures::TypePolicy<decltype(drift_term)>::imagv(drift_term));
+            return std::to_string(common_measures::TypePolicy<typename SB::SiteType>::realv(system.drift_term()));
         }
 
         std::string name() {
             return "Drift";
+        }
+    };
+
+    template<typename SB>
+    struct MeasureDriftImagPolicy : public common_measures::MeasurePolicy<SB> {
+    public:
+        std::string measure(const SB &system) override {
+            return std::to_string(common_measures::TypePolicy<typename SB::SiteType>::imagv(system.drift_term()));
+        }
+
+        std::string name() {
+            return "DriftImag";
         }
     };
 

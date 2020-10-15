@@ -389,7 +389,9 @@ LatticeSystem<T, ModelParameters, UpdateFormalismParameters, LatticeUpdateFormal
         else if(measure_name == "EnergyImag")
             lattice_measures.push_back(std::make_unique<lattice_model_measures::MeasureEnergyImagPolicy<LatSys>>());
         else if(measure_name == "Drift")
-            lattice_measures.push_back(std::make_unique<lattice_model_measures::MeasureDriftTermPolicy<LatSys>>());
+            lattice_measures.push_back(std::make_unique<lattice_model_measures::MeasureDriftPolicy<LatSys>>());
+        else if(measure_name == "DriftImag")
+            lattice_measures.push_back(std::make_unique<lattice_model_measures::MeasureDriftImagPolicy<LatSys>>());
         else if(measure_name == "WilsonAction")
             lattice_measures.push_back(std::make_unique<lattice_model_measures::MeasureWilsonActionPolicy<LatSys>>());
     return lattice_measures;

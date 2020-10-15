@@ -31,7 +31,7 @@ set(PYTHON_LIBRARIES "${path_to_python3}lib/libpython3.7m.so")
 set(PYTHON_EXECUTABLE "${path_to_python3}bin/python3.7m")
 set(Python3_ROOT_DIR "$path_to_python3")
 include_directories("${path_to_python3}include/python3.7m")
-# find_package(PythonInterp 3 REQUIRED)
+# find_package(PythonInterp 3 REQUIRED) # Might be necessary to uncomment on your system
 find_package(PythonLibs 3 REQUIRED)
 find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
 include_directories(\${PYTHON_INCLUDE_DIRS})
