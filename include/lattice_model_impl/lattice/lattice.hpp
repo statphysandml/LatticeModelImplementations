@@ -172,8 +172,7 @@ public:
 
     void initialize(std::string starting_mode)
     {
-        std::cout << "Inializte lattice not implemented" << std::endl;
-        std::exit(EXIT_FAILURE);
+        std::cout << "Cold start not possible, so far" << std::endl;
     }
 
     const T energy() const {

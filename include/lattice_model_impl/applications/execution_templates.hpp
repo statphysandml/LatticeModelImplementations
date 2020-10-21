@@ -15,7 +15,8 @@ namespace site_execution_templates
                                Executer::RunningMode running_mode=Executer::local, bool execute_code=true, const std::vector<std::string> additional_args={},
                                uint measure_interval=0, uint number_of_measurements=100000, uint start_measuring=10000,
                       json measures={"Mean", "ComplexConfig", "AbsoluteDetailedBalanceAccuracy", "DetailedBalanceAccuracy",
-                                     "RealStepSize", "ImagStepSize", "Energy", "EnergyImag", "Drift", "DriftImag"}, json post_measures={"2ndMoment"}) {
+                                     "RealStepSize", "ImagStepSize", "Energy", "EnergyImag", "Drift", "DriftImag"},
+                               json post_measures={"2ndMoment"}, uint n_means_bootstrap=200) {
 
         std::string rel_config_path = "/configs/" + target_name + "/";
         std::string rel_data_path = "/data/" + target_name + "/";
@@ -35,7 +36,7 @@ namespace site_execution_templates
         {
             ExpectationValueParameters expectation_value_parameters(correlation_time_results_path, number_of_measurements, start_measuring,
                                                                     {}, // optional additional measures
-                                                                    post_measures);
+                                                                    post_measures, n_means_bootstrap);
 
             // Generates all simulation parameters
             SimulationParameters<typename Algorithm::SystemBaseParams, ExpectationValueParameters>::generate_traceable_simulation(
@@ -47,7 +48,7 @@ namespace site_execution_templates
         {
             ExpectationValueParameters expectation_value_parameters(measure_interval, number_of_measurements, start_measuring,
                                                                     {}, // optional additional measures
-                                                                    post_measures);
+                                                                    post_measures, n_means_bootstrap);
             // expectation_value_parameters.write_to_file(rel_data_path);
 
             SimulationParameters<typename Algorithm::SystemBaseParams, ExpectationValueParameters>::generate_traceable_simulation(

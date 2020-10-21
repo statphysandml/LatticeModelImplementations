@@ -48,7 +48,47 @@ int main(int argc, char **argv) {
 
 void custom_main()
 {
-    typedef XYModelParameters ModelParams;
+    typedef IsingModelParameters ModelParams;
+
+    typedef double BasicType;
+    typedef MetropolisUpdateParameters<ModelParams, IsingModelSampler> MCMCUpdateParams;
+    typedef SequentialUpdateParameters UpdateDynamicsParams;
+    typedef LatticeParameters<BasicType, ModelParams, MCMCUpdateParams, UpdateDynamicsParams> SystemBaseParams;
+
+    std::string target_name = "IsingModelMetropolis";
+    std::string rel_config_path = "/configs/" + target_name + "/";
+    std::string rel_data_path = "/data/" + target_name + "/";
+
+    std::vector<double> dimensions {16, 16};
+
+    MCMCUpdateParams mcmc_update_parameters(0.1);
+
+    double beta = 0.4;
+    ModelParams model_parameters(beta, 1.0, 0.0);
+
+    UpdateDynamicsParams update_dynamics_parameters;
+
+    SystemBaseParams lattice_parameters(
+            json {
+                    {"dimensions", dimensions},
+                    {"measures", {"Config", "AbsMean", "Mean", "Energy", "Std"}},
+                    {ModelParams::param_file_name(), model_parameters.get_json()},
+                    {MCMCUpdateParams::param_file_name(), mcmc_update_parameters.get_json()},
+                    {UpdateDynamicsParams::param_file_name(), update_dynamics_parameters.get_json()}},
+            rel_config_path
+    );
+
+    typedef ExpectationValueParameters ExecutionParams;
+    ExecutionParams execution_parameters(1, 10000, 100, {}, {});
+
+    auto simparams = SimulationParameters< SystemBaseParams , ExecutionParams >::generate_traceable_simulation(
+            lattice_parameters, execution_parameters, rel_config_path, rel_data_path, "model_params", "beta", 0.1, 0.7, 10);
+
+    // Execute the simulation
+    execute< SystemBaseParams > (ExecutionParams::name(), target_name, "/./", true,
+                                 Executer::local, true);
+
+    /* typedef XYModelParameters ModelParams;
 
     typedef double BasicType;
     typedef MetropolisUpdateParameters<ModelParams, GaussianSampler> MCMCUpdateParams;
@@ -86,9 +126,8 @@ void custom_main()
 
     // Execute the simulation
     execute< SystemBaseParams > (ExecutionParams::name(), target_name, "/./", true,
-                                 Executer::local, false,
-                                 {"ComplexLangevinDynamics, ComplexPolynomialModel"}
-    );
+                                 Executer::local, false);
+    */
 }
 
 // Rerun the simulation with ./$project_name expectation_value XYModelMetropolis

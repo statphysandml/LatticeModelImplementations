@@ -46,11 +46,30 @@ private:
 class IsingModel : public LatticeModel< IsingModel >
 {
 public:
-    explicit IsingModel(const IsingModelParameters &mp_) : mp(mp_) {
+    explicit IsingModel(const IsingModelParameters &mp_) : mp(mp_) {}
+
+    template<typename T, typename T2=double_t>
+    T2 get_potential(const T site, const std::vector<T*> neighbours)
+    {
+        double coupling = 0;
+        for(size_t i = 0; i < neighbours.size(); i++) {
+            coupling += *neighbours[i];
+        }
+        return  -1.0 * mp.beta * site * (mp.J.real() * coupling + mp.h.real()); // 0.5
+    }
+
+private:
+    const IsingModelParameters &mp;
+};
+
+struct IsingModelSampler //  : public Sampler
+{
+    IsingModelSampler(const double eps_)
+    {
         uniint = std::uniform_int_distribution<int>(0, 1);
     }
 
-    template< typename T>
+    template<typename T>
     T random_state()
     {
         return 2 * uniint(gen) - 1;
@@ -62,18 +81,15 @@ public:
         return -1 * site;
     }
 
-    template<typename T, typename T2=double_t>
-    T2 get_potential(const T site, const std::vector<T*> neighbours)
+    double get_eps() const
     {
-        double coupling = 0;
-        for(auto i = 0; i < neighbours.size(); i++) {
-            coupling += *neighbours[i];
-        }
-        return  -1.0 * mp.beta * site * (mp.J.real() * coupling + mp.h.real()); // 0.5
+        return 0.0;
     }
 
-private:
-    const IsingModelParameters &mp;
+    const static std::string name() {
+        return "IsingModelSampler";
+    }
+
     std::uniform_int_distribution<int> uniint;
 };
 
