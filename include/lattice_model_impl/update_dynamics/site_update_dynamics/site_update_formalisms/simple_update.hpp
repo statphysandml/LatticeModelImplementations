@@ -38,7 +38,7 @@ struct SiteSimpleUpdate : public UpdateDynamicsBase<SiteSimpleUpdate>
     template<typename Site>
     void update (Site& site, uint measure_interval=1)
     {
-        for(auto k = 0; k < measure_interval; k++)
+        for(uint k = 0; k < measure_interval; k++)
         {
             site.get_system_representation() = update_lattice_site(site.get_update_formalism(), site.get_system_representation());
         }

@@ -45,7 +45,7 @@ class ComplexScalarGaussianModel : public SiteModel< ComplexScalarGaussianModel 
 public:
     explicit ComplexScalarGaussianModel(const ComplexScalarGaussianModelParameters &mp_) : mp(mp_) {}
 
-std::complex<double> get_drift_term(const std::complex<double> site)
+    std::complex<double> get_drift_term(const std::complex<double> site)
     {
         return  {mp.a.real() * site.real() - mp.a.imag() * site.imag() - mp.b.real(),
                  mp.a.real() * site.imag() + mp.a.imag() * site.real() - mp.b.imag()};

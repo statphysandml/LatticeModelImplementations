@@ -5,8 +5,11 @@
 #ifndef MAIN_SITE_MODEL_HPP
 #define MAIN_SITE_MODEL_HPP
 
-
 #include "param_helper/params.hpp"
+
+#include "../site_representations/representations/nvec.hpp"
+
+#include "mcmc_simulation/measure_policy.hpp"
 
 
 class SiteModelParameters : public Parameters {

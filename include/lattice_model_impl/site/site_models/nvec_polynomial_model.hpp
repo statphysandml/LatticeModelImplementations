@@ -11,68 +11,66 @@
 #include "../site_model.hpp"
 
 
-template<typename SamplerCl, typename NVecSplitting>
+template<typename NVecSplitting>
 class NVecPolynomialModel;
 
-template<typename SamplerCl, typename NVecSplitting>
+template<typename NVecSplitting>
 class NVecPolynomialModelParameters : public SiteModelParameters {
 public:
-    explicit NVecPolynomialModelParameters<SamplerCl, NVecSplitting>(const json params_) : SiteModelParameters(params_),
+    explicit NVecPolynomialModelParameters<NVecSplitting>(const json params_) : SiteModelParameters(params_),
                                                                             sigma(get_value_by_key< double >("sigma")),
                                                                             lambda(get_value_by_key< double >("lambda")),
-                                                                            h(get_value_by_key< double >("h"))
+                                                                            h(get_value_by_key< double >("h")),
+                                                                            drift_term_in_python_code(NVecSplitting::get_drift_term_in_python_code())
     {}
 
-    explicit NVecPolynomialModelParameters<SamplerCl, NVecSplitting>(double beta_, double mu_, double eps_) : NVecPolynomialModelParameters(json {})
+    explicit NVecPolynomialModelParameters<NVecSplitting>(
+        double lambda_, double sigma_, double h_) : NVecPolynomialModelParameters(json {
+            {"lambda", lambda_},
+            {"sigma", sigma_},
+            {"h", h_},
+            {"drift_term_in_python_code", NVecSplitting::get_drift_term_in_python_code()}
+    })
     {}
 
     const static std::string name() {
-        return "NVecPolynomialModel";
+        return "NVecPolynomialModel" + NVecSplitting::name();
     }
 
-    typedef NVecPolynomialModel<SamplerCl, NVecSplitting> Model;
+    typedef NVecPolynomialModel<NVecSplitting> Model;
 
 private:
-    friend class NVecPolynomialModel<SamplerCl, NVecSplitting>;
+    friend class NVecPolynomialModel<NVecSplitting>;
 
     const double sigma;
     const double lambda;
     const double h;
+    const std::string drift_term_in_python_code;
 };
 
 
-template<typename SamplerCl, typename NVecSplitting>
-class NVecPolynomialModel : public SiteModel< NVecPolynomialModel<SamplerCl, NVecSplitting> >
+template<typename NVecSplitting>
+class NVecPolynomialModel : public SiteModel< NVecPolynomialModel<NVecSplitting> >
 {
 public:
-    explicit NVecPolynomialModel(const NVecPolynomialModelParameters<SamplerCl, NVecSplitting> &mp_) :
+    explicit NVecPolynomialModel(const NVecPolynomialModelParameters<NVecSplitting> &mp_) :
         mp(mp_), nvec_splitting(NVecSplitting(mp.lambda, mp.sigma, mp.h))
     {}
 
-    using SiteModel< NVecPolynomialModel<SamplerCl, NVecSplitting> >::random_state;
-
-    /* typename NVecSplitting::Ttype random_state()
+    template<typename T>
+    T get_potential(const T site) const
     {
-        return typename NVecSplitting::Ttype(sampler.template random_state<typename NVecSplitting::Ttype>());
-    }
-
-    typename NVecSplitting::Ttype propose_state(typename NVecSplitting::Ttype site)
-    {
-        return typename NVecSplitting::Ttype(sampler.template propose_state<typename NVecSplitting::Ttype>(), site);
-    } */
-
-    typename NVecSplitting::Ttype get_potential(const typename NVecSplitting::Ttype site) const
-    {
-        return typename NVecSplitting::Ttype(nvec_splitting.get_potential(site));
+        return T(nvec_splitting.get_potential(site));
     };
 
-    typename NVecSplitting::Ttype get_drift_term(const typename NVecSplitting::Ttype site) const
+    template<typename T>
+    T get_drift_term(const T site) const
     {
-        return typename NVecSplitting::Ttype(nvec_splitting.get_drift_term(site));
+        return T(nvec_splitting.get_drift_term(site));
     };
 
 private:
-    const NVecPolynomialModelParameters<SamplerCl, NVecSplitting> &mp;
+    const NVecPolynomialModelParameters<NVecSplitting> &mp;
     const NVecSplitting nvec_splitting;
 };
 

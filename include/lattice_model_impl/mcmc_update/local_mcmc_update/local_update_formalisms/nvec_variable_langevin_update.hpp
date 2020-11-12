@@ -1,40 +1,40 @@
 //
-// Created by lukas on 01.10.20.
+// Created by lukas on 11.11.20.
 //
 
-#ifndef LATTICEMODELIMPLEMENTATIONS_NVEC_LANGEVIN_UPDATE_HPP
-#define LATTICEMODELIMPLEMENTATIONS_NVEC_LANGEVIN_UPDATE_HPP
+#ifndef LATTICEMODELIMPLEMENTATIONS_NVEC_VARIABLE_LANGEVIN_UPDATE_HPP
+#define LATTICEMODELIMPLEMENTATIONS_NVEC_VARIABLE_LANGEVIN_UPDATE_HPP
 
 #include "../../mcmc_update_base.hpp"
 
 
 template<typename ModelParameters, typename SamplerCl>
-class NVecLangevinUpdate;
+class NVecVariableLangevinUpdate;
 
 
 template<typename ModelParameters, typename SamplerCl>
-class NVecLangevinUpdateParameters : public MCMCUpdateBaseParameters {
+class NVecVariableLangevinUpdateParameters : public MCMCUpdateBaseParameters {
 public:
-    explicit NVecLangevinUpdateParameters(const json params_) : MCMCUpdateBaseParameters(params_),
+    explicit NVecVariableLangevinUpdateParameters(const json params_) : MCMCUpdateBaseParameters(params_),
                                                                 epsilon(get_value_by_key<double>("epsilon")), sqrt2epsilon(sqrt(2 * get_value_by_key<double>("epsilon")))
     {}
 
-    explicit NVecLangevinUpdateParameters(
+    explicit NVecVariableLangevinUpdateParameters(
             const double epsilon_
-    ) : NVecLangevinUpdateParameters(json{
+    ) : NVecVariableLangevinUpdateParameters(json{
             {"epsilon", epsilon_},
             {"eps", epsilon_}
     })
     {}
 
     static std::string name() {
-        return "NVecLangevinUpdate";
+        return "NVecVariableLangevinUpdate";
     }
 
-    typedef NVecLangevinUpdate<ModelParameters, SamplerCl> MCMCUpdate;
+    typedef NVecVariableLangevinUpdate<ModelParameters, SamplerCl> MCMCUpdate;
 
 private:
-    friend class NVecLangevinUpdate<ModelParameters, SamplerCl>;
+    friend class NVecVariableLangevinUpdate<ModelParameters, SamplerCl>;
 
     const double epsilon;
     const double sqrt2epsilon;
@@ -42,11 +42,11 @@ private:
 
 
 template<typename ModelParameters, typename SamplerCl>
-class NVecLangevinUpdate : public MCMCUpdateBase< NVecLangevinUpdate<ModelParameters, SamplerCl>, SamplerCl >
+class NVecVariableLangevinUpdate : public MCMCUpdateBase< NVecVariableLangevinUpdate<ModelParameters, SamplerCl>, SamplerCl >
 {
 public:
-    explicit NVecLangevinUpdate(const NVecLangevinUpdateParameters<ModelParameters, SamplerCl> &up_, typename ModelParameters::Model & model_)
-        : MCMCUpdateBase<NVecLangevinUpdate<ModelParameters, SamplerCl>, SamplerCl>(up_.eps), up(up_), model(model_)
+    explicit NVecVariableLangevinUpdate(const NVecVariableLangevinUpdateParameters<ModelParameters, SamplerCl> &up_, typename ModelParameters::Model & model_)
+            : MCMCUpdateBase<NVecVariableLangevinUpdate<ModelParameters, SamplerCl>, SamplerCl>(up_.eps), up(up_), model(model_)
     {
         normal = std::normal_distribution<double> (0,1);
     }
@@ -56,9 +56,9 @@ public:
     {
         return update(site, model.get_drift_term(site), up.epsilon, up.sqrt2epsilon);
     }
-    
+
 private:
-    const NVecLangevinUpdateParameters<ModelParameters, SamplerCl> & up;
+    const NVecVariableLangevinUpdateParameters<ModelParameters, SamplerCl> & up;
     typename ModelParameters::Model & model;
 
     std::normal_distribution<double> normal;
@@ -66,6 +66,8 @@ private:
     template<typename T>
     T update(const T site, const T drift_term, const double &epsilon, const double &sqrt2epsilon)
     {
+        model.update_ft();
+
         T new_site(site);
         new_site(0) = site.orig() - epsilon * drift_term(0) + sqrt2epsilon * normal(gen);
         for(uint i = 1; i < new_site.dim(); i++)
@@ -77,5 +79,4 @@ private:
     }
 };
 
-
-#endif //LATTICEMODELIMPLEMENTATIONS_NVEC_LANGEVIN_UPDATE_HPP
+#endif //LATTICEMODELIMPLEMENTATIONS_NVEC_VARIABLE_LANGEVIN_UPDATE_HPP

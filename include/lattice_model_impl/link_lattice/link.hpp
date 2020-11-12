@@ -41,9 +41,15 @@ public:
     virtual Link& adjungate();
 };
 
-//Link operator*(const Link& x, const Link& y);
+// Link operator*(const Link& x, const Link& y);
 
-//Link operator-(const Link& a,const Link& b);
+template<typename T>
+Link<T> operator-(const Link<T>& a,const Link<T>& b)
+{
+    auto val(a);
+    val -= b;
+    return val;
+}
 
 //std::ostream& operator<<(std::ostream &os, const Link& x);
 
@@ -71,14 +77,14 @@ T& Link<T>::operator()(int i)
 
 template<typename T>
 Link<T>& Link<T>::operator+=(const Link<T>& x) {
-    for(auto i = 0; i < x_.size(); i ++)
+    for(size_t i = 0; i < x_.size(); i ++)
         x_[i] += x(i);
     return *this;
 }
 
 template<typename T>
 Link<T>& Link<T>::operator-=(const Link<T>& x) {
-    for(auto i = 0; i < x_.size(); i ++)
+    for(size_t i = 0; i < x_.size(); i ++)
         x_[i] -= x(i);
     return *this;
 }

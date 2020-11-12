@@ -9,7 +9,6 @@
 #include "mcmc_simulation/util/random.hpp"
 
 
-
 class ComplexCubicModel;
 
 

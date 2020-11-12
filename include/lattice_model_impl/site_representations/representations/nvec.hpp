@@ -80,6 +80,8 @@ public:
         return *this;
     } */
 
+
+
     T reduce() const
     {
         double sum = 0;
@@ -101,6 +103,7 @@ public:
                 resc = true;
         if(resc)
         {
+            // std::cout << "Remap" << std::endl;
             remap();
         }
     }
@@ -118,7 +121,7 @@ public:
         auto j = uniform(gen);
         auto val = this->reduce();
         x_[j] = normal(gen);
-        for (size_t i = 0; i < x_.size(); i++)
+        for (int i = 0; i < int(x_.size()); i++)
         {
             if(i != j)
                 x_[i] = val - x_[j];
@@ -145,7 +148,158 @@ public:
         return N;
     }
 
+    T real() const
+    {
+        return x_[0];
+    }
+
+    void real(const T x_val)
+    {
+        x_[0] = x_val;
+    }
+
+    T imag() const
+    {
+        return x_[1];
+    }
+
+    void imag(const T x_val)
+    {
+        x_[1] = x_val;
+    }
+
     typedef T Ttype;
 };
+
+namespace std
+{
+    template<typename T, uint N>
+    double fabs(NVec<T, N> arg)
+    {
+        return std::fabs(arg.reduce());
+    }
+
+    template<typename T, uint N>
+    const double fabs(const NVec<T, N> arg)
+    {
+        return std::fabs(arg.reduce());
+    }
+
+    double fabs(const NVec<double, 2> arg)
+    {
+        return std::fabs(arg.reduce());
+    }
+
+    template<typename T, uint N>
+    double abs(NVec<T, N> arg)
+    {
+        return std::abs(arg.reduce());
+    }
+
+    template<typename T, uint N>
+    const double abs(const NVec<T, N> arg)
+    {
+        return std::abs(arg.reduce());
+    }
+
+    double abs(const NVec<double, 2> arg)
+    {
+        return std::abs(arg.reduce());
+    }
+}
+
+template<typename T, uint N>
+NVec<T, N> operator-(const NVec<T, N>& a,const NVec<T, N>& b)
+{
+    auto val(a);
+    val -= b;
+    return val;
+}
+
+namespace common_measures
+{
+    template<typename T>
+    struct TypePolicy;
+
+    template<typename T, uint N>
+    struct TypePolicy< NVec<T,N> > {
+    public:
+        static double realv(const NVec<T,N> state) {
+            return state.reduce();
+        }
+
+        static double imagv(const NVec<T,N> state) {
+            return 0.0; //state(0).imag();
+        }
+
+        static std::string conf(const NVec<T, N> state) {
+            std::string conf = "";
+            for(auto j = 0; j < state.dim(); j++)
+                conf += std::to_string(state(j)) + " ";
+            conf = conf.substr(0, conf.size() -1);
+            return conf;
+        }
+    };
+
+    template<typename T, uint N>
+    struct TypePolicy< NVec<const T, N> > {
+    public:
+        static double realv(const NVec<T,N> state) {
+            return state.reduce();
+        }
+
+        static double imagv(const NVec<T,N> state) {
+            return 0.0; //state(0).imag();
+        }
+
+        static std::string conf(const NVec<T, N> state) {
+            std::string conf = "";
+            for(auto j = 0; j < state.dim(); j++)
+                conf += std::to_string(state(j)) + " ";
+            conf = conf.substr(0, conf.size() -1);
+            return conf;
+        }
+    };
+
+    template<typename T, uint N>
+    struct TypePolicy< const NVec<T,N> > {
+    public:
+        static double realv(const NVec<T,N> state) {
+            return state.reduce();
+        }
+
+        static double imagv(const NVec<T,N> state) {
+            return 0.0; //state(0).imag();
+        }
+
+        static std::string conf(const NVec<T, N> state) {
+            std::string conf = "";
+            for(uint j = 0; j < state.dim(); j++)
+                conf += std::to_string(state(j)) + " ";
+            conf = conf.substr(0, conf.size() -1);
+            return conf;
+        }
+    };
+
+    template<typename T, uint N>
+    struct TypePolicy< const NVec<const T, N> > {
+    public:
+        static double realv(const NVec<T,N> state) {
+            return state.reduce();
+        }
+
+        static double imagv(const NVec<T,N> state) {
+            return 0.0; //state(0).imag();
+        }
+
+        static std::string conf(const NVec<T, N> state) {
+            std::string conf = "";
+            for(auto j = 0; j < state.dim(); j++)
+                conf += std::to_string(state(j)) + " ";
+            conf = conf.substr(0, conf.size() -1);
+            return conf;
+        }
+    };
+}
 
 #endif //LATTICEMODELIMPLEMENTATIONS_NVEC_HPP
