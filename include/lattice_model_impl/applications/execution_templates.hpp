@@ -16,11 +16,26 @@ namespace site_execution_templates
                                uint measure_interval=0, uint number_of_measurements=100000, uint start_measuring=10000,
                       json measures={"Mean", "ComplexConfig", "AbsoluteDetailedBalanceAccuracy", "DetailedBalanceAccuracy",
                                      "RealStepSize", "ImagStepSize", "Energy", "EnergyImag", "Drift", "DriftImag"},
-                               json post_measures={"2ndMoment"}, uint n_means_bootstrap=200) {
+                               json post_measures={"2ndMoment"}, uint n_means_bootstrap=200,
+                               const std::string correlation_time_results_path_="", const uint maximum_measure_interval=0) {
 
         std::string rel_config_path = "/configs/" + target_name + "/";
         std::string rel_data_path = "/data/" + target_name + "/";
-        std::string correlation_time_results_path = "/results/" + target_name + "/";
+
+        std::string correlation_time_results_path;
+        if(correlation_time_results_path_ == "")
+            correlation_time_results_path = "/results/" + target_name + "/";
+        else
+            correlation_time_results_path = correlation_time_results_path_;
+
+        if(maximum_measure_interval != 0)
+        {
+            // Load correlation time and adapt it, if it is larger then maximum_measure_interval
+            auto correlation_time_results = Parameters::read_parameter_file(correlation_time_results_path, "correlation_time_results");
+            auto correlation_time = Parameters::value_by_key<uint>(correlation_time_results["CorrelationTime"], "default");
+            if(correlation_time > maximum_measure_interval)
+                measure_interval = maximum_measure_interval;
+        }
 
         auto mcmc_update_parameters = Algorithm::generate_update_parameters(mcmc_update_params);
 
