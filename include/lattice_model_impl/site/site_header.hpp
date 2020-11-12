@@ -11,6 +11,7 @@
 #include "site_models/nvec_polynomial_model.hpp"
 #include "site_models/nvec_variable_polynomial_model.hpp"
 #include "site_models/nvec_polynomial_model_splittings.hpp"
+#include "site_models/polynomial_model.hpp"
 
 #include "site.hpp"
 
