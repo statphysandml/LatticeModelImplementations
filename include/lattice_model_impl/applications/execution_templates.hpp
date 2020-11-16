@@ -31,7 +31,7 @@ namespace site_execution_templates
         if(maximum_measure_interval != 0)
         {
             // Load correlation time and adapt it, if it is larger then maximum_measure_interval
-            auto correlation_time_results = Parameters::read_parameter_file(correlation_time_results_path, "correlation_time_results");
+            auto correlation_time_results = Parameters::read_parameter_file(correlation_time_results_path, "correlation_time");
             auto correlation_time = Parameters::value_by_key<uint>(correlation_time_results["CorrelationTime"], "default");
             if(correlation_time > maximum_measure_interval)
                 measure_interval = maximum_measure_interval;
