@@ -16,7 +16,7 @@ namespace site_execution_templates
                                uint measure_interval=0, uint number_of_measurements=100000, uint start_measuring=10000,
                       json measures={"Mean", "ComplexConfig", "AbsoluteDetailedBalanceAccuracy", "DetailedBalanceAccuracy",
                                      "RealStepSize", "ImagStepSize", "Energy", "EnergyImag", "Drift", "DriftImag"},
-                               json post_measures={"2ndMoment"}, uint n_means_bootstrap=200,
+                               json post_measures={"2ndMoment"}, uint n_means_bootstrap=50,
                                const std::string correlation_time_results_path_="", const uint maximum_measure_interval=0) {
 
         std::string rel_config_path = "/configs/" + target_name + "/";
