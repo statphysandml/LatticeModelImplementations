@@ -4,8 +4,10 @@ if ! test -f "config.sh"; then
   exit 1
 fi
 
+path_to_config="$(dirname -- "$(readlink -f -- "build.sh")")"
+
 # Build submodule
-bash build_submodules.sh
+source build_submodules.sh
 
 # Build library
 # bash build_library.sh

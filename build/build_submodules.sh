@@ -6,7 +6,7 @@ bash build.sh
 
 # Build MCMCSimulationLib
 cd ../../../build/
-bash build.sh
+source build.sh
 
 # Navigate back to build directory
 cd ../../../build/
