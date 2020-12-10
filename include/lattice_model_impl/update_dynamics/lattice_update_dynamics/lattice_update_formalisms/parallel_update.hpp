@@ -9,53 +9,52 @@
 #include "../../update_dynamics_base.hpp"
 
 
-struct ParallelUpdate;
+namespace lm_impl {
+    namespace update_dynamics {
 
-struct ParallelUpdateParameters : UpdateDynamicsBaseParameters
-{
-    explicit ParallelUpdateParameters(const json params_) : UpdateDynamicsBaseParameters(params_)
-    {}
+        struct ParallelUpdate;
 
-    explicit ParallelUpdateParameters() : ParallelUpdateParameters(json {})
-    {}
+        struct ParallelUpdateParameters : UpdateDynamicsBaseParameters {
+            explicit ParallelUpdateParameters(const json params_) : UpdateDynamicsBaseParameters(params_) {}
 
-    static std::string name() {
-        return "ParallelUpdate";
-    }
+            explicit ParallelUpdateParameters() : ParallelUpdateParameters(json{}) {}
 
-    typedef ParallelUpdate UpdateDynamics; //  LatticeUpdate;
-};
-
-struct ParallelUpdate : public UpdateDynamicsBase<ParallelUpdate>
-{
-    explicit ParallelUpdate(const ParallelUpdateParameters &lp_) : lp(lp_)
-    {}
-
-    template<typename Lattice>
-    void initialize_update(const Lattice& lattice)
-    {}
-
-    template<typename Lattice>
-    void update (Lattice& lattice, uint measure_interval=1)
-    {
-        // ToDo: Introduce boost!
-        for(auto j = 0; j < measure_interval; j++)
-        {
-            std::vector<typename Lattice::SiteType> lattice_grid_new(lattice.get_size(), typename Lattice::SiteType(0));
-
-            // #pragma omp parallel for
-            for(uint i = 0; i < lattice.get_size(); i++)
-            {
-                lattice_grid_new[i] = update_lattice_site(lattice.get_update_formalism(), lattice[i], lattice.neighbours_at(i));
+            static std::string name() {
+                return "ParallelUpdate";
             }
 
-            // ToDo: Rewrite?
-            auto& lattice_grid = lattice.get_system_representation();
-            lattice_grid = lattice_grid_new;
-        }
-    }
+            typedef ParallelUpdate UpdateDynamics; //  LatticeUpdate;
+        };
 
-    const ParallelUpdateParameters &lp;
-};
+        struct ParallelUpdate : public UpdateDynamicsBase<ParallelUpdate> {
+            explicit ParallelUpdate(const ParallelUpdateParameters &lp_) : lp(lp_) {}
+
+            template<typename Lattice>
+            void initialize_update(const Lattice &lattice) {}
+
+            template<typename Lattice>
+            void update(Lattice &lattice, uint measure_interval = 1) {
+                // ToDo: Introduce boost!
+                for (auto j = 0; j < measure_interval; j++) {
+                    std::vector<typename Lattice::SiteType> lattice_grid_new(lattice.get_size(),
+                                                                             typename Lattice::SiteType(0));
+
+                    // #pragma omp parallel for
+                    for (uint i = 0; i < lattice.get_size(); i++) {
+                        lattice_grid_new[i] = update_lattice_site(lattice.get_update_formalism(), lattice[i],
+                                                                  lattice.neighbours_at(i));
+                    }
+
+                    // ToDo: Rewrite?
+                    auto &lattice_grid = lattice.get_system_representation();
+                    lattice_grid = lattice_grid_new;
+                }
+            }
+
+            const ParallelUpdateParameters &lp;
+        };
+
+    }
+}
 
 #endif //LATTICEMODELIMPLEMENTATIONS_PARALLEL_UPDATE_HPP

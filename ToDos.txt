@@ -1,2 +1,0 @@
-ToDo:
-- Catch "Parameter not found" error and clear already build directories

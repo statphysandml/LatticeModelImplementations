@@ -10,38 +10,36 @@
 #include "update_dynamics_base.hpp"
 
 
-struct DummyUpdateDynamics;
+namespace lm_impl {
+    namespace update_dynamics {
 
-struct DummyUpdateDynamicsParameters : UpdateDynamicsBaseParameters
-{
-    explicit DummyUpdateDynamicsParameters(const json params_) : UpdateDynamicsBaseParameters(params_)
-    {}
+        struct DummyUpdateDynamics;
 
-    explicit DummyUpdateDynamicsParameters() :DummyUpdateDynamicsParameters(json {})
-    {}
+        struct DummyUpdateDynamicsParameters : UpdateDynamicsBaseParameters {
+            explicit DummyUpdateDynamicsParameters(const json params_) : UpdateDynamicsBaseParameters(params_) {}
 
-    static std::string name() {
-        return "DummyUpdateDynamics";
+            explicit DummyUpdateDynamicsParameters() : DummyUpdateDynamicsParameters(json{}) {}
+
+            static std::string name() {
+                return "DummyUpdateDynamics";
+            }
+
+            typedef DummyUpdateDynamics UpdateDynamics;
+        };
+
+        struct DummyUpdateDynamics : public UpdateDynamicsBase<DummyUpdateDynamics> {
+            explicit DummyUpdateDynamics(const DummyUpdateDynamicsParameters &lp_) : lp(lp_) {}
+
+            template<typename Site>
+            void initialize_update(const Site &site) {}
+
+            template<typename Site>
+            void update(Site &site, uint measure_interval = 1) {}
+
+            const DummyUpdateDynamicsParameters &lp;
+        };
+
     }
-
-    typedef DummyUpdateDynamics UpdateDynamics;
-};
-
-struct DummyUpdateDynamics : public UpdateDynamicsBase<DummyUpdateDynamics>
-{
-    explicit DummyUpdateDynamics(const DummyUpdateDynamicsParameters &lp_) : lp(lp_)
-    {}
-
-    template<typename Site>
-    void initialize_update(const Site& site)
-    {}
-
-    template<typename Site>
-    void update (Site& site, uint measure_interval=1)
-    {}
-
-    const DummyUpdateDynamicsParameters &lp;
-};
-
+}
 
 #endif //LATTICEMODELIMPLEMENTATIONS_DUMMY_UPDATE_DYNAMICS_HPP

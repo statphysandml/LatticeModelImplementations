@@ -9,50 +9,48 @@
 #include "../../update_dynamics_base.hpp"
 
 
-struct SequentialUpdate;
+namespace lm_impl {
+    namespace update_dynamics {
 
-struct SequentialUpdateParameters : UpdateDynamicsBaseParameters
-{
-    explicit SequentialUpdateParameters(const json params_) : UpdateDynamicsBaseParameters(params_)
-    {}
+        struct SequentialUpdate;
 
-    explicit SequentialUpdateParameters() : SequentialUpdateParameters(json {})
-    {}
+        struct SequentialUpdateParameters : UpdateDynamicsBaseParameters {
+            explicit SequentialUpdateParameters(const json params_) : UpdateDynamicsBaseParameters(params_) {}
 
-    static std::string name() {
-        return "SequentialUpdate";
-    }
+            explicit SequentialUpdateParameters() : SequentialUpdateParameters(json{}) {}
 
-    typedef SequentialUpdate UpdateDynamics; //  LatticeUpdate;
-};
-
-struct SequentialUpdate : public UpdateDynamicsBase<SequentialUpdate>
-{
-    explicit SequentialUpdate(const SequentialUpdateParameters &lp_) : lp(lp_)
-    {}
-
-    template<typename Lattice>
-    void initialize_update(const Lattice& lattice)
-    {
-        uniint = std::uniform_int_distribution<int> (0, lattice.get_size() - 1);
-    }
-
-    template<typename Lattice>
-    void update (Lattice& lattice, uint measure_interval=1)
-    {
-        for(size_t k = 0; k < measure_interval; k++)
-        {
-            for (uint j = 0; j < lattice.get_size(); j++)
-            {
-                int i = uniint(gen);
-                lattice[i] = update_lattice_site(lattice.get_update_formalism(), lattice[i], lattice.neighbours_at(i));
-                // const double K = std::fabs(update_formalism->estimate_drift_term(lattice[i], lattice.neighbours_at[i]));
+            static std::string name() {
+                return "SequentialUpdate";
             }
-        }
-    }
 
-    const SequentialUpdateParameters &lp;
-    std::uniform_int_distribution<int> uniint;
-};
+            typedef SequentialUpdate UpdateDynamics; //  LatticeUpdate;
+        };
+
+        struct SequentialUpdate : public UpdateDynamicsBase<SequentialUpdate> {
+            explicit SequentialUpdate(const SequentialUpdateParameters &lp_) : lp(lp_) {}
+
+            template<typename Lattice>
+            void initialize_update(const Lattice &lattice) {
+                uniint = std::uniform_int_distribution<int>(0, lattice.get_size() - 1);
+            }
+
+            template<typename Lattice>
+            void update(Lattice &lattice, uint measure_interval = 1) {
+                for (size_t k = 0; k < measure_interval; k++) {
+                    for (uint j = 0; j < lattice.get_size(); j++) {
+                        int i = uniint(mcmc::util::gen);
+                        lattice[i] = update_lattice_site(lattice.get_update_formalism(), lattice[i],
+                                                         lattice.neighbours_at(i));
+                        // const double K = std::fabs(update_formalism->estimate_drift_term(lattice[i], lattice.neighbours_at[i]));
+                    }
+                }
+            }
+
+            const SequentialUpdateParameters &lp;
+            std::uniform_int_distribution<int> uniint;
+        };
+
+    }
+}
 
 #endif //LATTICEMODELIMPLEMENTATIONS_SEQUENTIAL_UPDATE_HPP

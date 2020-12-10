@@ -30,7 +30,7 @@
 void custom_main();
 
 template<typename T>
-using can_update = typename detail::is_updateable<T, MetropolisUpdateParameters<IsingModelParameters, GaussianSampler>::MCMCUpdate>;
+using can_update = typename detail::is_updateable<T, MetropolisUpdateParameters<IsingModelParameters, mcmc::sampler::GaussianSampler>::MCMCUpdate>;
 
 
 template <class T>
@@ -56,11 +56,11 @@ int main(int argc, char **argv) {
     std::cout << foo(5) << std::endl;
 //     std::cout << foo(meow()) << std::endl;
 
-    initialize_python();
+    mcmc::execution::initialize_python();
 
     custom_main();
 
-    finalize_python();
+    mcmc::execution::finalize_python();
 }
 
 // - Introduce a default update_dynamics for sites - not for lattices!

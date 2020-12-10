@@ -90,7 +90,7 @@ U1<T>::U1(std::string init)
     }
     else {
         std::uniform_real_distribution<double> uniform(-1,1);
-        x_.push_back(T(uniform(gen),uniform(gen)));
+        x_.push_back(T(uniform(mcmc::util::gen), uniform(mcmc::util::gen)));
         x_[0] = x_[0]/std::abs(x_[0]);
     }
 }
@@ -145,6 +145,78 @@ U1<T>& U1<T>::adjungate() {
     x_[0] = std::conj(x_[0]);
     return *this;
 }
+
+
+/* template<typename T>
+double fabs(const U1<T> x)
+{
+    return std::fabs(x(0));
+} */
+
+/* template<>
+        struct TypePolicy< U1<std::complex<double> > > {
+        public:
+            static double realv(const U1<std::complex<double> > state) {
+                return state(0).real();
+            }
+
+            static double imagv(const U1<std::complex<double> > state) {
+                return state(0).imag();
+            }
+
+            static std::string conf(const U1<std::complex<double> > state) {
+                return " ";
+            }
+        };
+
+        template<>
+        struct TypePolicy< U1<const std::complex<double> > > {
+        public:
+            static double realv(const U1<std::complex<double> > state) {
+                return state(0).real();
+            }
+
+            static double imagv(const U1<std::complex<double> > state) {
+                return state(0).imag();
+            }
+
+            static std::string conf(const U1<std::complex<double> > state) {
+                return " ";
+            }
+        };
+
+        template<>
+        struct TypePolicy< const U1<std::complex<double> > > {
+        public:
+            static double realv(const U1<std::complex<double> > state) {
+                return state(0).real();
+            }
+
+            static double imagv(const U1<std::complex<double> > state) {
+                return state(0).imag();
+            }
+
+            static std::string conf(const U1<std::complex<double> > state) {
+                return " ";
+            }
+        };
+
+        template<>
+        struct TypePolicy< const U1<const std::complex<double> > > {
+        public:
+            static double realv(const U1<std::complex<double> > state) {
+                return state(0).real();
+            }
+
+            static double imagv(const U1<std::complex<double> > state) {
+                return state(0).imag();
+            }
+
+            static std::string conf(const U1<std::complex<double> > state) {
+                return " ";
+            }
+        };
+*/
 
 
 #endif //MAIN_U1_HPP

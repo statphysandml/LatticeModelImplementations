@@ -66,7 +66,7 @@ SU2<T>::SU2(std::string init)
             x_.clear();
             length = 0;
             for(int i = 0; i < 4; i++) {
-                x_.push_back(distribution(gen));
+                x_.push_back(distribution(mcmc::util::gen));
                 length += x_[i]*x_[i];
             }
             length = sqrt(length);
@@ -86,11 +86,11 @@ SU2<T>::SU2(double epsilon) {
     // ( proposal state according to equation (4.30))
     std::uniform_real_distribution<double> distribution(-0.5,0.5);
 
-    x_.push_back(sgn(distribution(gen))*sqrt(1-epsilon*epsilon));
+    x_.push_back(sgn(distribution(mcmc::util::gen))*sqrt(1-epsilon*epsilon));
 
     double length = 0;
     for(auto i = 1; i < 4; i++) {
-        x_.push_back(distribution(gen));
+        x_.push_back(distribution(mcmc::util::gen));
         length += x_[i]*x_[i];
     }
     length = sqrt(length);
@@ -121,9 +121,9 @@ SU2<T>::SU2(const SU2<T>& A, double beta) {
         double x1,x2,x3;
         double length_r;
         while(true) {
-            x1 = distribution(gen);
-            x2 = distribution(gen);
-            x3 = distribution(gen);
+            x1 = distribution(mcmc::util::gen);
+            x2 = distribution(mcmc::util::gen);
+            x3 = distribution(mcmc::util::gen);
             length_r = sqrt(x1*x1+x2*x2+x3*x3);
             if(length_r <= 1)
                 break;
@@ -205,6 +205,79 @@ std::ostream& operator<<(std::ostream &os, const SU2<T>& x) {
     os << "(("<<x(0)<<"+I*"<<x(3)<<","<<x(2)<<"+I*"<<x(1)<<"),("<<-x(2)<<"+I*"<<x(1)<<","<<x(0)<<"+I*"<<-x(3)<<"))";
     return os;
 }
+
+/* template<typename T>
+double fabs(const SU2<T> x)
+{
+    // ToDo!! Incorrect return type for SU2
+    return std::fabs(x(0));
+} */
+
+/*        template<>
+        struct TypePolicy< SU2<double> > {
+        public:
+            static double realv(const SU2<double> state) {
+                return 0.0; // state(0).real();
+            }
+
+            static double imagv(const SU2<double> state) {
+                return 0.0; //state(0).imag();
+            }
+
+            static std::string conf(const SU2<double> state) {
+                return " ";
+            }
+        };
+
+        template<>
+        struct TypePolicy< SU2<const double> > {
+        public:
+            static double realv(const SU2<double> state) {
+                return 0.0; //state(0).real();
+            }
+
+            static double imagv(const SU2<double> state) {
+                return 0.0; //state(0).imag();
+            }
+
+            static std::string conf(const SU2<double> state) {
+                return " ";
+            }
+        };
+
+        template<>
+        struct TypePolicy< const SU2<double> > {
+        public:
+            static double realv(const SU2<double> state) {
+                return 0.0; //state(0).real();
+            }
+
+            static double imagv(const SU2<double> state) {
+                return 0.0; //state(0).imag();
+            }
+
+            static std::string conf(const SU2<double> state) {
+                return " ";
+            }
+        };
+
+        template<>
+        struct TypePolicy< const SU2<const double> > {
+        public:
+            static double realv(const SU2<double> state) {
+                return 0.0; //state(0).real();
+            }
+
+            static double imagv(const SU2<double> state) {
+                return 0.0; //state(0).imag();
+            }
+
+            static std::string conf(const SU2<double> state) {
+                return " ";
+            }
+        };*/
+
+
 
 
 #endif //MAIN_SU2_HPP

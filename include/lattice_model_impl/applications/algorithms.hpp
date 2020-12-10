@@ -29,7 +29,7 @@ namespace memory_site_algorithms
         ComplexLangevinDynamics() = default;
 
         typedef std::complex<double> BasicType;
-        typedef ComplexLangevinUpdateParameters<ModelParameters, GaussianSampler> MCMCUpdateParams;
+        typedef ComplexLangevinUpdateParameters<ModelParameters, mcmc::sampler::GaussianSampler> MCMCUpdateParams;
         typedef MemorySiteSimpleUpdateParameters<BasicType> SiteUpdateParameters;
         typedef SiteParameters<BasicType, ModelParameters, MCMCUpdateParams, SiteUpdateParameters> SystemBaseParams;
 
@@ -46,7 +46,7 @@ namespace memory_site_algorithms
         SecondOrderComplexLangevinDynamics() = default;
 
         typedef std::complex<double> BasicType;
-        typedef ComplexLangevinSecondOrderUpdateParameters<ModelParameters, GaussianSampler> MCMCUpdateParams;
+        typedef ComplexLangevinSecondOrderUpdateParameters<ModelParameters, mcmc::sampler::GaussianSampler> MCMCUpdateParams;
         typedef MemorySiteSimpleUpdateParameters<BasicType> SiteUpdateParameters;
         typedef SiteParameters<BasicType, ModelParameters, MCMCUpdateParams, SiteUpdateParameters> SystemBaseParams;
 
@@ -63,8 +63,8 @@ namespace memory_site_algorithms
         ComplexGaussianMetropolis() = default;
 
         typedef std::complex<double> BasicType;
-        typedef GaussianTransitionRate<BasicType, typename ModelParameters::Model, GaussianSampler> TransitionRate;
-        typedef ComplexMetropolisLangevinUpdateParameters<TransitionRate, ModelParameters, GaussianSampler> MCMCUpdateParams;
+        typedef GaussianTransitionRate<BasicType, typename ModelParameters::Model, mcmc::sampler::GaussianSampler> TransitionRate;
+        typedef ComplexMetropolisLangevinUpdateParameters<TransitionRate, ModelParameters, mcmc::sampler::GaussianSampler> MCMCUpdateParams;
         typedef MemorySiteSimpleUpdateParameters<BasicType> SiteUpdateParameters;
         typedef SiteParameters<BasicType, ModelParameters, MCMCUpdateParams, SiteUpdateParameters> SystemBaseParams;
 
@@ -80,8 +80,8 @@ namespace memory_site_algorithms
         ComplexHatFunctionMetropolis() = default;
 
         typedef std::complex<double> BasicType;
-        typedef HatFunctionTransitionRate<BasicType, typename ModelParameters::Model, HatFunctionSampler> TransitionRate;
-        typedef ComplexMetropolisLangevinUpdateParameters<TransitionRate, ModelParameters, HatFunctionSampler> MCMCUpdateParams;
+        typedef HatFunctionTransitionRate<BasicType, typename ModelParameters::Model, mcmc::sampler::HatFunctionSampler> TransitionRate;
+        typedef ComplexMetropolisLangevinUpdateParameters<TransitionRate, ModelParameters, mcmc::sampler::HatFunctionSampler> MCMCUpdateParams;
         typedef MemorySiteSimpleUpdateParameters<BasicType> SiteUpdateParameters;
         typedef SiteParameters<BasicType, ModelParameters, MCMCUpdateParams, SiteUpdateParameters> SystemBaseParams;
 
@@ -114,8 +114,8 @@ namespace memory_site_algorithms
         ComplexImlicitGaussianAlgorithm() = default;
 
         typedef std::complex<double> BasicType;
-        typedef GaussianTransitionRate<BasicType, typename ModelParameters::Model, GaussianSampler> TransitionRate;
-        typedef ComplexImplicitUpdateParameters<readdy::util::integration::integrator, iterative_solver, TransitionRate, ModelParameters, GaussianSampler> MCMCUpdateParams;
+        typedef GaussianTransitionRate<BasicType, typename ModelParameters::Model, mcmc::sampler::GaussianSampler> TransitionRate;
+        typedef ComplexImplicitUpdateParameters<readdy::util::integration::integrator, iterative_solver, TransitionRate, ModelParameters, mcmc::sampler::GaussianSampler> MCMCUpdateParams;
         typedef MemorySiteSimpleUpdateParameters<BasicType> SiteUpdateParameters;
         typedef SiteParameters<BasicType, ModelParameters, MCMCUpdateParams, SiteUpdateParameters> SystemBaseParams;
 
@@ -131,8 +131,8 @@ namespace memory_site_algorithms
         ComplexImlicitHatFunctionAlgorithm() = default;
 
         typedef std::complex<double> BasicType;
-        typedef HatFunctionTransitionRate<BasicType, typename ModelParameters::Model, HatFunctionSampler> TransitionRate;
-        typedef ComplexImplicitUpdateParameters<readdy::util::integration::integrator, iterative_solver, TransitionRate, ModelParameters, HatFunctionSampler> MCMCUpdateParams;
+        typedef HatFunctionTransitionRate<BasicType, typename ModelParameters::Model, mcmc::sampler::HatFunctionSampler> TransitionRate;
+        typedef ComplexImplicitUpdateParameters<readdy::util::integration::integrator, iterative_solver, TransitionRate, ModelParameters, mcmc::sampler::HatFunctionSampler> MCMCUpdateParams;
         typedef MemorySiteSimpleUpdateParameters<BasicType> SiteUpdateParameters;
         typedef SiteParameters<BasicType, ModelParameters, MCMCUpdateParams, SiteUpdateParameters> SystemBaseParams;
 
