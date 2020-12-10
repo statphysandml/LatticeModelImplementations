@@ -1,12 +1,11 @@
-#!/bin/bash
+# Verify if config.sh file has been generated
+if ! test -f "config.sh"; then
+  echo "config.sh file not in build directory. You can copy the config_template.sh file and adapt the parameters according to your system."
+  exit 1
+fi
 
-source config.sh
+# Build submodule
+bash build_submodules.sh
 
-source generate_cmake_lists_txt_file.sh
-
-cd ../
-mkdir lib
-cd lib
-
-cmake ..
-make -j9
+# Build library
+# bash build_library.sh

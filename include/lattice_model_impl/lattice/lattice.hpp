@@ -16,9 +16,9 @@ namespace lm_impl {
         class LatticeSystem;
 
         template<typename T, typename ModelParameters, typename UpdateFormalismParameters, typename LatticeUpdateFormalismParameters>
-        class LatticeParameters : public mcmc::simulation::SystemBaseMeasuresParameters {
+        class LatticeParameters : public mcmc::simulation::SystemBaseParameters {
         public:
-            explicit LatticeParameters(const json params_) : SystemBaseMeasuresParameters(params_) {
+            explicit LatticeParameters(const json params_) : SystemBaseParameters(params_) {
 
                 // measures = get_entry<json>("measures", {"Mean"});
                 dimensions = get_entry<std::vector<int> >("dimensions", std::vector<int>{4, 4});
@@ -135,7 +135,7 @@ namespace lm_impl {
 
         template<typename T, typename ModelParameters, typename UpdateFormalismParameters, typename LatticeUpdateFormalismParameters>
         class LatticeSystem
-                : public mcmc::simulation::SystemBaseMeasures<LatticeSystem<T, ModelParameters, UpdateFormalismParameters, LatticeUpdateFormalismParameters> > {
+                : public mcmc::simulation::SystemBase<LatticeSystem<T, ModelParameters, UpdateFormalismParameters, LatticeUpdateFormalismParameters> > {
         public:
             explicit LatticeSystem(
                     const LatticeParameters<T, ModelParameters, UpdateFormalismParameters, LatticeUpdateFormalismParameters> &lp_)

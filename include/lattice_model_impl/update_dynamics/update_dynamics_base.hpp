@@ -27,7 +27,7 @@ namespace lm_impl {
         }
 
 
-        class UpdateDynamicsBaseParameters : public impl_helper::params::Parameters {
+        class UpdateDynamicsBaseParameters : public param_helper::params::Parameters {
         public:
             using Parameters::Parameters;
 

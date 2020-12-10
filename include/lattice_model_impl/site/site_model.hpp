@@ -13,7 +13,7 @@
 namespace lm_impl {
     namespace site_system {
 
-        class SiteModelParameters : public impl_helper::params::Parameters {
+        class SiteModelParameters : public param_helper::params::Parameters {
         public:
             using Parameters::Parameters;
 

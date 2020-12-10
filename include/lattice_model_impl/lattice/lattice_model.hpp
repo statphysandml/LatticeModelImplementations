@@ -13,7 +13,7 @@
 namespace lm_impl {
     namespace lattice_system {
 
-        class LatticeModelParameters : public impl_helper::params::Parameters {
+        class LatticeModelParameters : public param_helper::params::Parameters {
         public:
             using Parameters::Parameters;
 

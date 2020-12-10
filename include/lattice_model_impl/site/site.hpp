@@ -19,9 +19,9 @@ namespace lm_impl {
 
 
         template<typename T, typename ModelParameters, typename UpdateFormalismParameters, typename SiteUpdateFormalismParameters=update_dynamics::SiteSimpleUpdateParameters>
-        class SiteParameters : public mcmc::simulation::SystemBaseMeasuresParameters {
+        class SiteParameters : public mcmc::simulation::SystemBaseParameters {
         public:
-            explicit SiteParameters(const json params_) : SystemBaseMeasuresParameters(params_) {
+            explicit SiteParameters(const json params_) : SystemBaseParameters(params_) {
                 model_parameters = std::make_unique<ModelParameters>(
                         mcmc::util::generate_parameter_class_json<SiteParameters<T, ModelParameters, UpdateFormalismParameters, SiteUpdateFormalismParameters>, ModelParameters>(
                                 *this, model_parameters->param_file_name()));
@@ -122,7 +122,7 @@ namespace lm_impl {
 
         template<typename T, typename ModelParameters, typename UpdateFormalismParameters, typename SiteUpdateFormalismParameters>
         class SiteSystem
-                : public mcmc::simulation::SystemBaseMeasures<SiteSystem<T, ModelParameters, UpdateFormalismParameters, SiteUpdateFormalismParameters> > {
+                : public mcmc::simulation::SystemBase<SiteSystem<T, ModelParameters, UpdateFormalismParameters, SiteUpdateFormalismParameters> > {
         public:
             explicit SiteSystem(
                     const SiteParameters<T, ModelParameters, UpdateFormalismParameters, SiteUpdateFormalismParameters> &sp_)

@@ -13,7 +13,7 @@
 namespace lm_impl {
     namespace mcmc_update {
 
-        class MCMCUpdateBaseParameters : public impl_helper::params::Parameters {
+        class MCMCUpdateBaseParameters : public param_helper::params::Parameters {
         public:
             MCMCUpdateBaseParameters(const json params_) : Parameters(params_),
                                                            eps(get_entry<double>("eps", 0.0)) {}
