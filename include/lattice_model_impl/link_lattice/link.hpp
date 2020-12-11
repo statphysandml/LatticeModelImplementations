@@ -13,6 +13,8 @@
 #include <random>
 #include <algorithm>
 
+#include "mcmc_simulation/util/random.hpp"
+
 
 template<typename T>
 class Link

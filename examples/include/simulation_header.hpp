@@ -7,6 +7,9 @@
 
 #include <Python.h>
 
+#include "lattice_model_impl/link_lattice/links/u1.hpp"
+#include "lattice_model_impl/link_lattice/links/su2.hpp"
+
 #include "mcmc_simulation/header.hpp"
 
 #include "lattice_model_impl/update_dynamics/update_dynamics_header.hpp"
@@ -30,10 +33,15 @@ typedef XYModelParameters<GaussianSampler> ModelParams;
 typedef MetropolisUpdateParameters<ModelParams> UpdateParams;
 typedef LatticeParameters< BasicType, ModelParams, UpdateParams, SequentialUpdateParameters> SystemBaseParams; */
 
-typedef double BasicType;
+/* typedef double BasicType;
 typedef lm_impl::lattice_system::XYModelParameters ModelParams;
 typedef lm_impl::mcmc_update::HybridMonteCarloUpdateParameters<BasicType, ModelParams, mcmc::sampler::GaussianSampler> UpdateParams;
-typedef lm_impl::lattice_system::LatticeParameters< BasicType, ModelParams, UpdateParams, lm_impl::update_dynamics::GlobalLatticeUpdateParameters> SystemBaseParams;
+typedef lm_impl::lattice_system::LatticeParameters< BasicType, ModelParams, UpdateParams, lm_impl::update_dynamics::GlobalLatticeUpdateParameters> SystemBaseParams; */
+
+typedef SU2<double> BasicType;
+typedef lm_impl::link_lattice_system::SUTwoModelParameters ModelParams;
+typedef lm_impl::mcmc_update::MetropolisUpdateParameters<ModelParams, lm_impl::link_lattice_system::SUTwoModelSampler> UpdateParams;
+typedef lm_impl::lattice_system::LatticeParameters< BasicType, ModelParams, UpdateParams, lm_impl::update_dynamics::SequentialUpdateParameters> SystemBaseParams;
 
 /* typedef std::complex<double> BasicType;
 typedef CubicGaussianModelParameters<GaussianSampler> ModelParams;

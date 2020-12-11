@@ -25,8 +25,8 @@ private:
     using Link<T>::x_;
 public:
     SU2(double a, double b, double c, double d);
-    explicit  SU2(double epsilon);
-    explicit  SU2(std::string init = "random");
+    explicit SU2(double epsilon);
+    explicit SU2(std::string init = "random");
     SU2(const SU2& A, double beta);
 
     //void Print() const;
@@ -206,12 +206,40 @@ std::ostream& operator<<(std::ostream &os, const SU2<T>& x) {
     return os;
 }
 
-/* template<typename T>
-double fabs(const SU2<T> x)
-{
-    // ToDo!! Incorrect return type for SU2
-    return std::fabs(x(0));
-} */
+
+namespace std {
+    template<typename T>
+    double fabs(SU2<T> x)
+    {
+        // ToDo!! Incorrect return type for SU2
+        return std::fabs(x(0));
+    }
+
+    template<typename T>
+    double abs(const SU2<T> x)
+    {
+        // ToDo!! Incorrect return type for SU2
+        return std::abs(x(0));
+    }
+
+    template<typename T>
+    const double abs(const SU2<T> x)
+    {
+        // ToDo!! Incorrect return type for SU2
+        return std::abs(x(0));
+    }
+
+    template<typename T>
+    std::string to_string(const SU2<T> x)
+    {
+        std::string x_ = "(" + std::to_string(x(0));
+        for (uint i = 1; i < 4; i++) {
+            x_ += " " + std::to_string(x(i));
+        }
+        x_ += ")";
+        return x_;
+    }
+}
 
 /*        template<>
         struct TypePolicy< SU2<double> > {

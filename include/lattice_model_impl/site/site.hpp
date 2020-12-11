@@ -59,10 +59,6 @@ namespace lm_impl {
 
             typedef SiteSystem<T, ModelParameters, UpdateFormalismParameters, SiteUpdateFormalismParameters> System;
 
-            static std::string name() {
-                return "Site";
-            }
-
             std::unique_ptr<System> generate() {
                 return std::make_unique<System>(*this);
             }

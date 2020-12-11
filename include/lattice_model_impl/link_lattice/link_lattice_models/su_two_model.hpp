@@ -19,12 +19,11 @@ namespace lm_impl {
         class SUTwoModelParameters : public LinkLatticeModelParameters {
         public:
             explicit SUTwoModelParameters(const json params_) : LinkLatticeModelParameters(params_),
-                                                                beta(get_entry<double>("beta")),
-                                                                eps(get_entry<double>("eps")) {}
+                                                                beta(get_entry<double>("beta"))
+                                                                {}
 
-            explicit SUTwoModelParameters(double beta_, double eps_) : SUTwoModelParameters(json{
-                    {"beta", beta_},
-                    {"eps",  eps_}
+            explicit SUTwoModelParameters(double beta_) : SUTwoModelParameters(json{
+                    {"beta", beta_}
             }) {}
 
             const static std::string name() {
@@ -41,23 +40,12 @@ namespace lm_impl {
             friend class SUTwoModel;
 
             const double beta;
-            const double eps;
         };
 
 
         class SUTwoModel : public LinkLatticeModel<SUTwoModel> {
         public:
             explicit SUTwoModel(const SUTwoModelParameters &mp_) : mp(mp_) {}
-
-            template<typename T>
-            T random_state() {
-                return T("random");
-            }
-
-            template<typename T>
-            T propose_state(T site) {
-                return site * T(mp.eps);
-            }
 
             template<typename T, typename T2=double_t>
             T2 get_potential(const T site, const std::vector<T *> neighbours) {
@@ -70,6 +58,33 @@ namespace lm_impl {
 
         private:
             const SUTwoModelParameters &mp;
+        };
+
+        struct SUTwoModelSampler
+        {
+            SUTwoModelSampler(const double eps_) : eps(eps_)
+            {}
+
+            template<typename T>
+            T random_state() {
+                return T("random");
+            }
+
+            template<typename T>
+            T propose_state(T site) {
+                return site * T(eps);
+            }
+
+            double get_eps() const
+            {
+                return eps;
+            }
+
+            const static std::string name() {
+                return "SUTwoModelSampler";
+            }
+
+            const double eps;
         };
 
     }

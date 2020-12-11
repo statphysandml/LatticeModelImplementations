@@ -53,9 +53,9 @@ namespace lm_impl {
 
             typedef LatticeSystem<T, ModelParameters, UpdateFormalismParameters, LatticeUpdateFormalismParameters> System;
 
-            static std::string name() {
+            /* static std::string name() { -> definition not allowed since python program wont find the system parameters
                 return "lattice";
-            }
+            } */
 
             std::unique_ptr<System> generate() {
                 return std::make_unique<System>(*this);
@@ -225,8 +225,8 @@ namespace lm_impl {
                 return *update_formalism;
             }
 
-            T energy() const {
-                T energy(0);
+            auto energy() const {
+                decltype(model->get_potential(lattice[0], neighbours[0])) energy(0);
                 for (uint i = 0; i < get_size(); i++) {
                     energy += model->get_potential(lattice[i], neighbours[i]);
                 }
@@ -234,8 +234,8 @@ namespace lm_impl {
                 return 0.5 * energy / double(get_size()); // 2 *
             }
 
-            T drift_term() const {
-                T drift_term(0);
+            auto drift_term() const {
+                decltype(model->get_potential(lattice[0], neighbours[0])) drift_term(0);
                 for (uint i = 0; i < get_size(); i++) {
                     // ToDo: Think about how this can be integrated!
                     // drift_term += model->get_drift_term(lattice[i], neighbours[i]);
