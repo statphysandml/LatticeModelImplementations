@@ -33,8 +33,8 @@ int main(int argc, char **argv) {
 #include "../include/examples/complex_site_models/complex_scalar_gaussian_model.hpp"
 #include "../include/examples/complex_lattice_models/complex_xy_model.hpp" */
 
-#include "../include/examples/lattice_models/ising_model.hpp"
-#include "../include/examples/lattice_models/xy_model.hpp"
+#include "../include/examples/lattice_models/ising_model_metropolis.hpp"
+#include "../include/examples/lattice_models/xy_model_hybrid_monte_carlo.hpp"
 
 void custom_main()
 {
