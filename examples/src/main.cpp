@@ -9,10 +9,6 @@
 void custom_main();
 
 int main(int argc, char **argv) {
-#ifdef PYTHON
-    std::cout<< "hey" << std::endl;
-#endif
-
     param_helper::fs::prfs::set_relative_path_to_project_root_dir("/../");
 
 #ifdef PYTHON
@@ -38,14 +34,12 @@ int main(int argc, char **argv) {
 #include "../include/examples/complex_lattice_models/complex_xy_model.hpp" */
 
 #include "../include/examples/lattice_models/ising_model.hpp"
+#include "../include/examples/lattice_models/xy_model.hpp"
 
 void custom_main()
 {
- //   example_ising_model_metropolis();
-
-#ifdef PYTHON
-    std::cout<< "hey" << std::endl;
-#endif
+    // example_ising_model_metropolis();
+    example_xy_model_hmc_algorithm();
 
     // example_ising_full_simulation();
     // example_xy_model_metropolis();

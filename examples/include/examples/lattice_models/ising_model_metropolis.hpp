@@ -2,8 +2,8 @@
 // Created by lukas on 07.08.20.
 //
 
-#ifndef EXAMPLES_ISING_MODEL_HPP
-#define EXAMPLES_ISING_MODEL_HPP
+#ifndef EXAMPLES_ISING_MODEL_METROPOLIS_HPP
+#define EXAMPLES_ISING_MODEL_METROPOLIS_HPP
 
 #include "../../simulation_header.hpp"
 #include "execution/executer.hpp"
@@ -118,4 +118,4 @@ void example_ising_full_simulation()
 }
 
 
-#endif //EXAMPLES_ISING_MODEL_HPP
+#endif //EXAMPLES_ISING_MODEL_METROPOLIS_HPP
