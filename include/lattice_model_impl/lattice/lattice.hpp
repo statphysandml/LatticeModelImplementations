@@ -54,7 +54,7 @@ namespace lm_impl {
             typedef LatticeSystem<T, ModelParameters, UpdateFormalismParameters, LatticeUpdateFormalismParameters> System;
 
             static std::string name() {
-                return "Lattice";
+                return "lattice";
             }
 
             std::unique_ptr<System> generate() {
@@ -163,7 +163,7 @@ namespace lm_impl {
 
             void initialize(std::string starting_mode) {
                 // Needs to be called at the end so that update objects can already be used!
-                this->generate_measures();
+                this->generate_measures(lp.measures);
 
                 std::cout << "Note : Cold start not possible, so far" << std::endl;
             }
@@ -217,7 +217,7 @@ namespace lm_impl {
                 auto lattice_update_related_measures = lattice_update->template generate_update_dynamics_measures<LatticeSystem>(
                         lp.measures);
                 this->concat_measures(lattice_update_related_measures);
-                auto common_defined_measures = generate_systembase_measures(lp.measures);
+                auto common_defined_measures = this->generate_systembase_measures(lp.measures);
                 this->concat_measures(common_defined_measures);
             }
 

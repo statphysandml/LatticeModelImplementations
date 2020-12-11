@@ -1,3 +1,4 @@
+target_link_libraries_appendix="\${MCMCSimulationLib} \${ParamHelper}"
 cat >../CMakeLists.txt <<EOL
 cmake_minimum_required(VERSION 3.13)
 project(LatticeModelImplementations)
@@ -7,11 +8,13 @@ set(CMAKE_CXX_STANDARD 14)
 # Boost
 EOL
 if [ -v path_to_boost ]; then
+target_link_libraries_appendix="${target_link_libraries_appendix} \${Boost_LIBRARIES}"
 cat >>../CMakeLists.txt <<EOL
 set(BOOST_ROOT "${path_to_boost}")
 FIND_PACKAGE( Boost REQUIRED COMPONENTS filesystem)
 EOL
 else
+target_link_libraries_appendix="${target_link_libraries_appendix} \${Boost_LIBRARIES}"
 cat >>../CMakeLists.txt <<EOL
 FIND_PACKAGE( Boost 1.67 REQUIRED COMPONENTS filesystem)
 if(Boost_FOUND)
@@ -26,6 +29,10 @@ cat >>../CMakeLists.txt <<EOL
 # find_package(Ceres REQUIRED)
 # include_directories(\${CERES_INCLUDE_DIRS})
 
+EOL
+if [ -v path_to_python3 ]; then
+target_link_libraries_appendix="${target_link_libraries_appendix} \${PYTHON_LIBRARIES}"
+cat >>../CMakeLists.txt <<EOL
 # Python
 set(PYTHON_LIBRARIES "${path_to_python3}lib/libpython${python_version}m.so")
 set(PYTHON_EXECUTABLE "${path_to_python3}bin/python${python_version}m")
@@ -36,6 +43,29 @@ find_package(PythonLibs 3 REQUIRED)
 find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
 include_directories(\${PYTHON_INCLUDE_DIRS})
 message("Python executable = \${PYTHON_EXECUTABLE}")
+
+set(PYTHON_SCRIPTS_PATH "${path_to_mcmc_simulation_lib}/python_scripts/")
+
+option(PYTHON "Enable Python" ON)
+
+if(NOT CONDA_ACTIVATE_PATH)
+    set(CONDA_ACTIVATE_PATH "${path_to_conda_activate}")
+endif()
+
+if(NOT VIRTUAL_ENV)
+    set(VIRTUAL_ENV "${virtual_env}")
+endif()
+EOL
+else
+cat >>../CMakeLists.txt <<EOL
+option(PYTHON "Disable Python" OFF)
+EOL
+fi
+cat >>../CMakeLists.txt <<EOL
+
+if(NOT CLUSTER_MODE)
+    set(CLUSTER_MODE "${cluster_mode}") # else local
+endif()
 
 find_library(ParamHelper NAMES libparamhelper.a PATHS ${path_to_param_helper}lib)
 message("ParamHelper = \${ParamHelper}")
@@ -89,18 +119,12 @@ cat >>../CMakeLists.txt <<EOL
       set(CMAKE_EXE_LINKER_FLAGS "-s")  # Strip binary
     endif()
         
-    cuda_add_library(
-            latticemodelimplementations STATIC src/main.cpp
-            src/lattice_model_impl/distribution/thrust_complex_gaussian_distribution.cu
-            src/lattice_model_impl/thrust/thrust_header.cu
-            src/lattice_model_impl/thrust/thrust_finite_integration.cu
-            src/lattice_model_impl/thrust/thrust_integration.cu
-    )
+    cuda_add_library(latticemodelimplementations STATIC src/main.cpp)
     set_property(TARGET latticemodelimplementations PROPERTY CUDA_STANDARD 14)
 
-    target_link_libraries( latticemodelimplementations \${MCMCSimulationLib} \${ParamHelper} \${Boost_LIBRARIES} \${CERES_LIBRARIES} \${PYTHON_LIBRARIES} )
+    target_link_libraries( latticemodelimplementations ${target_link_libraries_appendix})
 
-    target_compile_definitions(latticemodelimplementations PUBLIC -D GPU -D THRUST)
+    target_compile_definitions(latticemodelimplementations PUBLIC -D GPU -D THRUST -D PYTHON)
     set_target_properties(latticemodelimplementations PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
 else()
     set(CMAKE_CXX_FLAGS "\${CMAKE_CXX_FLAGS} -std=c++14 -static-libstdc++ -lboost_system -lboost_filesystem")
@@ -116,7 +140,8 @@ else()
     
     add_library(latticemodelimplementations STATIC src/main.cpp)
 
-    target_link_libraries( latticemodelimplementations \${MCMCSimulationLib} \${ParamHelper} \${Boost_LIBRARIES} \${CERES_LIBRARIES} \${PYTHON_LIBRARIES})
+    target_compile_definitions(latticemodelimplementations PUBLIC -D PYTHON)
+    target_link_libraries( latticemodelimplementations ${target_link_libraries_appendix})
 endif()
 
 SET( APP_EXE StaticTest )

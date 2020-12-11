@@ -31,9 +31,9 @@ typedef MetropolisUpdateParameters<ModelParams> UpdateParams;
 typedef LatticeParameters< BasicType, ModelParams, UpdateParams, SequentialUpdateParameters> SystemBaseParams; */
 
 typedef double BasicType;
-typedef XYModelParameters<GaussianSampler> ModelParams;
-typedef HybridMonteCarloUpdateParameters<BasicType, ModelParams> UpdateParams;
-typedef LatticeParameters< BasicType, ModelParams, UpdateParams, GlobalLatticeUpdateParameters> SystemBaseParams;
+typedef lm_impl::lattice_system::XYModelParameters ModelParams;
+typedef lm_impl::mcmc_update::HybridMonteCarloUpdateParameters<BasicType, ModelParams, mcmc::sampler::GaussianSampler> UpdateParams;
+typedef lm_impl::lattice_system::LatticeParameters< BasicType, ModelParams, UpdateParams, lm_impl::update_dynamics::GlobalLatticeUpdateParameters> SystemBaseParams;
 
 /* typedef std::complex<double> BasicType;
 typedef CubicGaussianModelParameters<GaussianSampler> ModelParams;

@@ -10,4 +10,4 @@ path_to_config="$(dirname -- "$(readlink -f -- "build.sh")")"
 source build_submodules.sh
 
 # Build library
-# bash build_library.sh
+source build_library.sh

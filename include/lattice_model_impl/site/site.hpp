@@ -184,7 +184,7 @@ namespace lm_impl {
             }
 
             void initialize(std::string starting_mode) {
-                this->generate_measures();
+                this->generate_measures(sp.measures);
 
                 if (starting_mode == "hot")
                     site = update_formalism->template random_state<T>();
@@ -232,7 +232,7 @@ namespace lm_impl {
                 auto site_update_related_measures = site_update->template generate_update_dynamics_measures<SiteSystem>(
                         sp.measures);
                 this->concat_measures(site_update_related_measures);
-                auto common_defined_measures = generate_systembase_measures(sp.measures);
+                auto common_defined_measures = this->generate_systembase_measures(sp.measures);
                 this->concat_measures(common_defined_measures);
             }
 

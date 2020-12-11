@@ -34,7 +34,7 @@ namespace lm_impl {
 
             template<typename Lattice>
             void update(Lattice &lattice, uint measure_interval = 1) {
-                for (auto k = 0; k < measure_interval; k++) {
+                for (uint k = 0; k < measure_interval; k++) {
                     global_lattice_update(lattice.get_update_formalism(), lattice);
                 }
             }

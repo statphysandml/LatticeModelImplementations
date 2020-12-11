@@ -3,15 +3,15 @@ cat >"${src_path}/main.cpp" <<EOL
 #define MAIN_CPP
 
 EOL
-if [ "$project_path" = "../" ]; then
+if [ "$project_type" = "project" ]; then
 cat >>"${src_path}/main.cpp" <<EOL
-#include "../include/config.h"
 #include "../include/simulation_header.hpp"
+#include "execution/executer.hpp"
 EOL
 else
 cat >>"${src_path}/main.cpp" <<EOL
-#include "config.h"
 #include "simulation_header.hpp"
+#include "execution/executer.hpp"
 EOL
 fi
 cat >>"${src_path}/main.cpp" <<EOL
@@ -21,9 +21,11 @@ cat >>"${src_path}/main.cpp" <<EOL
 void custom_main();
 
 int main(int argc, char **argv) {
-    initialize_executer_params(PROJECT_NAME, PYTHON_SCRIPTS_PATH, CLUSTER_MODE, CONDA_ACTIVATE_PATH, VIRTUAL_ENV);
+    // initialize_executer_params(PROJECT_NAME, PYTHON_SCRIPTS_PATH, CLUSTER_MODE, CONDA_ACTIVATE_PATH, VIRTUAL_ENV); // optional
 
-    initialize_python();
+#ifdef PYTHON
+    mcmc::execution::initialize_python();
+#endif
 
     // A function of one of the first three if conditions is only called when an actual simulation takes place
     // (or for the generation of default parameters) based on a program that uses ./Main with arguments (from cpu/gpu/locally)
@@ -43,7 +45,9 @@ int main(int argc, char **argv) {
         // Helpful for a preparation of the simulation or immediate execution (on cpu/gpu/locally, testing/running directly)
         custom_main();
 
-    finalize_python();
+#ifdef PYTHON
+    mcmc::execution::finalize_python();
+#endif
 }
 
 void custom_main()

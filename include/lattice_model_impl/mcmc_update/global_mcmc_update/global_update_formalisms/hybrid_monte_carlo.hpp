@@ -99,7 +99,7 @@ namespace lm_impl {
                                                                                        hmc_neighbours(neighbours_) {}
 
                 void operator()(const std::vector<T> &q, std::vector<T> &dpdt) const {
-                    for (auto i = 0; i < q.size(); i++) {
+                    for (uint i = 0; i < q.size(); i++) {
                         dpdt[i] = -1.0 * hmc_model.get_drift_term(q[i], hmc_neighbours[i]);
                     }
                 }

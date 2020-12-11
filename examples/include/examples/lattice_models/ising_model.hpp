@@ -13,17 +13,15 @@
 
 // expectation_value IsingModel
 
-// ToDo: Introduce default sampler if sampling is not used!! Or remove completely, if not needed
-
 // ### Working example ###
 
 void example_ising_model_metropolis()
 {
     typedef double BasicType;
-    typedef IsingModelParameters ModelParams;
-    typedef MetropolisUpdateParameters<ModelParams> MCMCUpdateParams;
-    typedef SequentialUpdateParameters UpdateDynamicsParams;
-    typedef LatticeParameters< BasicType, ModelParams, MCMCUpdateParams, UpdateDynamicsParams> SystemBaseParams;
+    typedef lm_impl::lattice_system::IsingModelParameters ModelParams;
+    typedef lm_impl::mcmc_update::MetropolisUpdateParameters<ModelParams, lm_impl::lattice_system::IsingModelSampler> MCMCUpdateParams;
+    typedef lm_impl::update_dynamics::SequentialUpdateParameters UpdateDynamicsParams;
+    typedef lm_impl::lattice_system::LatticeParameters< BasicType, ModelParams, MCMCUpdateParams, UpdateDynamicsParams> SystemBaseParams;
 
     std::string model_name = "IsingModelMetropolis";
     std::string rel_config_path = "/configs/" + model_name + "/";
@@ -31,42 +29,41 @@ void example_ising_model_metropolis()
 
     std::vector<int> dimensions {4, 4};
 
-    MCMCUpdateParams mcmc_update_parameters;
+    MCMCUpdateParams mcmc_update_parameters(0.1);
 
     double beta = 0.4;
-    ModelParams model_parameters(beta, {1.0, 0.0}, {0.0, 0.0});
+    ModelParams model_parameters(beta, 1.0, 0.0);
 
     UpdateDynamicsParams update_dynamics_parameters;
 
     SystemBaseParams lattice_parameters(
             json {
                     {"dimensions", dimensions},
-                    {"measures", {"Mean", "Std", "Config"}},
+                    {"measures", {"Config", "Mean", "Std"}},
                     {ModelParams::param_file_name(), model_parameters.get_json()},
                     {MCMCUpdateParams::param_file_name(), mcmc_update_parameters.get_json()},
-                    {UpdateDynamicsParams::param_file_name(), update_dynamics_parameters.get_json()}},
-            rel_config_path
+                    {UpdateDynamicsParams::param_file_name(), update_dynamics_parameters.get_json()}}
     );
 
-    typedef ExpectationValueParameters ExecutionParams;
+    typedef mcmc::execution::ExpectationValueParameters ExecutionParams;
     ExecutionParams execution_parameters(10, 10000, 10000, {}, // optional additional measures
                                          {"AbsMean", "Energy"}); // Meausures which will be evaluated in terms of mean and error evaluation
-    execution_parameters.write_to_file(rel_data_path);
 
-    auto simparams = SimulationParameters< SystemBaseParams , ExecutionParams >::generate_traceable_simulation(
-            lattice_parameters, execution_parameters, rel_config_path, rel_data_path, "model_params", "beta", 0.1, 0.625, 21);
+    auto simparams = mcmc::simulation::SimulationParameters< SystemBaseParams , ExecutionParams >::generate_simulation(
+            lattice_parameters, execution_parameters, rel_data_path, "model_params", "beta", 0.1, 0.625, 21);
+    simparams.write_to_file(rel_config_path);
 
-    execute< SystemBaseParams > (ExecutionParams::name(), model_name);
+    mcmc::execution::execute< SystemBaseParams > (ExecutionParams::name(), model_name);
 }
 
 
 void example_ising_full_simulation()
 {
     typedef double BasicType;
-    typedef IsingModelParameters ModelParams;
-    typedef MetropolisUpdateParameters<ModelParams> MCMCUpdateParams;
-    typedef SequentialUpdateParameters UpdateDynamicsParams;
-    typedef LatticeParameters< BasicType, ModelParams, MCMCUpdateParams, UpdateDynamicsParams> SystemBaseParams;
+    typedef lm_impl::lattice_system::IsingModelParameters ModelParams;
+    typedef lm_impl::mcmc_update::MetropolisUpdateParameters<ModelParams, lm_impl::lattice_system::IsingModelSampler> MCMCUpdateParams;
+    typedef lm_impl::update_dynamics::SequentialUpdateParameters UpdateDynamicsParams;
+    typedef lm_impl::lattice_system::LatticeParameters< BasicType, ModelParams, MCMCUpdateParams, UpdateDynamicsParams> SystemBaseParams;
 
     std::string model_name = "IsingModelMetropolis";
     std::string rel_config_path = "/configs/" + model_name + "/";
@@ -75,10 +72,10 @@ void example_ising_full_simulation()
 
     std::vector<int> dimensions {4, 4};
 
-    MCMCUpdateParams mcmc_update_parameters;
+    MCMCUpdateParams mcmc_update_parameters(0.1);
 
     double beta = 0.4;
-    ModelParams model_parameters(beta, {1.0, 0.0}, {0.0, 0.0});
+    ModelParams model_parameters(beta, 1.0, 0.0);
 
     UpdateDynamicsParams update_dynamics_parameters;
 
@@ -88,34 +85,36 @@ void example_ising_full_simulation()
                     {"measures", {}},
                     {ModelParams::param_file_name(), model_parameters.get_json()},
                     {MCMCUpdateParams::param_file_name(), mcmc_update_parameters.get_json()},
-                    {UpdateDynamicsParams::param_file_name(), update_dynamics_parameters.get_json()}},
-            rel_config_path
+                    {UpdateDynamicsParams::param_file_name(), update_dynamics_parameters.get_json()}}
     );
 
-    EquilibriateParameters equilibriate_parameters(5000, 100, {"Mean"}); // Meausures which will be evaluated in terms of mean and error evaluation
-    equilibriate_parameters.write_to_file(rel_data_path);
+    mcmc::execution::EquilibriateParameters equilibriate_parameters(5000, 100, {"Mean"}); // Meausures which will be evaluated in terms of mean and error evaluation
+    // equilibriate_parameters.write_to_file(rel_data_path);
 
-    SimulationParameters< SystemBaseParams, EquilibriateParameters >::generate_traceable_simulation(
-            lattice_parameters, equilibriate_parameters, rel_config_path, rel_data_path, "model_params", "beta", 0.1, 0.6, 5);
+    auto simparams_equilibriate = mcmc::simulation::SimulationParameters< SystemBaseParams, mcmc::execution::EquilibriateParameters >::generate_simulation(
+            lattice_parameters, equilibriate_parameters, rel_data_path, "model_params", "beta", 0.1, 0.6, 5);
+    simparams_equilibriate.write_to_file(rel_config_path);
 
-    execute< SystemBaseParams > (EquilibriateParameters::name(), model_name);
+    mcmc::execution::execute< SystemBaseParams > (mcmc::execution::EquilibriateParameters::name(), model_name);
 
-    CorrelationTimeParameters correlation_time_parameters(5000, 100, 10000, {"Mean"}); // Meausures which will be evaluated in terms of mean and error evaluation
-    correlation_time_parameters.write_to_file(rel_data_path);
+    mcmc::execution::CorrelationTimeParameters correlation_time_parameters(5000, 100, 10000, {"Mean"}); // Meausures which will be evaluated in terms of mean and error evaluation
+    // correlation_time_parameters.write_to_file(rel_config_path);
 
-    SimulationParameters< SystemBaseParams , CorrelationTimeParameters >::generate_traceable_simulation(
-            lattice_parameters, correlation_time_parameters, rel_config_path, rel_data_path, "model_params", "beta", 0.1, 0.6, 5);
+    auto simparams_correlation_time = mcmc::simulation::SimulationParameters< SystemBaseParams , mcmc::execution::CorrelationTimeParameters >::generate_simulation(
+            lattice_parameters, correlation_time_parameters, rel_data_path, "model_params", "beta", 0.1, 0.6, 5);
+    simparams_correlation_time.write_to_file(rel_config_path);
 
-    execute< SystemBaseParams > (CorrelationTimeParameters::name(), model_name);
+    mcmc::execution::execute< SystemBaseParams > (mcmc::execution::CorrelationTimeParameters::name(), model_name);
 
-    ExpectationValueParameters expectation_value_parameters(correlation_time_results_path, 10000, 10000, {"Mean", "Config"}, // optional additional measures
+    mcmc::execution::ExpectationValueParameters expectation_value_parameters(correlation_time_results_path, 10000, 10000, {"Mean", "Config"}, // optional additional measures
                                          {"AbsMean", "Energy"}); // Meausures which will be evaluated in terms of mean and error evaluation
-    expectation_value_parameters.write_to_file(rel_data_path);
+    // expectation_value_parameters.write_to_file(rel_config_path);
 
-    SimulationParameters< SystemBaseParams , ExpectationValueParameters >::generate_traceable_simulation(
-            lattice_parameters, expectation_value_parameters, rel_config_path, rel_data_path, "model_params", "beta", 0.1, 0.6, 5);
+    auto simparams_expectation_value = mcmc::simulation::SimulationParameters< SystemBaseParams , mcmc::execution::ExpectationValueParameters >::generate_simulation(
+            lattice_parameters, expectation_value_parameters, rel_data_path, "model_params", "beta", 0.1, 0.6, 5);
+    simparams_expectation_value.write_to_file(rel_config_path);
 
-    execute< SystemBaseParams > (ExpectationValueParameters::name(), model_name);
+    mcmc::execution::execute< SystemBaseParams > (mcmc::execution::ExpectationValueParameters::name(), model_name);
 }
 
 

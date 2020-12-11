@@ -6,19 +6,27 @@
 
 #endif
 
-
 void custom_main();
 
 int main(int argc, char **argv) {
+#ifdef PYTHON
+    std::cout<< "hey" << std::endl;
+#endif
 
-    initialize_python();
+    param_helper::fs::prfs::set_relative_path_to_project_root_dir("/../");
+
+#ifdef PYTHON
+    mcmc::execution::initialize_python();
+#endif
 
     if(argc > 1)
-        run_from_file<from_file_simulation::SystemBaseParams>(argc, argv);
+        mcmc::execution::run_from_file<from_file_simulation::SystemBaseParams>(argc, argv);
     else
         custom_main();
 
-    finalize_python();
+#ifdef PYTHON
+    mcmc::execution::finalize_python();
+#endif
 }
 
 /* #include "../include/examples/complex_lattice_models/complex_anharmonic_oscillator.hpp"
@@ -28,21 +36,17 @@ int main(int argc, char **argv) {
 #include "../include/examples/complex_site_models/complex_polynomial_model.hpp"
 #include "../include/examples/complex_site_models/complex_scalar_gaussian_model.hpp"
 #include "../include/examples/complex_lattice_models/complex_xy_model.hpp" */
-#include "../include/examples/integration/integration.hpp"
-#include "../include/examples/implicit_solver/implicit_solver.hpp"
 
-// - Introduce a default update_dynamics for sites - not for lattices!
-
+#include "../include/examples/lattice_models/ising_model.hpp"
 
 void custom_main()
 {
-    // integrate();
-    examples::implicit_solver::run_implicit_integral_solvers();
-#ifdef THRUST
-    examples::implicit_solver::thrust_run_implicit_integral_solvers();
+ //   example_ising_model_metropolis();
+
+#ifdef PYTHON
+    std::cout<< "hey" << std::endl;
 #endif
 
-    // example_ising_model();
     // example_ising_full_simulation();
     // example_xy_model_metropolis();
     // example_xy_model_hmc_algorithm();

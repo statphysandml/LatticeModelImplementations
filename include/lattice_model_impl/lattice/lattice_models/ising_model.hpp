@@ -20,13 +20,13 @@ namespace lm_impl
         public:
             explicit IsingModelParameters(const json params_) : LatticeModelParameters(params_),
                                                                 beta(get_entry<double>("beta", 0.4)),
-                                                                J(get_entry<std::complex<double>>("J", 1.0)),
-                                                                h(get_entry<std::complex<double>>("h", 0.0))
+                                                                J(get_entry<double>("J", 1.0)),
+                                                                h(get_entry<double>("h", 0.0))
             {
 
             }
 
-            explicit IsingModelParameters(double beta_, std::complex<double> J_, std::complex<double> h_) : IsingModelParameters(json{
+            explicit IsingModelParameters(double beta_, double J_, double h_) : IsingModelParameters(json{
                     {"beta", beta_},
                     {"J", J_},
                     {"h", h_}
@@ -43,8 +43,8 @@ namespace lm_impl
             friend class IsingModel;
 
             const double beta;
-            const std::complex<double> J;
-            const std::complex<double> h;
+            const double J;
+            const double h;
         };
 
 
@@ -60,7 +60,7 @@ namespace lm_impl
                 for(size_t i = 0; i < neighbours.size(); i++) {
                     coupling += *neighbours[i];
                 }
-                return  -1.0 * mp.beta * site * (mp.J.real() * coupling + mp.h.real()); // 0.5
+                return  -1.0 * mp.beta * site * (mp.J * coupling + mp.h); // 0.5
             }
 
         private:
