@@ -50,16 +50,19 @@ T operator*(const ON<T,N>& x, const ON<T,N>& y)
     return sum;
 }
 
+template<typename T, uint N>
+T operator*(const ON<T,N>& x, const double& y)
+{
+    T sum = 0;
+    for(auto i = 0; i < N; i++)
+        sum += x(i) * y;
+    return sum;
+}
+
 namespace std
 {
     template<typename T, uint N>
     double fabs(ON<T, N> arg)
-    {
-        return 0.0;
-    }
-
-    template<typename T, uint N>
-    const double fabs(const ON<T, N> arg)
     {
         return 0.0;
     }
