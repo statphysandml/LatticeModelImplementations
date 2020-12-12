@@ -59,7 +59,7 @@ namespace lm_impl {
 
             // ToDo: Can be defined only once outside of the class
 
-            template<typename SB>
+            /* template<typename SB>
             struct MeasureDetailedBalanceAccuracyPolicy : public mcmc::common_measures::MeasurePolicy<SB> {
             public:
                 explicit MeasureDetailedBalanceAccuracyPolicy(std::vector<SiteType> &prev_lattice_) : prev_lattice(
@@ -67,8 +67,7 @@ namespace lm_impl {
 
                 std::string measure(const SB &system) override {
                     auto a = prev_lattice;
-                    return std::to_string(
-                            mcmc::common_measures::TypePolicy<typename SB::SiteType>::realv(system.energy()));
+                    return std::to_string(system.energy());
                 }
 
                 std::string name() {
@@ -87,7 +86,7 @@ namespace lm_impl {
                         measures.push_back(
                                 std::make_unique<MeasureDetailedBalanceAccuracyPolicy<SB>>(previous_lattice));
                 return measures;
-            }
+            } */
 
             const MemoryParallelUpdateParameters<SiteType> &lp;
             std::vector<SiteType> previous_lattice;

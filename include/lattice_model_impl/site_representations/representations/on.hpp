@@ -85,7 +85,20 @@ ON<T, N> operator+(const ON<T, N>& a,const ON<T, N>& b)
     return val;
 }
 
-namespace common_measures
+namespace std
+{
+    template<typename T, uint N>
+    std::string to_string(ON<T, N> x)
+    {
+        std::string conf = "";
+        for(auto j = 0; j < x.dim(); j++)
+            conf += std::to_string(x(j)) + " ";
+        conf = conf.substr(0, conf.size() -1);
+        return conf;
+    }
+}
+
+/* namespace common_measures
 {
     template<typename T>
     struct TypePolicy;
@@ -169,6 +182,6 @@ namespace common_measures
             return conf;
         }
     };
-}
+} */
 
 #endif //LATTICEMODELIMPLEMENTATIONS_ON_HPP

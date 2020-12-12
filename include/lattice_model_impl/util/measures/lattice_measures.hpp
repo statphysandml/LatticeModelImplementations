@@ -18,8 +18,7 @@ namespace lm_impl {
             struct MeasureEnergyPolicy : public mcmc::common_measures::MeasurePolicy<SB> {
             public:
                 std::string measure(const SB &system) override {
-                    return std::to_string(
-                            mcmc::common_measures::TypePolicy<typename SB::SiteType>::realv(system.energy()));
+                    return std::to_string(system.energy());
                 }
 
                 std::string name() {
@@ -28,24 +27,10 @@ namespace lm_impl {
             };
 
             template<typename SB>
-            struct MeasureEnergyImagPolicy : public mcmc::common_measures::MeasurePolicy<SB> {
-            public:
-                std::string measure(const SB &system) override {
-                    return std::to_string(
-                            mcmc::common_measures::TypePolicy<typename SB::SiteType>::imagv(system.energy()));
-                }
-
-                std::string name() {
-                    return "EnergyImag";
-                }
-            };
-
-            template<typename SB>
             struct MeasureDriftPolicy : public mcmc::common_measures::MeasurePolicy<SB> {
             public:
                 std::string measure(const SB &system) override {
-                    return std::to_string(
-                            mcmc::common_measures::TypePolicy<typename SB::SiteType>::realv(system.drift_term()));
+                    return std::to_string(system.drift_term());
                 }
 
                 std::string name() {
@@ -54,24 +39,10 @@ namespace lm_impl {
             };
 
             template<typename SB>
-            struct MeasureDriftImagPolicy : public mcmc::common_measures::MeasurePolicy<SB> {
-            public:
-                std::string measure(const SB &system) override {
-                    return std::to_string(
-                            mcmc::common_measures::TypePolicy<typename SB::SiteType>::imagv(system.drift_term()));
-                }
-
-                std::string name() {
-                    return "DriftImag";
-                }
-            };
-
-            template<typename SB>
             struct MeasureWilsonActionPolicy : public mcmc::common_measures::MeasurePolicy<SB> {
             public:
                 std::string measure(const SB &system) override {
-                    return std::to_string(
-                            mcmc::common_measures::TypePolicy<typename SB::SiteType>::realv(system.energy()));
+                    return std::to_string(system.energy());
                 }
 
                 std::string name() {

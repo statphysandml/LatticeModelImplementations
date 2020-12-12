@@ -298,14 +298,8 @@ namespace lm_impl {
             for (auto &measure_name :  measure_names)
                 if (measure_name == "Energy")
                     site_measures.push_back(std::make_unique<util::lattice_system_model_measures::MeasureEnergyPolicy<SiteSys>>());
-                else if (measure_name == "EnergyImag")
-                    site_measures.push_back(
-                            std::make_unique<util::lattice_system_model_measures::MeasureEnergyImagPolicy<SiteSys>>());
                 else if (measure_name == "Drift")
                     site_measures.push_back(std::make_unique<util::lattice_system_model_measures::MeasureDriftPolicy<SiteSys>>());
-                else if (measure_name == "DriftImag")
-                    site_measures.push_back(
-                            std::make_unique<util::lattice_system_model_measures::MeasureDriftImagPolicy<SiteSys>>());
                 else if (measure_name == "WilsonAction")
                     site_measures.push_back(
                             std::make_unique<util::lattice_system_model_measures::MeasureWilsonActionPolicy<SiteSys>>());
