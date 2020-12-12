@@ -8,7 +8,6 @@
 
 #include "../link_lattice_model.hpp"
 
-// #include "../su2.hpp"
 
 namespace lm_impl {
     namespace link_lattice_system {
@@ -91,7 +90,6 @@ namespace lm_impl {
 
             const double eps;
         };
-
     }
 }
 

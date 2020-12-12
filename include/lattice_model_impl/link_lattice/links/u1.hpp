@@ -14,98 +14,43 @@
 
 #include "../link.hpp"
 
-template<typename T>
-class U1 : public Link<T>
+
+class U1 : public Link< std::complex<double> >
 {
 private:
-    using Link<T>::x_;
+    using Link< std::complex<double> >::x_;
 public:
-    //U1();
-    U1(T a);
+    U1(std::complex<double> a);
     U1(double epsilon);
     U1(std::string init = "random");
 
-    //void Print() const;
-
-    //double operator()(int i) const;
-
-    // U1& operator+=(const U1& x);
-    // U1& operator-=(const U1& x);
-
-    T trace();
+    std::complex<double> trace();
 
     U1& adjungate();
-
-    /* size_t size() const
-    {
-        return 1;
-    } */
-
-    //private:
-    //  std::vector< double > x_;
 };
 
-template<typename T>
-U1<T> operator*(const U1<T>& x, const U1<T>& y);
 
-template<typename T>
-U1<T> operator-(const U1<T>& a,const U1<T>& b);
-
-template<typename T>
-std::ostream& operator<<(std::ostream &os, const U1<T>& x);
-
-template <typename T>
-U1<T> operator*(const U1<T>& x, const U1<T>& y)
-{
-    return U1<T>(x(0)*y(0));
-}
-
-template <typename T>
-U1<T> operator-(const U1<T>& a,const U1<T>& b)
-{
-    U1<T> temp(a);
-    temp -= b;
-    return temp;
-}
-
-template <typename T>
-std::ostream& operator<<(std::ostream &os, const U1<T>& x) {
-    os << x(0);
-    return os;
-}
-
-/*std::complex<double> operator-(const int& a,const std::complex<double>& b) {
-    return std::complex<double> (a,0) - b;
-}*/
-
-
-template <typename T>
-U1<T>::U1(std::string init)
+U1::U1(std::string init)
 {
     if(init == "null") {
-        x_.push_back(T(0,0));
+        x_.push_back(std::complex<double>(0,0));
     }
     else if(init == "identity") {
-        x_.push_back(T(1,0));
+        x_.push_back(std::complex<double>(1,0));
     }
     else {
         std::uniform_real_distribution<double> uniform(-1,1);
-        x_.push_back(T(uniform(mcmc::util::gen), uniform(mcmc::util::gen)));
+        x_.push_back(std::complex<double>(uniform(mcmc::util::gen), uniform(mcmc::util::gen)));
         x_[0] = x_[0]/std::abs(x_[0]);
     }
 }
 
-/* template <typename T> int sgn(T val) {
-    return (T(0) < val) - (val < T(0));
-} */
-
-template <typename T>
-U1<T>::U1(double epsilon) {//######################################################
+U1::U1(double epsilon) {//######################################################
     std::random_device rd;
     std::mt19937 gen{rd()};
     std::uniform_real_distribution<double> uniform(-epsilon,epsilon);
 
-    x_.push_back(T(1,uniform(gen)));
+    x_.push_back(std::complex<double>(1,uniform(gen)));
 
     x_[0] = x_[0]/std::abs(x_[0]);
 
@@ -118,105 +63,64 @@ U1<T>::U1(double epsilon) {//###################################################
     for(int i = 1; i < 4; i++) x_[i] = epsilon*x_[i]/length;*/
 };
 
-template <typename T>
-U1<T>::U1(T a) {
+
+U1::U1(std::complex<double> a) {
     x_.push_back(a);
 }
 
-/* template <typename T>
-U1<T>& U1<T>::operator+=(const U1<T>& x) {
-    x_[0] += x(0);
-    return *this;
-}
 
-template <typename T>
-U1<T>& U1<T>::operator-=(const U1<T>& x) {
-    x_[0] -= x(0);
-    return *this;
-} */
-
-template <typename T>
-T U1<T>::trace() {
+std::complex<double> U1::trace() {
     return x_[0];
 }
 
-template <typename T>
-U1<T>& U1<T>::adjungate() {
+
+U1& U1::adjungate() {
     x_[0] = std::conj(x_[0]);
     return *this;
 }
 
-
-/* template<typename T>
-double fabs(const U1<T> x)
+U1 operator*(const U1& x, const U1& y)
 {
-    return std::fabs(x(0));
-} */
+    return U1(x(0)*y(0));
+}
 
-/* template<>
-        struct TypePolicy< U1<std::complex<double> > > {
-        public:
-            static double realv(const U1<std::complex<double> > state) {
-                return state(0).real();
-            }
+U1 operator*(const U1& x, const double& y)
+{
+    return x(0) * y;
+}
 
-            static double imagv(const U1<std::complex<double> > state) {
-                return state(0).imag();
-            }
+U1 operator-(const U1& a,const U1& b)
+{
+    U1 temp(a);
+    temp -= b;
+    return temp;
+}
 
-            static std::string conf(const U1<std::complex<double> > state) {
-                return " ";
-            }
-        };
+std::ostream& operator<<(std::ostream &os, const U1& x) {
+    os << x(0);
+    return os;
+}
 
-        template<>
-        struct TypePolicy< U1<const std::complex<double> > > {
-        public:
-            static double realv(const U1<std::complex<double> > state) {
-                return state(0).real();
-            }
 
-            static double imagv(const U1<std::complex<double> > state) {
-                return state(0).imag();
-            }
+namespace std {
 
-            static std::string conf(const U1<std::complex<double> > state) {
-                return " ";
-            }
-        };
+    std::string to_string(U1 x)
+    {
+        return std::to_string(x(0));
+    }
 
-        template<>
-        struct TypePolicy< const U1<std::complex<double> > > {
-        public:
-            static double realv(const U1<std::complex<double> > state) {
-                return state(0).real();
-            }
 
-            static double imagv(const U1<std::complex<double> > state) {
-                return state(0).imag();
-            }
+    double fabs(U1 x)
+    {
+        return std::fabs(x(0));
+    }
 
-            static std::string conf(const U1<std::complex<double> > state) {
-                return " ";
-            }
-        };
 
-        template<>
-        struct TypePolicy< const U1<const std::complex<double> > > {
-        public:
-            static double realv(const U1<std::complex<double> > state) {
-                return state(0).real();
-            }
-
-            static double imagv(const U1<std::complex<double> > state) {
-                return state(0).imag();
-            }
-
-            static std::string conf(const U1<std::complex<double> > state) {
-                return " ";
-            }
-        };
-*/
+    double abs(const U1 x)
+    {
+        return std::abs(x(0));
+    }
+}
 
 
 #endif //MAIN_U1_HPP

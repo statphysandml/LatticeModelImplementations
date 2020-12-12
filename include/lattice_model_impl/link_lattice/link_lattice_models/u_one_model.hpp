@@ -16,14 +16,11 @@ namespace lm_impl {
         class UOneModelParameters : public LinkLatticeModelParameters {
         public:
             explicit UOneModelParameters(const json params_) : LinkLatticeModelParameters(params_),
-                                                               beta(get_entry<double>("beta")),
-                                                               eps(get_entry<double>("eps"))
-            //mu(complex_to_json(get_entry("mu")))
+                                                               beta(get_entry<double>("beta"))
             {}
 
-            explicit UOneModelParameters(double beta_, double eps_) : UOneModelParameters(json{
-                    {"beta", beta_},
-                    {"eps",  eps_}
+            explicit UOneModelParameters(double beta_) : UOneModelParameters(json{
+                    {"beta", beta_}
             }) {}
 
             const static std::string name() {
@@ -40,23 +37,12 @@ namespace lm_impl {
             friend class UOneModel;
 
             const double beta;
-            const double eps;
         };
 
 
         class UOneModel : public LinkLatticeModel<UOneModel> {
         public:
             explicit UOneModel(const UOneModelParameters &mp_) : mp(mp_) {}
-
-            template<typename T>
-            T random_state() {
-                return T("random");
-            }
-
-            template<typename T>
-            T propose_state(T site) {
-                return site * T(mp.eps);
-            }
 
             template<typename T, typename T2=double_t>
             T2 get_potential(const T site, const std::vector<T *> neighbours) {
@@ -66,10 +52,41 @@ namespace lm_impl {
                                            std::real((site * A).trace())); // Additional 1/N missing in second term??
             }
 
+            template<typename T, typename T2=double_t>
+            T2 get_drift_term(const T site, const std::vector<T *> neighbours) {
+                return T2(0.0);
+            }
+
         private:
             const UOneModelParameters &mp;
         };
 
+        struct UOneModelSampler
+        {
+            UOneModelSampler(const double eps_) : eps(eps_)
+            {}
+
+            template<typename T>
+            T random_state() {
+                return T("random");
+            }
+
+            template<typename T>
+            T propose_state(T site) {
+                return site * T(eps);
+            }
+
+            double get_eps() const
+            {
+                return eps;
+            }
+
+            const static std::string name() {
+                return "UOneModelSampler";
+            }
+
+            const double eps;
+        };
     }
 }
 

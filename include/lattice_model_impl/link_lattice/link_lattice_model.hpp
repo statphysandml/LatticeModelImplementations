@@ -59,7 +59,7 @@ namespace lm_impl {
             template<typename T>
             T calc_A (const std::vector<T*> neighbours, bool both_orientations=true) {
                 T A("null");
-                for(auto i = 0; i < neighbours.size(); i += 6)
+                for(uint i = 0; i < neighbours.size(); i += 6)
                 {
                     A += (*neighbours[i]) * T(*neighbours[i + 1]).adjungate() * T(*neighbours[i + 2]).adjungate();
                     if(both_orientations)

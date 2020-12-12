@@ -192,6 +192,15 @@ SU2<T> operator*(const SU2<T>& x, const SU2<T>& y)
     return SU2<T>(x(0)*y(0)-x(1)*y(1)-x(2)*y(2)-x(3)*y(3),y(0)*x(1)+x(0)*y(1)-x(2)*y(3)+x(3)*y(2),y(0)*x(2)+x(0)*y(2)-x(3)*y(1)+x(1)*y(3),y(0)*x(3)+x(0)*y(3)-x(1)*y(2)+x(2)*y(1));
 }
 
+template<typename T>
+SU2<T> operator*(const SU2<T>& x, const double& y)
+{
+    SU2<T>x_(x);
+    for(auto i = 0; i < 4; i++)
+        x_(i) *= y;
+    return x_;
+}
+
 template <typename T>
 SU2<T> operator-(const SU2<T>& a,const SU2<T>& b)
 {
@@ -209,6 +218,16 @@ std::ostream& operator<<(std::ostream &os, const SU2<T>& x) {
 
 namespace std {
     template<typename T>
+    std::string to_string(SU2<T> x)
+    {
+        std::string conf = "";
+        for(auto j = 0; j < 4; j++)
+            conf += std::to_string(x(j)) + " ";
+        conf = conf.substr(0, conf.size() -1);
+        return conf;
+    }
+
+    template<typename T>
     double fabs(SU2<T> x)
     {
         // ToDo!! Incorrect return type for SU2
@@ -220,103 +239,6 @@ namespace std {
     {
         // ToDo!! Incorrect return type for SU2
         return std::abs(x(0));
-    }
-
-    template<typename T>
-    const double abs(const SU2<T> x)
-    {
-        // ToDo!! Incorrect return type for SU2
-        return std::abs(x(0));
-    }
-
-    template<typename T>
-    std::string to_string(const SU2<T> x)
-    {
-        std::string x_ = "(" + std::to_string(x(0));
-        for (uint i = 1; i < 4; i++) {
-            x_ += " " + std::to_string(x(i));
-        }
-        x_ += ")";
-        return x_;
-    }
-}
-
-namespace mcmc {
-    namespace common_measures {
-        template<typename T>
-        struct TypePolicy;
-
-        template<>
-        struct TypePolicy<SU2<double> > {
-        public:
-            static double realv(const SU2<double> state) {
-                return 0.0; // state(0).real();
-            }
-
-            static double imagv(const SU2<double> state) {
-                return 0.0; //state(0).imag();
-            }
-
-            static std::string conf(const SU2<double> state) {
-                return " ";
-            }
-
-            static double realv(double state) {
-                return state; // state(0).real();
-            }
-
-            static double imagv(double state) {
-                return 0.0; //state(0).imag();
-            }
-        };
-
-        template<>
-        struct TypePolicy<SU2<const double> > {
-        public:
-            static double realv(const SU2<double> state) {
-                return 0.0; //state(0).real();
-            }
-
-            static double imagv(const SU2<double> state) {
-                return 0.0; //state(0).imag();
-            }
-
-            static std::string conf(const SU2<double> state) {
-                return " ";
-            }
-        };
-
-        template<>
-        struct TypePolicy<const SU2<double> > {
-        public:
-            static double realv(const SU2<double> state) {
-                return 0.0; //state(0).real();
-            }
-
-            static double imagv(const SU2<double> state) {
-                return 0.0; //state(0).imag();
-            }
-
-            static std::string conf(const SU2<double> state) {
-                return " ";
-            }
-        };
-
-        template<>
-        struct TypePolicy<const SU2<const double> > {
-        public:
-            static double realv(const SU2<double> state) {
-                return 0.0; //state(0).real();
-            }
-
-            static double imagv(const SU2<double> state) {
-                return 0.0; //state(0).imag();
-            }
-
-            static std::string conf(const SU2<double> state) {
-                return " ";
-            }
-        };
     }
 }
 

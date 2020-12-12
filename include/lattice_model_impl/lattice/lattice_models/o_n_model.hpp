@@ -8,8 +8,6 @@
 #include "mcmc_simulation/util/random.hpp"
 #include "../lattice_model.hpp"
 
-// #include "../su2.hpp"
-
 namespace lm_impl {
     namespace lattice_system {
 
@@ -68,8 +66,7 @@ namespace lm_impl {
             const ONModelParameters &mp;
         };
 
-        // Overload GaussianSmapler instea
-
+        // Overload GaussianSampler instead?
 
         struct ONModelSampler
         {
@@ -81,7 +78,7 @@ namespace lm_impl {
             template<typename T>
             T random_state() {
                 T new_site(0);
-                for(auto i = 0; i < new_site.dim(); i++)
+                for(uint i = 0; i < new_site.dim(); i++)
                     new_site(i) += std::sqrt(2 * eps) * normal(mcmc::util::gen);
                 return new_site;
             }

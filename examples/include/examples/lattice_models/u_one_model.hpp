@@ -1,9 +1,9 @@
 //
-// Created by lukas on 07.08.20.
+// Created by lukas on 12.12.20.
 //
 
-#ifndef EXAMPLES_SU_TWO_MODEL_HPP
-#define EXAMPLES_SU_TWO_MODEL_HPP
+#ifndef LATTICEMODELIMPLEMENTATIONSEXAMPLES_U_ONE_MODEL_HPP
+#define LATTICEMODELIMPLEMENTATIONSEXAMPLES_U_ONE_MODEL_HPP
 
 #include "../../simulation_header.hpp"
 #include "execution/executer.hpp"
@@ -13,15 +13,15 @@
 
 // ### Working example ###
 
-void example_su_two_model_metropolis()
+void example_u_one_model_metropolis()
 {
-    typedef SU2<double> BasicType;
-    typedef lm_impl::link_lattice_system::SUTwoModelParameters ModelParams;
-    typedef lm_impl::mcmc_update::MetropolisUpdateParameters<ModelParams, lm_impl::link_lattice_system::SUTwoModelSampler> MCMCUpdateParams;
+    typedef U1 BasicType;
+    typedef lm_impl::link_lattice_system::UOneModelParameters ModelParams;
+    typedef lm_impl::mcmc_update::MetropolisUpdateParameters<ModelParams, lm_impl::link_lattice_system::UOneModelSampler> MCMCUpdateParams;
     typedef lm_impl::update_dynamics::SequentialUpdateParameters UpdateDynamicsParams;
     typedef lm_impl::lattice_system::LatticeParameters< BasicType, ModelParams, MCMCUpdateParams, UpdateDynamicsParams> SystemBaseParams;
 
-    std::string model_name = "SUTwoModelMetropolis";
+    std::string model_name = "UOneModelMetropolis";
     std::string rel_config_path = "/configs/" + model_name + "/";
     std::string rel_data_path = "/data/" + model_name + "/";
 
@@ -55,4 +55,4 @@ void example_su_two_model_metropolis()
     mcmc::execution::execute< SystemBaseParams > (ExecutionParams::name(), model_name);
 }
 
-#endif //EXAMPLES_SU_TWO_MODEL_HPP
+#endif //LATTICEMODELIMPLEMENTATIONSEXAMPLES_U_ONE_MODEL_HPP

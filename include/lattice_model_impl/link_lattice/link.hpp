@@ -32,6 +32,8 @@ public:
 
     virtual Link& operator+=(const Link& x);
     virtual Link& operator-=(const Link& x);
+    virtual Link& operator*=(const double& x);
+    virtual Link& operator/=(const double& x);
 
     /* virtual size_t size() const
     {
@@ -42,18 +44,6 @@ public:
 
     virtual Link& adjungate();
 };
-
-// Link operator*(const Link& x, const Link& y);
-
-template<typename T>
-Link<T> operator-(const Link<T>& a,const Link<T>& b)
-{
-    auto val(a);
-    val -= b;
-    return val;
-}
-
-//std::ostream& operator<<(std::ostream &os, const Link& x);
 
 
 template<typename T>
@@ -91,6 +81,19 @@ Link<T>& Link<T>::operator-=(const Link<T>& x) {
     return *this;
 }
 
+template<typename T>
+Link<T>& Link<T>::operator*=(const double& x) {
+    for(size_t i = 0; i < x_.size(); i ++)
+        x_[i] *= x;
+    return *this;
+}
+
+template<typename T>
+Link<T>& Link<T>::operator/=(const double& x) {
+    for(size_t i = 0; i < x_.size(); i ++)
+        x_[i] /= x;
+    return *this;
+}
 
 /*template<typename T>
 T Link<T>::trace() {

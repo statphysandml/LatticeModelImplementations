@@ -35,15 +35,17 @@ int main(int argc, char **argv) {
 
 // #include "../include/examples/lattice_models/ising_model_metropolis.hpp"
 // #include "../include/examples/lattice_models/xy_model_hybrid_monte_carlo.hpp"
-// #include "../include/examples/lattice_models/su_two_model.hpp"
+#include "../include/examples/lattice_models/u_one_model.hpp"
+#include "../include/examples/lattice_models/su_two_model.hpp"
 #include "../include/examples/lattice_models/on_model_metropolis.hpp"
 
 void custom_main()
 {
     // example_ising_model_metropolis();
     // example_xy_model_hmc_algorithm();
+    example_u_one_model_metropolis();
     // example_su_two_model_metropolis();
-    example_on_model_metropolis();
+    // example_on_model_metropolis();
 
     // example_ising_full_simulation();
     // example_xy_model_metropolis();
