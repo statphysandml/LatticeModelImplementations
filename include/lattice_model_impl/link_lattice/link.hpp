@@ -91,6 +91,7 @@ Link<T>& Link<T>::operator-=(const Link<T>& x) {
     return *this;
 }
 
+
 /*template<typename T>
 T Link<T>::trace() {
     return x_[0]*2.0;

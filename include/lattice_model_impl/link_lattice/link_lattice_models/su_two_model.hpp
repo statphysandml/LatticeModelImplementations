@@ -56,6 +56,11 @@ namespace lm_impl {
                                                                          A).trace())); // Additional 1/N missing in second term??
             }
 
+            template<typename T, typename T2=double_t>
+            T2 get_drift_term(const T site, const std::vector<T *> neighbours) {
+                return T2(0.0);
+            }
+
         private:
             const SUTwoModelParameters &mp;
         };

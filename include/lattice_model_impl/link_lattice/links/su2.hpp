@@ -241,8 +241,13 @@ namespace std {
     }
 }
 
-/*        template<>
-        struct TypePolicy< SU2<double> > {
+namespace mcmc {
+    namespace common_measures {
+        template<typename T>
+        struct TypePolicy;
+
+        template<>
+        struct TypePolicy<SU2<double> > {
         public:
             static double realv(const SU2<double> state) {
                 return 0.0; // state(0).real();
@@ -255,10 +260,18 @@ namespace std {
             static std::string conf(const SU2<double> state) {
                 return " ";
             }
+
+            static double realv(double state) {
+                return state; // state(0).real();
+            }
+
+            static double imagv(double state) {
+                return 0.0; //state(0).imag();
+            }
         };
 
         template<>
-        struct TypePolicy< SU2<const double> > {
+        struct TypePolicy<SU2<const double> > {
         public:
             static double realv(const SU2<double> state) {
                 return 0.0; //state(0).real();
@@ -274,7 +287,7 @@ namespace std {
         };
 
         template<>
-        struct TypePolicy< const SU2<double> > {
+        struct TypePolicy<const SU2<double> > {
         public:
             static double realv(const SU2<double> state) {
                 return 0.0; //state(0).real();
@@ -290,7 +303,7 @@ namespace std {
         };
 
         template<>
-        struct TypePolicy< const SU2<const double> > {
+        struct TypePolicy<const SU2<const double> > {
         public:
             static double realv(const SU2<double> state) {
                 return 0.0; //state(0).real();
@@ -303,9 +316,8 @@ namespace std {
             static std::string conf(const SU2<double> state) {
                 return " ";
             }
-        };*/
-
-
-
+        };
+    }
+}
 
 #endif //MAIN_SU2_HPP

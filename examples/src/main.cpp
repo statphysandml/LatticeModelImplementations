@@ -33,15 +33,17 @@ int main(int argc, char **argv) {
 #include "../include/examples/complex_site_models/complex_scalar_gaussian_model.hpp"
 #include "../include/examples/complex_lattice_models/complex_xy_model.hpp" */
 
-#include "../include/examples/lattice_models/ising_model_metropolis.hpp"
-/* #include "../include/examples/lattice_models/xy_model_hybrid_monte_carlo.hpp"
-#include "../include/examples/lattice_models/su_two_model.hpp" */
+// #include "../include/examples/lattice_models/ising_model_metropolis.hpp"
+// #include "../include/examples/lattice_models/xy_model_hybrid_monte_carlo.hpp"
+// #include "../include/examples/lattice_models/su_two_model.hpp"
+#include "../include/examples/lattice_models/on_model_metropolis.hpp"
 
 void custom_main()
 {
-    example_ising_model_metropolis();
+    // example_ising_model_metropolis();
     // example_xy_model_hmc_algorithm();
     // example_su_two_model_metropolis();
+    example_on_model_metropolis();
 
     // example_ising_full_simulation();
     // example_xy_model_metropolis();
