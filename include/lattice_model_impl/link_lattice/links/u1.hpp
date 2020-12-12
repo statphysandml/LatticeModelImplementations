@@ -89,6 +89,14 @@ U1 operator*(const U1& x, const double& y)
     return x(0) * y;
 }
 
+template <typename T>
+U1 operator/(const U1& x, const T& y)
+{
+    U1 temp(x);
+    temp /= y;
+    return temp;
+}
+
 U1 operator-(const U1& a,const U1& b)
 {
     U1 temp(a);
@@ -103,22 +111,14 @@ std::ostream& operator<<(std::ostream &os, const U1& x) {
 
 
 namespace std {
-
     std::string to_string(U1 x)
     {
         return std::to_string(x(0));
     }
 
-
     double fabs(U1 x)
     {
         return std::fabs(x(0));
-    }
-
-
-    double abs(const U1 x)
-    {
-        return std::abs(x(0));
     }
 }
 

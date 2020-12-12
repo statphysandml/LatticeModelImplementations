@@ -92,12 +92,6 @@ namespace std
     {
         return 0.0;
     }
-
-    template<typename T, uint N>
-    double abs(ON<T, N> arg)
-    {
-        return 0.0;
-    }
 }
 
 #endif //LATTICEMODELIMPLEMENTATIONS_ON_HPP

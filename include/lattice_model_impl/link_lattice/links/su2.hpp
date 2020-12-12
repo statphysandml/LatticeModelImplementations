@@ -17,6 +17,9 @@
 
 double compute_x0(double beta, double a);
 
+template <typename T> int sgn(T val) {
+    return (T(0) < val) - (val < T(0));
+}
 
 template<typename T>
 class SU2 : public Link<T>
@@ -29,20 +32,34 @@ public:
     explicit SU2(std::string init = "random");
     SU2(const SU2& A, double beta);
 
-    //void Print() const;
-
-    //double operator()(int i) const;
-    SU2& operator+=(const SU2& x);
-    SU2& operator-=(const SU2& x);
-    SU2& operator/=(const double& x);
-
     double trace();
-
     double det();
-
     SU2& adjungate();
 };
 
+template <typename T>
+SU2<T>::SU2(double a, double b, double c, double d) {
+    x_.push_back(a);
+    x_.push_back(b);
+    x_.push_back(c);
+    x_.push_back(d);
+}
+
+template <typename T>
+SU2<T>::SU2(double epsilon) {
+    // ( proposal state according to equation (4.30))
+    std::uniform_real_distribution<double> distribution(-0.5,0.5);
+
+    x_.push_back(sgn(distribution(mcmc::util::gen))*sqrt(1-epsilon*epsilon));
+
+    double length = 0;
+    for(auto i = 1; i < 4; i++) {
+        x_.push_back(distribution(mcmc::util::gen));
+        length += x_[i]*x_[i];
+    }
+    length = sqrt(length);
+    for(int i = 1; i < 4; i++) x_[i] = epsilon*x_[i]/length;
+};
 
 template <typename T>
 SU2<T>::SU2(std::string init)
@@ -77,34 +94,6 @@ SU2<T>::SU2(std::string init)
     }
 }
 
-template <typename T> int sgn(T val) {
-    return (T(0) < val) - (val < T(0));
-}
-
-template <typename T>
-SU2<T>::SU2(double epsilon) {
-    // ( proposal state according to equation (4.30))
-    std::uniform_real_distribution<double> distribution(-0.5,0.5);
-
-    x_.push_back(sgn(distribution(mcmc::util::gen))*sqrt(1-epsilon*epsilon));
-
-    double length = 0;
-    for(auto i = 1; i < 4; i++) {
-        x_.push_back(distribution(mcmc::util::gen));
-        length += x_[i]*x_[i];
-    }
-    length = sqrt(length);
-    for(int i = 1; i < 4; i++) x_[i] = epsilon*x_[i]/length;
-};
-
-template <typename T>
-SU2<T>::SU2(double a, double b, double c, double d) {
-    x_.push_back(a);
-    x_.push_back(b);
-    x_.push_back(c);
-    x_.push_back(d);
-}
-
 template <typename T>
 SU2<T>::SU2(const SU2<T>& A, double beta) {
     // Proposal according to heatbath!!
@@ -133,28 +122,6 @@ SU2<T>::SU2(const SU2<T>& A, double beta) {
     }
 }
 
-
-template <typename T>
-SU2<T>& SU2<T>::operator+=(const SU2<T>& x) {
-    for(auto i = 0; i < 4; i ++)
-        x_[i] += x(i);
-    return *this;
-}
-
-template <typename T>
-SU2<T>& SU2<T>::operator-=(const SU2<T>& x) {
-    for(auto i = 0; i < 4; i ++)
-        x_[i] -= x(i);
-    return *this;
-}
-
-template <typename T>
-SU2<T>& SU2<T>::operator/=(const double& x) {
-    for(auto i = 0; i < 4; i ++)
-        x_[i] /= x;
-    return *this;
-}
-
 template <typename T>
 double SU2<T>::trace() {
     return x_[0]*2.0;
@@ -176,22 +143,6 @@ SU2<T>& SU2<T>::adjungate() {
 }
 
 
-
-template<typename T>
-SU2<T> operator*(const SU2<T>& x, const SU2<T>& y);
-
-template<typename T>
-SU2<T> operator-(const SU2<T>& a,const SU2<T>& b);
-
-template<typename T>
-std::ostream& operator<<(std::ostream &os, const SU2<T>& x);
-
-template <typename T>
-SU2<T> operator*(const SU2<T>& x, const SU2<T>& y)
-{
-    return SU2<T>(x(0)*y(0)-x(1)*y(1)-x(2)*y(2)-x(3)*y(3),y(0)*x(1)+x(0)*y(1)-x(2)*y(3)+x(3)*y(2),y(0)*x(2)+x(0)*y(2)-x(3)*y(1)+x(1)*y(3),y(0)*x(3)+x(0)*y(3)-x(1)*y(2)+x(2)*y(1));
-}
-
 template<typename T>
 SU2<T> operator*(const SU2<T>& x, const double& y)
 {
@@ -207,6 +158,20 @@ SU2<T> operator-(const SU2<T>& a,const SU2<T>& b)
     SU2<T> temp(a);
     temp -= b;
     return temp;
+}
+
+template <typename T, typename T2>
+SU2<T> operator/(const SU2<T>& x, const T2& y)
+{
+    SU2<T> temp(x);
+    temp /= y;
+    return temp;
+}
+
+template <typename T>
+SU2<T> operator*(const SU2<T>& x, const SU2<T>& y)
+{
+    return SU2<T>(x(0)*y(0)-x(1)*y(1)-x(2)*y(2)-x(3)*y(3),y(0)*x(1)+x(0)*y(1)-x(2)*y(3)+x(3)*y(2),y(0)*x(2)+x(0)*y(2)-x(3)*y(1)+x(1)*y(3),y(0)*x(3)+x(0)*y(3)-x(1)*y(2)+x(2)*y(1));
 }
 
 template <typename T>
@@ -232,13 +197,6 @@ namespace std {
     {
         // ToDo!! Incorrect return type for SU2
         return std::fabs(x(0));
-    }
-
-    template<typename T>
-    double abs(const SU2<T> x)
-    {
-        // ToDo!! Incorrect return type for SU2
-        return std::abs(x(0));
     }
 }
 

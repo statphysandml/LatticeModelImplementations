@@ -44,8 +44,8 @@ void custom_main()
     // example_ising_model_metropolis();
     // example_xy_model_hmc_algorithm();
     example_u_one_model_metropolis();
-    // example_su_two_model_metropolis();
-    // example_on_model_metropolis();
+    example_su_two_model_metropolis();
+    example_on_model_metropolis();
 
     // example_ising_full_simulation();
     // example_xy_model_metropolis();
