@@ -20,9 +20,6 @@ template<typename T>
 class Link
 {
 protected:
-    //Link();
-    //Link(double a, double b, double c, double d);
-    //Link(double epsilon);
     std::vector< T > x_;
 public:
     void Print() const;
@@ -34,13 +31,6 @@ public:
     virtual Link& operator-=(const Link& x);
     virtual Link& operator*=(const double& x);
     virtual Link& operator/=(const double& x);
-
-    /* virtual size_t size() const
-    {
-        return x_.size();
-    } */
-
-    //virtual T trace();
 
     virtual Link& adjungate();
 };
@@ -94,11 +84,6 @@ Link<T>& Link<T>::operator/=(const double& x) {
         x_[i] /= x;
     return *this;
 }
-
-/*template<typename T>
-T Link<T>::trace() {
-    return x_[0]*2.0;
-}*/
 
 template<typename T>
 Link<T>& Link<T>::adjungate() {

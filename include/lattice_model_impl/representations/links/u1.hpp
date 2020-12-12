@@ -12,6 +12,7 @@
 #include <random>
 #include <algorithm>
 
+#include "mcmc_simulation/util/complex_type.hpp"
 #include "../link.hpp"
 
 
@@ -45,7 +46,7 @@ U1::U1(std::string init)
     }
 }
 
-U1::U1(double epsilon) {//######################################################
+U1::U1(double epsilon) {
     std::random_device rd;
     std::mt19937 gen{rd()};
     std::uniform_real_distribution<double> uniform(-epsilon,epsilon);

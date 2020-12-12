@@ -6,7 +6,7 @@
 #define LATTICEMODELIMPLEMENTATIONS_ON_HPP
 
 
-#include "../../link_lattice/link.hpp"
+#include "../link.hpp"
 #include "mcmc_simulation/util/random.hpp"
 
 
