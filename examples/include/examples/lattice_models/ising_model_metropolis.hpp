@@ -106,8 +106,8 @@ void example_ising_full_simulation()
 
     mcmc::execution::execute< SystemBaseParams > (mcmc::execution::CorrelationTimeParameters::name(), model_name);
 
-    mcmc::execution::ExpectationValueParameters expectation_value_parameters(correlation_time_results_path, 10000, 10000, {"Mean", "Config"}, // optional additional measures
-                                         {"AbsMean", "Energy"}); // Meausures which will be evaluated in terms of mean and error evaluation
+    mcmc::execution::ExpectationValueParameters expectation_value_parameters(correlation_time_results_path, 10000, 10000, {"Mean", "Config", "Energy"}, // optional additional measures
+                                         {"AbsMean"}); // Meausures which will be evaluated in terms of mean and error evaluation
     // expectation_value_parameters.write_to_file(rel_config_path);
 
     auto simparams_expectation_value = mcmc::simulation::SimulationParameters< SystemBaseParams , mcmc::execution::ExpectationValueParameters >::generate_simulation(

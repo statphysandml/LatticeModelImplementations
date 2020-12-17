@@ -16,7 +16,6 @@ namespace lm_impl {
             template<typename SB>
             struct MeasureDetailedBalanceAccuracyPolicy : public mcmc::common_measures::MeasurePolicy<SB> {
             public:
-                // ToDo: Introduce possibility to use this also without defining model_params_path
                 explicit MeasureDetailedBalanceAccuracyPolicy(const json &system_repr_params_,
                                                               const typename SB::SiteType &prev_site_) :
                         prev_site(prev_site_), system_repr(
@@ -47,7 +46,6 @@ namespace lm_impl {
             template<typename SB>
             struct MeasureAbsoluteDetailedBalanceAccuracyPolicy : public mcmc::common_measures::MeasurePolicy<SB> {
             public:
-                // ToDo: Introduce possibility to use this also without defining model_params_path
                 explicit MeasureAbsoluteDetailedBalanceAccuracyPolicy(const json &system_repr_params_,
                                                                       const typename SB::SiteType &prev_site_) :
                         prev_site(prev_site_), system_repr(

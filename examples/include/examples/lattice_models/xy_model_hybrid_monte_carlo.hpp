@@ -42,7 +42,7 @@ void example_xy_model_hmc_algorithm()
     SystemBaseParams lattice_parameters(
             json {
                     {"dimensions", dimensions},
-                    {"measures", {"XYMagnetization"}},
+                    {"measures", {"XYMagnetization", "Config"}},
                     {ModelParams::param_file_name(), model_parameters.get_json()},
                     {MCMCUpdateParams::param_file_name(), mcmc_update_parameters.get_json()},
                     {UpdateDynamicsParams::param_file_name(), update_dynamics_parameters.get_json()}}

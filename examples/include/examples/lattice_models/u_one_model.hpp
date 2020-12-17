@@ -15,7 +15,7 @@
 
 void example_u_one_model_metropolis()
 {
-    typedef U1 BasicType;
+    typedef lm_impl::link::U1 BasicType;
     typedef lm_impl::link_lattice_system::UOneModelParameters ModelParams;
     typedef lm_impl::mcmc_update::MetropolisUpdateParameters<ModelParams, lm_impl::link_lattice_system::UOneModelSampler> MCMCUpdateParams;
     typedef lm_impl::update_dynamics::SequentialUpdateParameters UpdateDynamicsParams;
@@ -37,7 +37,7 @@ void example_u_one_model_metropolis()
     SystemBaseParams lattice_parameters(
             json {
                     {"dimensions", dimensions},
-                    {"measures", {"Config", "Mean", "Std"}},
+                    {"measures", {"Config", "Mean", "Std", "Energy"}},
                     {"lattice_action_type", "plaquette"},
                     {ModelParams::param_file_name(), model_parameters.get_json()},
                     {MCMCUpdateParams::param_file_name(), mcmc_update_parameters.get_json()},
@@ -46,7 +46,7 @@ void example_u_one_model_metropolis()
 
     typedef mcmc::execution::ExpectationValueParameters ExecutionParams;
     ExecutionParams execution_parameters(10, 10000, 10000, {}, // optional additional measures
-                                         {"AbsMean", "Energy"}); // Meausures which will be evaluated in terms of mean and error evaluation
+                                         {"AbsMean"}); // Meausures which will be evaluated in terms of mean and error evaluation
 
     auto simparams = mcmc::simulation::SimulationParameters< SystemBaseParams , ExecutionParams >::generate_simulation(
             lattice_parameters, execution_parameters, rel_data_path, "model_params", "beta", 0.1, 0.625, 21);

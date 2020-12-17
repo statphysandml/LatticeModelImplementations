@@ -37,7 +37,7 @@ namespace lm_impl {
 
             // Move constructor
             SiteParameters(SiteParameters &&site_parameters) :
-                    measures(site_parameters.measures),
+                    SystemBaseParameters({"measures", site_parameters.measures}),
                     model_parameters(std::move(site_parameters.model_parameters)),
                     update_parameters(std::move(site_parameters.update_parameters)),
                     site_update_parameters(std::move(
@@ -109,8 +109,6 @@ namespace lm_impl {
             friend
             class SiteSystem;
 
-            json measures;
-
             std::unique_ptr<ModelParameters> model_parameters;
             std::unique_ptr<UpdateFormalismParameters> update_parameters;
             std::unique_ptr<SiteUpdateFormalismParameters> site_update_parameters;
@@ -134,9 +132,6 @@ namespace lm_impl {
 
                 update_formalism->initialize(*this);
                 site_update->initialize(*this);
-
-                // Needs to be called at the end so that update objects can already be used!
-                this->generate_measures();
             }
 
             SiteSystem(
@@ -146,12 +141,14 @@ namespace lm_impl {
             // Move constructor
             SiteSystem(SiteSystem &&site_system) :
             // sp_ptr(std::move(site_system.sp_ptr)),
+            // meausures do also need to be moved, right? -> not implemented so far
                     sp(site_system.sp),
                     site(site_system.site),
                     model(std::move(site_system.model)),
                     update_formalism(std::move(site_system.update_formalism)),
                     site_update(std::move(
-                            site_system.site_update)) { /* std::cout << "Move cosntructor is called" << std::endl; */ }
+                            site_system.site_update)) {
+                /* std::cout << "Move cosntructor is called" << std::endl; */ }
 
             // Move assignment
             SiteSystem &
@@ -188,7 +185,7 @@ namespace lm_impl {
                     site = update_formalism->template cold_state<T>();
             }
 
-            const auto get_size() const {
+            const uint get_size() const {
                 return 1;
             }
 
@@ -207,18 +204,6 @@ namespace lm_impl {
             auto get_system_representation() const {
                 return site;
             }
-
-            /* struct MeasureNormalizationPolicy: public common_measures::MeasurePolicy< SiteSystem<T, ModelParameters, UpdateFormalismParameters, SiteUpdateFormalismParameters> > {
-        public:
-            std::string measure(const SiteSystem<T, ModelParameters, UpdateFormalismParameters, SiteUpdateFormalismParameters> &system) override {
-                return std::to_string(system.normalization_factor());
-            }
-
-            std::string name()
-            {
-                return "Normalization";
-            }
-        }; */
 
             void generate_measures(const json &measure_names) override {
                 auto lattice_related_measures = generate_site_system_measures(sp.measures);

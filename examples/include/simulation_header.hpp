@@ -7,9 +7,7 @@
 
 #include <Python.h>
 
-#include "lattice_model_impl/link_lattice/links/u1.hpp"
-#include "lattice_model_impl/link_lattice/links/su2.hpp"
-#include "lattice_model_impl/site_representations/representations/on.hpp"
+#include "lattice_model_impl/representations/link_header.hpp"
 
 #include "mcmc_simulation/header.hpp"
 
@@ -39,17 +37,17 @@ typedef lm_impl::lattice_system::XYModelParameters ModelParams;
 typedef lm_impl::mcmc_update::HybridMonteCarloUpdateParameters<BasicType, ModelParams, mcmc::sampler::GaussianSampler> UpdateParams;
 typedef lm_impl::lattice_system::LatticeParameters< BasicType, ModelParams, UpdateParams, lm_impl::update_dynamics::GlobalLatticeUpdateParameters> SystemBaseParams; */
 
-typedef U1 BasicType;
+typedef lm_impl::link::U1 BasicType;
 typedef lm_impl::link_lattice_system::UOneModelParameters ModelParams;
 typedef lm_impl::mcmc_update::MetropolisUpdateParameters<ModelParams, lm_impl::link_lattice_system::UOneModelSampler> UpdateParams;
 typedef lm_impl::lattice_system::LatticeParameters< BasicType, ModelParams, UpdateParams, lm_impl::update_dynamics::SequentialUpdateParameters> SystemBaseParams;
 
-/* typedef SU2<double> BasicType;
+/* typedef lm_impl::link::SU2<double> BasicType;
 typedef lm_impl::link_lattice_system::SUTwoModelParameters ModelParams;
 typedef lm_impl::mcmc_update::MetropolisUpdateParameters<ModelParams, lm_impl::link_lattice_system::SUTwoModelSampler> UpdateParams;
 typedef lm_impl::lattice_system::LatticeParameters< BasicType, ModelParams, UpdateParams, lm_impl::update_dynamics::SequentialUpdateParameters> SystemBaseParams; */
 
-/* typedef ON<double, 4> BasicType;
+/* typedef lm_impl::link::ON<double, 4> BasicType;
 typedef lm_impl::lattice_system::ONModelParameters ModelParams;
 typedef lm_impl::mcmc_update::MetropolisUpdateParameters<ModelParams, lm_impl::lattice_system::ONModelSampler> UpdateParams;
 typedef lm_impl::lattice_system::LatticeParameters< BasicType, ModelParams, UpdateParams, lm_impl::update_dynamics::SequentialUpdateParameters> SystemBaseParams; */

@@ -18,7 +18,7 @@
 
 void example_on_model_metropolis()
 {
-    typedef ON<double, 4> BasicType;
+    typedef lm_impl::link::ON<double, 4> BasicType;
     typedef lm_impl::lattice_system::ONModelParameters ModelParams;
     typedef lm_impl::mcmc_update::MetropolisUpdateParameters<ModelParams, lm_impl::lattice_system::ONModelSampler> MCMCUpdateParams;
     typedef lm_impl::update_dynamics::SequentialUpdateParameters UpdateDynamicsParams;
@@ -40,7 +40,7 @@ void example_on_model_metropolis()
     SystemBaseParams lattice_parameters(
             json {
                     {"dimensions", dimensions},
-                    {"measures", {"Config", "Mean", "Std"}},
+                    {"measures", {"Config", "Mean", "Variance", "Energy"}},
                     {ModelParams::param_file_name(), model_parameters.get_json()},
                     {MCMCUpdateParams::param_file_name(), mcmc_update_parameters.get_json()},
                     {UpdateDynamicsParams::param_file_name(), update_dynamics_parameters.get_json()}}
@@ -48,7 +48,7 @@ void example_on_model_metropolis()
 
     typedef mcmc::execution::ExpectationValueParameters ExecutionParams;
     ExecutionParams execution_parameters(10, 10000, 10000, {}, // optional additional measures
-                                         {"AbsMean", "Energy"}); // Meausures which will be evaluated in terms of mean and error evaluation
+                                         {"AbsMean", "2ndMoment"}); // Meausures which will be evaluated in terms of mean and error evaluation
 
     auto simparams = mcmc::simulation::SimulationParameters< SystemBaseParams , ExecutionParams >::generate_simulation(
             lattice_parameters, execution_parameters, rel_data_path, "model_params", "beta", 0.1, 0.625, 21);

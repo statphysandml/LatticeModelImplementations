@@ -25,31 +25,53 @@ int main(int argc, char **argv) {
 #endif
 }
 
-/* #include "../include/examples/complex_lattice_models/complex_anharmonic_oscillator.hpp"
-#include "../include/examples/lattice_models/ising_model.hpp"
-#include "../include/examples/lattice_models/xy_model.hpp"
+// Site Models
+
+#include "../include/examples/site_models/polynomial_model.hpp"
+
+#include "../include/examples/complex_site_models/complex_scalar_gaussian_model.hpp"
 #include "../include/examples/complex_site_models/complex_cubic_model.hpp"
 #include "../include/examples/complex_site_models/complex_polynomial_model.hpp"
-#include "../include/examples/complex_site_models/complex_scalar_gaussian_model.hpp"
-#include "../include/examples/complex_lattice_models/complex_xy_model.hpp" */
 
-// #include "../include/examples/lattice_models/ising_model_metropolis.hpp"
-// #include "../include/examples/lattice_models/xy_model_hybrid_monte_carlo.hpp"
+// Lattice Models
+
+#include "../include/examples/lattice_models/ising_model_metropolis.hpp"
+#include "../include/examples/lattice_models/xy_model_hybrid_monte_carlo.hpp"
 #include "../include/examples/lattice_models/u_one_model.hpp"
 #include "../include/examples/lattice_models/su_two_model.hpp"
 #include "../include/examples/lattice_models/on_model_metropolis.hpp"
+#include "../include/examples/lattice_models/on_model_hybrid_monte_carlo.hpp" // ToDo
+
+#include "../include/examples/complex_lattice_models/complex_xy_model.hpp"
+#include "../include/examples/complex_lattice_models/complex_on_model.hpp" // ToDo
+
+// single real
+// single complex
+// single vec
+// lattice real
+// lattice complex
+// lattice vec
+
+
+
 
 void custom_main()
 {
+    // example_complex_scalar_gaussian_model();
+    // example_complex_cubic_model_complex_langevin();
+    // example_complex_polynomial_model_complex_langevin();
+
+    // example_complex_xy_model_complex_langevin();
+
+    // example_polynomial_model_langevin();
+
     // example_ising_model_metropolis();
     // example_xy_model_hmc_algorithm();
-    example_u_one_model_metropolis();
-    example_su_two_model_metropolis();
+    // example_u_one_model_metropolis();
+    // example_su_two_model_metropolis();
     example_on_model_metropolis();
 
     // example_ising_full_simulation();
-    // example_xy_model_metropolis();
-    // example_xy_model_hmc_algorithm();
 
     // example_complex_cubic_model_complex_langevin();
     // example_complex_scalar_gaussian_model();

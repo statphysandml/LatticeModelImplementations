@@ -83,7 +83,6 @@ namespace lm_impl {
 
                 auto proposal_energy = lattice.energy();
                 if (rand(mcmc::util::gen) >= std::min(1.0, std::exp(-1.0 * (proposal_energy - current_energy)))) {
-                    // ToDo: Rewrite?
                     auto &lattice_grid = lattice.get_system_representation();
                     lattice_grid = current_lattice_grid;
                 }

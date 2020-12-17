@@ -34,8 +34,8 @@ namespace lm_impl {
 
             template<typename Lattice>
             void update(Lattice &lattice, uint measure_interval = 1) {
-                // ToDo: Introduce boost!
-                for (auto j = 0; j < measure_interval; j++) {
+                // Introduce boost?
+                for (uint j = 0; j < measure_interval; j++) {
                     std::vector<typename Lattice::SiteType> lattice_grid_new(lattice.get_size(),
                                                                              typename Lattice::SiteType(0));
 
@@ -45,7 +45,7 @@ namespace lm_impl {
                                                                   lattice.neighbours_at(i));
                     }
 
-                    // ToDo: Rewrite?
+                    // Rewrite?
                     auto &lattice_grid = lattice.get_system_representation();
                     lattice_grid = lattice_grid_new;
                 }

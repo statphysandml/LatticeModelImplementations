@@ -48,7 +48,7 @@ namespace lm_impl {
         public:
             explicit ComplexONModel(const ComplexONModelParameters &mp_) : mp(mp_) {}
 
-            template<typename T, typename T2=double_t>
+            template<typename T, typename T2=std::complex<double_t>>
             T2 get_potential(const T site, const std::vector<T*> neighbours)
             {
                 double sum = 0;
@@ -60,7 +60,7 @@ namespace lm_impl {
                 return  -1.0 * mp.beta * sum; // 0.5
             }
 
-            template<typename T, typename T2=double_t>
+            template<typename T, typename T2=std::complex<double_t>>
             T2 get_drift_term(const T site, const std::vector<T *> neighbours) {
                 return T2(0.0);
             }
