@@ -65,25 +65,13 @@ void custom_main()
 
     // example_polynomial_model_langevin();
 
-    // example_ising_model_metropolis();
+    example_ising_model_metropolis();
     // example_xy_model_hmc_algorithm();
     // example_u_one_model_metropolis();
     // example_su_two_model_metropolis();
-    example_on_model_metropolis();
+    // example_on_model_metropolis();
 
     // example_ising_full_simulation();
-
-    // example_complex_cubic_model_complex_langevin();
-    // example_complex_scalar_gaussian_model();
-    // example_complex_polynomial_model_complex_langevin();
-    // example_complex_polynomial_model_cobrid_monte_carlo();
-
-    // example_complex_polynomial_model_complex_langevin_correlation_time();
-
-    /* example_complex_xy_model_complex_langevin(); ToDo: Check correct action and drift term definitions, implement adaptive stepsize!
-    example_complex_xy_model_config_comparison_complex_langevin(); */
-
-    // example_complex_anharmonic_oscillator_cobrid_monte_carlo();
 }
 
 // ./LatticeModelImplementations mode_type config_file data_root_dir
