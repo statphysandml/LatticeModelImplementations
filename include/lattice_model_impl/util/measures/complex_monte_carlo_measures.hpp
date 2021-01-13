@@ -21,7 +21,7 @@ namespace lm_impl {
                         prev_site(prev_site_), system_repr(
                         site_system::SiteSystem<typename SB::SiteType, typename SB::ModelType, mcmc_update::DummyMCMCUpdateParameters, update_dynamics::DummyUpdateDynamicsParameters>::from_json(
                                 json{{"mcmc_update_params", {{"eps", 0.0}}},
-                                     {"model_params_path",  system_repr_params_["model_params_path"]}}, "None")) {}
+                                     {"model_params_path",  system_repr_params_["model_params_path"]}})) {}
 
                 std::string measure(const SB &system) override {
                     auto previous_site = prev_site;
@@ -51,7 +51,7 @@ namespace lm_impl {
                         prev_site(prev_site_), system_repr(
                         site_system::SiteSystem<typename SB::SiteType, typename SB::ModelType, mcmc_update::DummyMCMCUpdateParameters, update_dynamics::DummyUpdateDynamicsParameters>::from_json(
                                 json{{"mcmc_update_params", {{"eps", 0.0}}},
-                                     {"model_params_path",  system_repr_params_["model_params_path"]}}, "None")) {}
+                                     {"model_params_path",  system_repr_params_["model_params_path"]}})) {}
 
                 std::string measure(const SB &system) override {
                     auto previous_site = prev_site;

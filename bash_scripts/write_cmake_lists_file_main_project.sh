@@ -41,8 +41,13 @@ set(PYTHON_INCLUDE_DIRS "${path_to_python3}include/python3.7m")
 include_directories(\${PYTHON_INCLUDE_DIRS})
 find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
 message("Python executable = \${PYTHON_EXECUTABLE}")
-
-set(PYTHON_SCRIPTS_PATH "${path_to_mcmc_simulation_lib}/python_scripts/")
+EOL
+if [ -v python_modules_path ]; then
+cat >>$project_path/cmake/CMakeLists.txt <<EOL
+set(PYTHON_SCRIPTS_PATH "${python_modules_path}")
+EOL
+fi
+cat >>$project_path/cmake/CMakeLists.txt <<EOL
 
 option(PYTHON "Enable Python" ON)
 
@@ -62,8 +67,20 @@ fi
 cat >>$project_path/cmake/CMakeLists.txt <<EOL
 
 if(NOT CLUSTER_MODE)
-    set(CLUSTER_MODE "${cluster_mode}") # else local
+    set(CLUSTER_MODE "${cluster_mode}")
 endif()
+
+EOL
+if [ "$project_type" = "project" ]; then
+cat >>$project_path/cmake/CMakeLists.txt <<EOL
+configure_file(./../include/config.h.in ./../include/config.h @ONLY)
+EOL
+else
+cat >>$project_path/cmake/CMakeLists.txt <<EOL
+configure_file(./../config.h.in ./../config.h @ONLY)
+EOL
+fi
+cat >>$project_path/cmake/CMakeLists.txt <<EOL
 
 find_library(ParamHelper NAMES libparamhelper.a PATHS ${path_to_param_helper}lib)
 message("ParamHelper = \${ParamHelper}")
@@ -143,7 +160,20 @@ cat >>$project_path/cmake/CMakeLists.txt <<EOL
 
     target_link_libraries( ${project_name} \${LatticeModelImplementations} \${MCMCSimulationLib} ${target_link_libraries_appendix})
 
-    target_compile_definitions(${project_name} PUBLIC -D GPU -D THRUST -D PYTHON)
+    if (PYTHON)
+      target_compile_definitions(${project_name} PUBLIC -D PYTHON)
+    endif()
+
+    if (THRUST)
+      target_compile_definitions(${project_name} PUBLIC -D THRUST)
+    endif()
+
+    if (GPU)
+      target_compile_definitions(${project_name} PUBLIC -D GPU)
+    endif()
+
+    # target_compile_definitions(${project_name} PUBLIC -D GPU -D THRUST -D PYTHON)
+
     set_target_properties(${project_name} PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
 else()
     set(CMAKE_CXX_FLAGS "\${CMAKE_CXX_FLAGS} -std=c++14 -static-libstdc++ -lboost_system -lboost_filesystem")
@@ -175,7 +205,9 @@ EOL
 fi
 cat >>$project_path/cmake/CMakeLists.txt <<EOL
     )
-    target_compile_definitions(${project_name} PUBLIC -D PYTHON)
+    if (PYTHON)
+      target_compile_definitions(${project_name} PUBLIC -D PYTHON)
+    endif()
     target_link_libraries( ${project_name} \${LatticeModelImplementations} \${MCMCSimulationLib} ${target_link_libraries_appendix})
 endif()
 

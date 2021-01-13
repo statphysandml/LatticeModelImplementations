@@ -1,6 +1,7 @@
 #ifndef MAIN_CPP
 #define MAIN_CPP
 
+#include "../include/config.h"
 #include "../include/simulation_header.hpp"
 #include "execution/executer.hpp"
 
@@ -12,7 +13,7 @@ int main(int argc, char **argv) {
     param_helper::fs::prfs::set_relative_path_to_project_root_dir("/../");
 
 #ifdef PYTHON
-    mcmc::execution::initialize_python();
+    mcmc::execution::initialize_python(PYTHON_SCRIPTS_PATH);
 #endif
 
     if(argc > 1)
@@ -23,6 +24,7 @@ int main(int argc, char **argv) {
 #ifdef PYTHON
     mcmc::execution::finalize_python();
 #endif
+    return 0;
 }
 
 // Site Models
@@ -43,7 +45,7 @@ int main(int argc, char **argv) {
 #include "../include/examples/lattice_models/on_model_hybrid_monte_carlo.hpp" // ToDo
 
 #include "../include/examples/complex_lattice_models/complex_xy_model.hpp"
-#include "../include/examples/complex_lattice_models/complex_on_model.hpp" // ToDo
+#include "../include/examples/complex_lattice_models/complex_on_model.hpp"
 
 // single real
 // single complex
@@ -62,10 +64,11 @@ void custom_main()
     // example_complex_polynomial_model_complex_langevin();
 
     // example_complex_xy_model_complex_langevin();
+    example_complex_on_model_complex_langevin();
 
     // example_polynomial_model_langevin();
 
-    example_ising_model_metropolis();
+    // example_ising_model_metropolis();
     // example_xy_model_hmc_algorithm();
     // example_u_one_model_metropolis();
     // example_su_two_model_metropolis();

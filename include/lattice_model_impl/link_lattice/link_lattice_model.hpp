@@ -7,6 +7,8 @@
 
 #include "../lattice/lattice_model.hpp"
 
+#include "../util/measures/link_lattice_model_measures.hpp"
+
 namespace lm_impl {
     namespace link_lattice_system {
 
@@ -17,44 +19,24 @@ namespace lm_impl {
 
 
         template <typename ModelCL>
-            class LinkLatticeModel : public lattice_system::LatticeModel<ModelCL>
+        class LinkLatticeModel : public lattice_system::LatticeModel<ModelCL>
         {
         public:
-            template<typename SB>
-        struct MeasurePolyakovLoopPolicy: public mcmc::common_measures::MeasurePolicy< SB > {
-            public:
-                MeasurePolyakovLoopPolicy(const std::vector<int> &dimensions_, const uint &elem_per_site_) : dimensions(dimensions_), elem_per_site(elem_per_site_)
-                {}
-
-                std::string measure(SB &system) override {
-                    std::complex<double> polyakov_loop = 0;
-                    for(auto i = 0; i < system.size(); i += elem_per_site * dimensions[0])
-                    {
-                        typename SB::SiteType group_elem = system[i];
-                        for(auto tau = elem_per_site; tau < elem_per_site * dimensions[0]; tau += elem_per_site)
-                            group_elem = group_elem * system[i + tau];
-                        polyakov_loop += group_elem.trace();
-                    }
-                    //return std::to_string(TypePolicy<double>::imagv(system.energy()));
-                    return std::to_string(polyakov_loop.real()) + " " + std::to_string(polyakov_loop.imag());
-                }
-
-                std::string name()
-                {
-                    return "PolyakovLoop";
-                }
-
-                const std::vector<int> &dimensions; // Different dimensions
-                const uint &elem_per_site; // Number of elements per site
-            };
-
             template<typename SB, typename SBP>
-            mcmc::common_measures::MeasurePolicy<SB>* model_measure_factory(const std::string& measure, const SBP& system_base_parameters) {
-                if(measure == "PolyakovLoop")
-                    return new MeasurePolyakovLoopPolicy<SB>(system_base_parameters.get_dimensions(), system_base_parameters.get_elems_per_site());
-                else
-                    return nullptr;
+            std::vector<std::unique_ptr<mcmc::common_measures::MeasurePolicy<SB>>>
+            generate_model_measures(const SBP &system_parameters) {
+                auto measure_names = system_parameters.get_measures();
+                std::vector<std::unique_ptr<mcmc::common_measures::MeasurePolicy<SB>>> link_lattice_measures{};
+                for (auto &measure_name :  measure_names)
+                    if (measure_name == "PolyakovLoop")
+                        link_lattice_measures.push_back(std::make_unique<util::link_lattice_system_model_measures::MeasurePolyakovLoopPolicy<SB>>(
+                                system_parameters.get_dimensions(), system_parameters.get_elems_per_site()));
+                    else if (measure_name == "AveragePlaquetteAction")
+                        link_lattice_measures.push_back(std::make_unique<util::link_lattice_system_model_measures::MeasureAveragePlaquetteActionPolicy<SB>>(
+                                system_parameters.get_dimension()));
+                return link_lattice_measures;
             }
+
         protected:
             template<typename T>
             T calc_A (const std::vector<T*> neighbours, bool both_orientations=true) {

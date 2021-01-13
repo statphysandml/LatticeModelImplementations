@@ -15,6 +15,17 @@ examples/release_thrust_gpu/*
 examples/data/*
 examples/configs/*
 examples/results/*
+examples/include/config.h
+examples/include/config.h.in
+examples/simulations/*
+!examples/simulations/IsingModel/
+examples/simulations/IsingModel/*
+!examples/simulations/IsingModel/main.cpp
+!examples/simulations/IsingModel/simulation_header.hpp
+!examples/simulations/SU2Model/
+examples/simulations/SU2Model/*
+!examples/simulations/SU2Model/main.cpp
+!examples/simulations/SU2Model/simulation_header.hpp
 lib/
 libgpu/
 __pychache__/

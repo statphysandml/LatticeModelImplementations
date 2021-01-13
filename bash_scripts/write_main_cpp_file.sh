@@ -5,13 +5,13 @@ cat >"${src_path}/main.cpp" <<EOL
 EOL
 if [ "$project_type" = "project" ]; then
 cat >>"${src_path}/main.cpp" <<EOL
+#include "../include/config.h"
 #include "../include/simulation_header.hpp"
-#include "execution/executer.hpp"
 EOL
 else
 cat >>"${src_path}/main.cpp" <<EOL
+#include "config.h"
 #include "simulation_header.hpp"
-#include "execution/executer.hpp"
 EOL
 fi
 cat >>"${src_path}/main.cpp" <<EOL
@@ -21,21 +21,24 @@ cat >>"${src_path}/main.cpp" <<EOL
 void custom_main();
 
 int main(int argc, char **argv) {
-    // initialize_executer_params(PROJECT_NAME, PYTHON_SCRIPTS_PATH, CLUSTER_MODE, CONDA_ACTIVATE_PATH, VIRTUAL_ENV); // optional
+    param_helper::fs::prfs::set_relative_path_to_project_root_dir("../");
+
+    // Initialization - Only needed for GPU and CPU runs
+    mcmc::execution::initialize_executer_params(PROJECT_NAME, CLUSTER_MODE);
 
 #ifdef PYTHON
-    mcmc::execution::initialize_python();
+    mcmc::execution::initialize_python(PYTHON_SCRIPTS_PATH);
 #endif
 
-    // A function of one of the first three if conditions is only called when an actual simulation takes place
+    // A function of one of the first three if-conditions is only called when an actual simulation takes place
     // (or for the generation of default parameters) based on a program that uses ./Main with arguments (from cpu/gpu/locally)
     if(argc > 1 and argc < 6)
     {
-        run_from_file<typename from_file_simulation::MetropolisDynamics<XYModelParameters>::SystemBaseParams>(argc, argv);
+        mcmc::execution::run_from_file<typename from_file_simulation::MetropolisDynamics<lm_impl::lattice_system::XYModelParameters>::SystemBaseParams>(argc, argv);
     }
     else if(argc == 6)
     {
-        from_file_simulation::run_based_on_algorithm<ComplexPolynomialModelParameters>(argc, argv);
+        from_file_simulation::run_based_on_algorithm<lm_impl::site_system::ComplexPolynomialModelParameters>(argc, argv);
     }
     else if(argc == 7)
     {
@@ -48,22 +51,23 @@ int main(int argc, char **argv) {
 #ifdef PYTHON
     mcmc::execution::finalize_python();
 #endif
+    return 0;
 }
 
 void custom_main()
 {
-    typedef IsingModelParameters ModelParams;
+    typedef lm_impl::lattice_system::IsingModelParameters ModelParams;
 
     typedef double BasicType;
-    typedef MetropolisUpdateParameters<ModelParams, IsingModelSampler> MCMCUpdateParams;
-    typedef SequentialUpdateParameters UpdateDynamicsParams;
-    typedef LatticeParameters<BasicType, ModelParams, MCMCUpdateParams, UpdateDynamicsParams> SystemBaseParams;
+    typedef lm_impl::mcmc_update::MetropolisUpdateParameters<ModelParams, lm_impl::lattice_system::IsingModelSampler> MCMCUpdateParams;
+    typedef lm_impl::update_dynamics::SequentialUpdateParameters UpdateDynamicsParams;
+    typedef lm_impl::lattice_system::LatticeParameters< BasicType, ModelParams, MCMCUpdateParams, UpdateDynamicsParams> SystemBaseParams;
 
-    std::string target_name = "IsingModelMetropolis";
-    std::string rel_config_path = "/configs/" + target_name + "/";
-    std::string rel_data_path = "/data/" + target_name + "/";
+    std::string model_name = "IsingModelMetropolis";
+    std::string rel_config_path = "/configs/" + model_name + "/";
+    std::string rel_data_path = "/data/" + model_name + "/";
 
-    std::vector<double> dimensions {16, 16};
+    std::vector<double> dimensions {4, 4};
 
     MCMCUpdateParams mcmc_update_parameters(0.1);
 
@@ -75,22 +79,22 @@ void custom_main()
     SystemBaseParams lattice_parameters(
             json {
                     {"dimensions", dimensions},
-                    {"measures", {"Config", "AbsMean", "Mean", "Energy", "Std"}},
+                    {"measures", {"Config", "Mean", "Std"}},
                     {ModelParams::param_file_name(), model_parameters.get_json()},
                     {MCMCUpdateParams::param_file_name(), mcmc_update_parameters.get_json()},
-                    {UpdateDynamicsParams::param_file_name(), update_dynamics_parameters.get_json()}},
-            rel_config_path
+                    {UpdateDynamicsParams::param_file_name(), update_dynamics_parameters.get_json()}}
     );
 
-    typedef ExpectationValueParameters ExecutionParams;
-    ExecutionParams execution_parameters(1, 10000, 100, {}, {});
+    typedef mcmc::execution::ExpectationValueParameters ExecutionParams;
+    ExecutionParams execution_parameters(10, 10000, 10000, {}, // optional additional measures
+                                         {"AbsMean", "Energy"}); // Meausures which will be evaluated in terms of mean and error evaluation
 
-    auto simparams = SimulationParameters< SystemBaseParams , ExecutionParams >::generate_traceable_simulation(
-            lattice_parameters, execution_parameters, rel_config_path, rel_data_path, "model_params", "beta", 0.1, 0.7, 10);
+    auto simparams = mcmc::simulation::SimulationParameters< SystemBaseParams , ExecutionParams >::generate_simulation(
+            lattice_parameters, execution_parameters, rel_data_path, "model_params", "beta", 0.1, 0.625, 21);
+    simparams.write_to_file(rel_config_path);
 
     // Execute the simulation
-    execute< SystemBaseParams > (ExecutionParams::name(), target_name, "/./", true,
-                                 Executer::local, true);
+    mcmc::execution::execute< SystemBaseParams > (ExecutionParams::name(), model_name, "./", true, mcmc::execution::Executer::local, true);
 
     /* typedef XYModelParameters ModelParams;
 
@@ -99,9 +103,9 @@ void custom_main()
     typedef SequentialUpdateParameters UpdateDynamicsParams;
     typedef LatticeParameters< BasicType, ModelParams, MCMCUpdateParams, UpdateDynamicsParams> SystemBaseParams;
 
-    std::string target_name = "XYModelMetropolis";
-    std::string rel_config_path = "/configs/" + target_name + "/";
-    std::string rel_data_path = "/data/" + target_name + "/";
+    std::string model_name = "XYModelMetropolis";
+    std::string rel_config_path = "/configs/" + model_name + "/";
+    std::string rel_data_path = "/data/" + model_name + "/";
 
     std::vector<double> dimensions {4, 4};
 
@@ -129,7 +133,7 @@ void custom_main()
             lattice_parameters, execution_parameters, rel_config_path, rel_data_path, "model_params", "beta", 0.05, 1.55, 10);
 
     // Execute the simulation
-    execute< SystemBaseParams > (ExecutionParams::name(), target_name, "/./", true,
+    execute< SystemBaseParams > (ExecutionParams::name(), model_name, "/./", true,
                                  Executer::local, false);
     */
 }

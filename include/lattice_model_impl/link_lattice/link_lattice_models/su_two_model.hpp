@@ -46,17 +46,17 @@ namespace lm_impl {
         public:
             explicit SUTwoModel(const SUTwoModelParameters &mp_) : mp(mp_) {}
 
+            // Corresponds to the contribution of the link to the action: S[U] = \beta/N tr[neighbours.size() / 3 * identity - U * A]
+            // See Gattringer - Quantum Chromodynamics on the Lattice Section 4.1.4
             template<typename T, typename T2=double_t>
-            T2 get_potential(const T site, const std::vector<T *> neighbours) {
+            T2 get_potential(const T link, const std::vector<T *> neighbours) {
                 T A = calc_A(neighbours);
-                // (lat.dim()-1)*2-std::real(1.0/N*(lat(n*lat.dim()+mu)*calc_A(lat, n, mu, both_orientations)).trace())
                 return mp.beta / SUTwoModelParameters::N() * (neighbours.size() / 3 * SUTwoModelParameters::N() -
-                                                              std::real((site *
-                                                                         A).trace())); // Additional 1/N missing in second term??
+                                                              std::real((link * A).trace()));
             }
 
             template<typename T, typename T2=double_t>
-            T2 get_drift_term(const T site, const std::vector<T *> neighbours) {
+            T2 get_drift_term(const T link, const std::vector<T *> neighbours) {
                 return T2(0.0);
             }
 
@@ -75,8 +75,8 @@ namespace lm_impl {
             }
 
             template<typename T>
-            T propose_state(T site) {
-                return site * T(eps);
+            T propose_state(T link) {
+                return link * T(eps);
             }
 
             double get_eps() const

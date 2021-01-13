@@ -52,6 +52,14 @@ namespace lm_impl {
                 return T(0);
             };
 
+            template<typename SB, typename SBP>
+            std::vector<std::unique_ptr<mcmc::common_measures::MeasurePolicy<SB>>>
+            generate_mcmc_update_measures(const SBP &system_parameters) {
+                // auto measure_names = system_parameters.get_measures();
+                return std::vector<std::unique_ptr<mcmc::common_measures::MeasurePolicy<SB>>>{};
+            }
+
+
         protected:
             SamplerCl sampler;
 

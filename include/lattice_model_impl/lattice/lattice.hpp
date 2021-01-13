@@ -20,7 +20,6 @@ namespace lm_impl {
         public:
             explicit LatticeParameters(const json params_) : SystemBaseParameters(params_) {
 
-                // measures = get_entry<json>("measures", {"Mean"});
                 dimensions = get_entry<std::vector<int> >("dimensions", std::vector<int>{4, 4});
                 lattice_action_type = get_entry<std::string>("lattice_action_type", "nearest_neighbour");
 
@@ -105,6 +104,10 @@ namespace lm_impl {
                 return dimensions;
             }
 
+            const auto &get_dimension() const {
+                return dimension;
+            }
+
             const uint &get_elems_per_site() const {
                 return elem_per_site;
             }
@@ -162,13 +165,13 @@ namespace lm_impl {
             }
 
             void initialize(std::string starting_mode) {
-                // Needs to be called at the end so that update objects can already be used!
+                // Needs to be called at the end so that generated objects (dynamics, model, etc.) can already be used!
                 this->generate_measures(lp.measures);
 
                 std::cout << "Note : Cold start not possible, so far" << std::endl;
             }
 
-            // Returns the total number of elements of the lattice - not the total number of sites
+            // Returns the total number of elements of the lattice - (equals the total number of sites if elem_per_site=1)
             auto get_size() const {
                 return lp.size;
             }
@@ -212,11 +215,19 @@ namespace lm_impl {
             void generate_measures(const json &measure_names) override {
                 auto lattice_related_measures = generate_lattice_system_measures(lp.measures);
                 this->concat_measures(lattice_related_measures);
-                auto model_related_measures = model->template generate_model_measures<LatticeSystem>(lp.measures);
+
+                auto model_related_measures = model->template generate_model_measures<LatticeSystem,
+                        LatticeParameters<T, ModelParameters, UpdateFormalismParameters, LatticeUpdateFormalismParameters>>(lp);
                 this->concat_measures(model_related_measures);
-                auto lattice_update_related_measures = lattice_update->template generate_update_dynamics_measures<LatticeSystem>(
-                        lp.measures);
+
+                auto mcmc_update_related_measures = update_formalism->template generate_mcmc_update_measures<LatticeSystem,
+                        LatticeParameters<T, ModelParameters, UpdateFormalismParameters, LatticeUpdateFormalismParameters>>(lp);
+                this->concat_measures(mcmc_update_related_measures);
+
+                auto lattice_update_related_measures = lattice_update->template generate_update_dynamics_measures<LatticeSystem,
+                        LatticeParameters<T, ModelParameters, UpdateFormalismParameters, LatticeUpdateFormalismParameters>>(lp);
                 this->concat_measures(lattice_update_related_measures);
+
                 auto common_defined_measures = this->generate_systembase_measures(lp.measures);
                 this->concat_measures(common_defined_measures);
             }
@@ -230,8 +241,7 @@ namespace lm_impl {
                 for (uint i = 0; i < get_size(); i++) {
                     energy += model->get_potential(lattice[i], neighbours[i]);
                 }
-                // return  2 * energy / (double(size()) * 6.0);
-                return 0.5 * energy / double(get_size()); // 2 *
+                return 0.5 * energy / double(get_size());
             }
 
             auto drift_term() const {
@@ -240,8 +250,7 @@ namespace lm_impl {
                     // ToDo: Think about how this can be integrated!
                     // drift_term += model->get_drift_term(lattice[i], neighbours[i]);
                 }
-                // return  2 * energy / (double(get_size()) * 6.0);
-                return 0.5 * drift_term / double(get_size()); // 2 *
+                return 0.5 * drift_term / double(get_size());
             }
 
             void normalize(std::vector<T> &lattice_grid) {
@@ -282,7 +291,7 @@ namespace lm_impl {
         }
 
 
-//site, moving dimension, direction, index
+        //site, moving dimension, direction, index
         template<typename T, typename ModelParameters, typename UpdateFormalismParameters, typename LatticeUpdateFormalismParameters>
         int
         LatticeSystem<T, ModelParameters, UpdateFormalismParameters, LatticeUpdateFormalismParameters>::neigh_dir(int n,
@@ -348,8 +357,6 @@ namespace lm_impl {
                                     &lattice[neigh_dir(neigh_dir(n, mu, true, 0) / lp.elem_per_site, nu, false, nu)]);
                             nn_of_site.push_back(&lattice[neigh_dir(n, nu, false, mu)]);
                             nn_of_site.push_back(&lattice[neigh_dir(n, nu, false, nu)]);
-//                    A += lat(lat.neigh_dir(n,mu,true,nu))*((lat(lat.neigh_dir(n,nu,true,mu))).adjungate())*(lat(n*lat.dim()+nu).adjungate());
-//                    if(both_orientations) A += ((lat(lat.neigh_dir(lat.neigh_dir(n,mu,true,0)/lat.dim(),nu,false,nu))).adjungate())*((lat(lat.neigh_dir(n,nu,false,mu))).adjungate())*lat(lat.neigh_dir(n,nu,false,nu));
                         }
                     }
                     neighbours.push_back(nn_of_site);
@@ -380,9 +387,6 @@ namespace lm_impl {
                     lattice_measures.push_back(std::make_unique<util::lattice_system_model_measures::MeasureEnergyPolicy<LatSys>>());
                 else if (measure_name == "Drift")
                     lattice_measures.push_back(std::make_unique<util::lattice_system_model_measures::MeasureDriftPolicy<LatSys>>());
-                else if (measure_name == "WilsonAction")
-                    lattice_measures.push_back(
-                            std::make_unique<util::lattice_system_model_measures::MeasureWilsonActionPolicy<LatSys>>());
             return lattice_measures;
         }
 

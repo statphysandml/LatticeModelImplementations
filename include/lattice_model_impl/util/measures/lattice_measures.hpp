@@ -37,18 +37,6 @@ namespace lm_impl {
                     return "Drift";
                 }
             };
-
-            template<typename SB>
-            struct MeasureWilsonActionPolicy : public mcmc::common_measures::MeasurePolicy<SB> {
-            public:
-                std::string measure(const SB &system) override {
-                    return std::to_string(system.energy());
-                }
-
-                std::string name() {
-                    return "WilsonAction";
-                }
-            };
         }
     }
 }

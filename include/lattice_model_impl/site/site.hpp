@@ -164,10 +164,10 @@ namespace lm_impl {
                 return *this;
             }
 
-            static SiteSystem from_json(const json params_, const std::string rel_config_path_) {
+            static SiteSystem from_json(const json params_) {
                 // Object is generated on the heap
-                auto sp_ptr_ = std::make_unique<SiteParameters<T, ModelParameters, UpdateFormalismParameters, SiteUpdateFormalismParameters>>(
-                        params_, rel_config_path_);
+                auto sp_ptr_ = std::make_unique<
+                        SiteParameters<T, ModelParameters, UpdateFormalismParameters, SiteUpdateFormalismParameters>>(params_);
                 return SiteSystem<T, ModelParameters, UpdateFormalismParameters, SiteUpdateFormalismParameters>(
                         *(sp_ptr_.release()));
             }
@@ -208,11 +208,19 @@ namespace lm_impl {
             void generate_measures(const json &measure_names) override {
                 auto lattice_related_measures = generate_site_system_measures(sp.measures);
                 this->concat_measures(lattice_related_measures);
-                auto model_related_measures = model->template generate_model_measures<SiteSystem>(sp.measures);
+
+                auto model_related_measures = model->template generate_model_measures<SiteSystem,
+                        SiteParameters<T, ModelParameters, UpdateFormalismParameters, SiteUpdateFormalismParameters>>(sp);
                 this->concat_measures(model_related_measures);
-                auto site_update_related_measures = site_update->template generate_update_dynamics_measures<SiteSystem>(
-                        sp.measures);
+
+                auto mcmc_update_related_measures = update_formalism->template generate_mcmc_update_measures<SiteSystem,
+                        SiteParameters<T, ModelParameters, UpdateFormalismParameters, SiteUpdateFormalismParameters>>(sp);
+                this->concat_measures(mcmc_update_related_measures);
+
+                auto site_update_related_measures = site_update->template generate_update_dynamics_measures<SiteSystem,
+                        SiteParameters<T, ModelParameters, UpdateFormalismParameters, SiteUpdateFormalismParameters>>(sp);
                 this->concat_measures(site_update_related_measures);
+
                 auto common_defined_measures = this->generate_systembase_measures(sp.measures);
                 this->concat_measures(common_defined_measures);
             }
@@ -285,9 +293,6 @@ namespace lm_impl {
                     site_measures.push_back(std::make_unique<util::lattice_system_model_measures::MeasureEnergyPolicy<SiteSys>>());
                 else if (measure_name == "Drift")
                     site_measures.push_back(std::make_unique<util::lattice_system_model_measures::MeasureDriftPolicy<SiteSys>>());
-                else if (measure_name == "WilsonAction")
-                    site_measures.push_back(
-                            std::make_unique<util::lattice_system_model_measures::MeasureWilsonActionPolicy<SiteSys>>());
             return site_measures;
         }
 

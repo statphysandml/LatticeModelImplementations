@@ -10,6 +10,7 @@
 #include "lattice_models/anharmonic_oscillator.hpp"
 #include "lattice_models/complex_anharmonic_oscillator.hpp"
 #include "lattice_models/complex_xy_model.hpp"
+#include "lattice_models/complex_on_model.hpp"
 #include "lattice_models/ising_model.hpp"
 #include "lattice_models/xy_model.hpp"
 #include "lattice_models/o_n_model.hpp"

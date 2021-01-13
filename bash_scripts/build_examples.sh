@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Examples
+
 # MCMC Simulation lib
 parent_dir="$(dirname -- "$(readlink -f -- "build_examples.sh")")"
 path_to_lattice_model_implementations="$(dirname "$parent_dir")"
@@ -12,6 +14,7 @@ path_to_param_helper="${path_to_mcmc_simulation_lib}/external_submodules/ParamHe
 
 project_name="LatticeModelImplementationsExamples"
 project_path="../examples/"
+project_path="$(cd "$project_path" && pwd -P)"
 project_type="project"
 
 # Build the project

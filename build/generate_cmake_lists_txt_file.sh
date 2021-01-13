@@ -42,17 +42,8 @@ include_directories(\${PYTHON_INCLUDE_DIRS})
 find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
 message("Python executable = \${PYTHON_EXECUTABLE}")
 
-set(PYTHON_SCRIPTS_PATH "${path_to_mcmc_simulation_lib}/python_scripts/")
-
 option(PYTHON "Enable Python" ON)
 
-if(NOT CONDA_ACTIVATE_PATH)
-    set(CONDA_ACTIVATE_PATH "${path_to_conda_activate}")
-endif()
-
-if(NOT VIRTUAL_ENV)
-    set(VIRTUAL_ENV "${virtual_env}")
-endif()
 EOL
 else
 cat >>../CMakeLists.txt <<EOL
@@ -60,10 +51,6 @@ option(PYTHON "Disable Python" OFF)
 EOL
 fi
 cat >>../CMakeLists.txt <<EOL
-
-if(NOT CLUSTER_MODE)
-    set(CLUSTER_MODE "${cluster_mode}") # else local
-endif()
 
 find_library(ParamHelper NAMES libparamhelper.a PATHS ${path_to_param_helper}lib)
 message("ParamHelper = \${ParamHelper}")
@@ -120,9 +107,19 @@ cat >>../CMakeLists.txt <<EOL
     cuda_add_library(latticemodelimplementations STATIC src/main.cpp)
     set_property(TARGET latticemodelimplementations PROPERTY CUDA_STANDARD 14)
 
-    target_link_libraries( latticemodelimplementations ${target_link_libraries_appendix})
+    if (PYTHON)
+      target_compile_definitions(latticemodelimplementations PUBLIC -D PYTHON)
+    endif()
 
-    target_compile_definitions(latticemodelimplementations PUBLIC -D GPU -D THRUST -D PYTHON)
+    if (THRUST)
+      target_compile_definitions(latticemodelimplementations PUBLIC -D THRUST)
+    endif()
+
+    if (GPU)
+      target_compile_definitions(latticemodelimplementations PUBLIC -D GPU)
+    endif()
+
+    target_link_libraries(latticemodelimplementations ${target_link_libraries_appendix})
     set_target_properties(latticemodelimplementations PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
 else()
     set(CMAKE_CXX_FLAGS "\${CMAKE_CXX_FLAGS} -std=c++14 -static-libstdc++ -lboost_system -lboost_filesystem")
@@ -138,7 +135,10 @@ else()
     
     add_library(latticemodelimplementations STATIC src/main.cpp)
 
-    target_compile_definitions(latticemodelimplementations PUBLIC -D PYTHON)
+    if (PYTHON)
+      target_compile_definitions(latticemodelimplementations PUBLIC -D PYTHON)
+    endif()
+
     target_link_libraries( latticemodelimplementations ${target_link_libraries_appendix})
 endif()
 

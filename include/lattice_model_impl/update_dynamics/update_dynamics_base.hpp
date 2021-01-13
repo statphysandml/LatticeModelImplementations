@@ -54,9 +54,10 @@ namespace lm_impl {
                 return system_update().update(system, measure_interval);
             }
 
-            template<typename SB>
+            template<typename SB, typename SBP>
             std::vector<std::unique_ptr<mcmc::common_measures::MeasurePolicy<SB>>>
-            generate_update_dynamics_measures(const json &measure_names) {
+            generate_update_dynamics_measures(const SBP &system_parameters) {
+                // auto measure_names = system_parameters.get_measures();
                 return std::vector<std::unique_ptr<mcmc::common_measures::MeasurePolicy<SB>>>{};
             }
 

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# For an entire project
+
 # MCMC Simulation lib
 parent_dir="$(dirname -- "$(readlink -f -- "build_project.sh")")"
 path_to_lattice_model_implementations="$(dirname "$parent_dir")"
@@ -21,4 +23,4 @@ source "${path_to_mcmc_simulation_lib}/bash_scripts/generic_compiling.sh"
 
 # Add bash_script for possibility to generate simulations
 mkdir -p "$project_path/bash_scripts/"
-source "${path_to_mcmc_simulation_lib}/bash_scripts/write_project_related_build_simulation_sh_file.sh"
+source "${path_to_lattice_model_implementations}/bash_scripts/write_project_related_build_simulation_sh_file.sh"

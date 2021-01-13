@@ -50,14 +50,24 @@ namespace lm_impl {
         template<typename T, uint N, typename T2>
         ON<T, N> operator*(const ON<T, N> &x, const T2 &y) {
             ON<T, N> x_(x);
-            x_ *= y;
+            for (uint i = 0; i < N; i++)
+                x_(i) *= y;
+            return x_;
+        }
+
+        template<typename T, uint N, typename T2>
+        ON<T, N> operator*(const T2 &y, const ON<T, N> &x) {
+            ON<T, N> x_(x);
+            for (uint i = 0; i < N; i++)
+                x_(i) *= y;
             return x_;
         }
 
         template<typename T, uint N, typename T2>
         ON<T, N> operator/(const ON<T, N> &x, const T2 &y) {
             ON<T, N> x_(x);
-            x_ /= y;
+            for (uint i = 0; i < N; i++)
+                x_(i) /= y;
             return x_;
         }
 

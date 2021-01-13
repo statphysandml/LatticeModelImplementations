@@ -99,14 +99,15 @@ namespace lm_impl {
                 return mp.beta * S;
             }
 
-            template<typename SB>
+            template<typename SB, typename SBP>
             std::vector<std::unique_ptr<mcmc::common_measures::MeasurePolicy<SB>>>
-            generate_model_measures(const json &measure_names) {
+            generate_model_measures(const SBP &system_parameters) {
+                auto measure_names = system_parameters.get_measures();
+
                 std::vector<std::unique_ptr<mcmc::common_measures::MeasurePolicy<SB>>> measures{};
                 for (auto &measure_name :  measure_names)
                     if (measure_name == "XYMagnetization")
-                        measures.push_back(std::make_unique<MeasureXYMagnetization <SB>>
-                ());
+                        measures.push_back(std::make_unique<MeasureXYMagnetization <SB>>());
                 return measures;
             }
 
