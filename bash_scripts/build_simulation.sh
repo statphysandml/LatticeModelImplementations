@@ -1,8 +1,10 @@
 #!/bin/bash
 
+# For small simulations
+
 # Lattice Model Implementations Lib
 if [ -z ${path_to_lattice_model_implementations=+x} ]; then
-  echo "Build simulation without a project currently not working because of a potentially wrong python_scripts path. But simulations can be generated with the bash script in the project_path/bash_scripts/ directory."
+  echo "Building a simulation without a project is currently not working because of a potentially wrong python_scripts path. But simulations can be generated with the bash script in the project_path/bash_scripts/ directory."
   exit
   parent_dir="$(dirname -- "$(readlink -f -- "build_simulation.sh")")"
   path_to_lattice_model_implementations="$(dirname "$parent_dir")"
