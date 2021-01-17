@@ -36,47 +36,51 @@ int main(int argc, char **argv) {
 
 void custom_main()
 {
-    typedef lm_impl::link_lattice_system::SUTwoModelParameters ModelParams;
-
-    typedef lm_impl::link::SU2<double> BasicType;
-    typedef lm_impl::mcmc_update::MetropolisUpdateParameters<ModelParams, lm_impl::link_lattice_system::SUTwoModelSampler> MCMCUpdateParams;
-    typedef lm_impl::update_dynamics::SequentialUpdateParameters UpdateDynamicsParams;
+    typedef lm_impl::lattice_system::ComplexONModelParameters ModelParams;
+    
+    typedef lm_impl::link::ON<std::complex<double>, 4> BasicType;
+    typedef lm_impl::mcmc_update::ComplexLangevinUpdateONParameters<ModelParams> MCMCUpdateParams;
+    typedef lm_impl::update_dynamics::ParallelUpdateParameters UpdateDynamicsParams; // /*WithAdpativeStepsize*/
     typedef lm_impl::lattice_system::LatticeParameters< BasicType, ModelParams, MCMCUpdateParams, UpdateDynamicsParams> SystemBaseParams;
 
-    std::string model_name = "SU2ModelMetropolis";
+    std::string model_name = "ComplexONModelComplexLangevin";
     std::string rel_config_path = "/configs/" + model_name + "/";
     std::string rel_data_path = "/data/" + model_name + "/";
+    
+    std::vector<double> dimensions {4, 4};
 
-    std::vector<int> dimensions {4, 4, 4, 4};
+    MCMCUpdateParams mcmc_update_parameters(0.00005);
 
-    MCMCUpdateParams mcmc_update_parameters(0.45);
+    ModelParams model_parameters(json{
+        {"beta", 1.0},
+        {"kappa_real", 1.0},
+        {"kappa_imag", 1.0},
+        {"lambda_real", 1.0},
+        {"lambda_imag", 1.0}
+    });
 
-    double beta = 2.3;
-    ModelParams model_parameters(beta);
-
-    UpdateDynamicsParams update_dynamics_parameters;
+    UpdateDynamicsParams update_dynamics_parameters; // (2000);
 
     SystemBaseParams lattice_parameters(
             json {
                     {"dimensions", dimensions},
-                    {"measures", {"Config", "AveragePlaquetteAction"}},
-                    {"lattice_action_type", "plaquette"},
+                    {"measures", {"Mean", "Config"}},
                     {ModelParams::param_file_name(), model_parameters.get_json()},
                     {MCMCUpdateParams::param_file_name(), mcmc_update_parameters.get_json()},
                     {UpdateDynamicsParams::param_file_name(), update_dynamics_parameters.get_json()}}
     );
-
+    
     typedef mcmc::execution::ExpectationValueParameters ExecutionParams;
-    ExecutionParams execution_parameters(20, 500, 100, {}, // optional additional measures
+    ExecutionParams execution_parameters(50, 20000, 1000, {}, // optional additional measures
                                          {}, // Meausures which will be evaluated in terms of mean and error evaluation
                                          200); // Compute error based on Bootstrap method with 200 sampled sets of configurations 
 
     auto simparams = mcmc::simulation::SimulationParameters< SystemBaseParams , ExecutionParams >::generate_simulation(
-            lattice_parameters, execution_parameters, rel_data_path, "model_params", "beta", 1.7, 2.9, 5);
+            lattice_parameters, execution_parameters, rel_data_path, "model_params", "kappa_imag", -0.4, 0.4, 11);
     simparams.write_to_file(rel_config_path);
 
     mcmc::execution::execute< SystemBaseParams > (ExecutionParams::name(), model_name);
 }
 
-// Rerun the simulation with ./SU2Model expectation_value SU2ModelMetropolis
+// Rerun the simulation with ./ComplexONModel expectation_value ComplexONModelComplexLangevin
 

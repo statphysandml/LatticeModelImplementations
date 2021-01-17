@@ -26,7 +26,14 @@ void example_complex_polynomial_model_complex_langevin()
 
     MCMCUpdateParams mcmc_update_parameters(0.01);
 
-    ModelParams model_parameters({1.0, 0.0}, {1.0, 1.0}, 0.0);
+    ModelParams model_parameters(json {
+        {"lambda_real", 1.0},
+        {"lambda_imag", 0.0},
+        {"sigma_real", 1.0},
+        {"sigma_imag", 1.0},
+        {"h_real", 1.0},
+        {"h_imag", 0.0}}
+    )
 
     UpdateDynamicsParams update_dynamics_parameters(2000);
 

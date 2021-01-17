@@ -36,8 +36,9 @@ int main(int argc, char **argv) {
 
 void custom_main()
 {
-    typedef double BasicType;
     typedef lm_impl::lattice_system::IsingModelParameters ModelParams;
+    
+    typedef double BasicType;
     typedef lm_impl::mcmc_update::MetropolisUpdateParameters<ModelParams, lm_impl::lattice_system::IsingModelSampler> MCMCUpdateParams;
     typedef lm_impl::update_dynamics::SequentialUpdateParameters UpdateDynamicsParams;
     typedef lm_impl::lattice_system::LatticeParameters< BasicType, ModelParams, MCMCUpdateParams, UpdateDynamicsParams> SystemBaseParams;
@@ -91,5 +92,5 @@ void custom_main()
     mcmc::execution::execute< SystemBaseParams > (mcmc::execution::ExpectationValueParameters::name(), model_name);
 }
 
-// Rerun the simulation with ./IsingModel expectation_value XYModelMetropolis
+// Rerun the simulation with ./IsingModel expectation_value IsingModelMetropolis
 

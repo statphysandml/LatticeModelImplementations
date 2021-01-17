@@ -22,10 +22,9 @@ namespace lm_impl {
             explicit ComplexXYModelParameters(const json params_) : LatticeModelParameters(params_),
                                                                     beta(get_entry<double>("beta")),
                                                                     mu(get_entry<double>("mu"))
-            //mu(complex_to_json(get_entry("mu")))
             {}
 
-            explicit ComplexXYModelParameters(double beta_, double mu_, double eps_ = 0.1) : ComplexXYModelParameters(
+            explicit ComplexXYModelParameters(double beta_, double mu_) : ComplexXYModelParameters(
                     json{
                             {"beta", beta_},
                             {"mu",   mu_}
@@ -50,17 +49,6 @@ namespace lm_impl {
             explicit ComplexXYModel(const ComplexXYModelParameters &mp_) :
                     mp(mp_) {
             }
-
-            /* std::complex<double> random_state()
-            {
-                return {random_phi_re(gen), random_phi_im(gen)};
-            }
-
-            std::complex<double> propose_state(const std::complex<double> site)
-            {
-                std::complex<double> state = site + std::complex<double>(propose_normal(gen), propose_normal(gen));
-                return normalize(state);
-            } */
 
             std::complex<double> normalize(std::complex<double> state) {
                 state.real(normalize(state.real()));
@@ -108,46 +96,6 @@ namespace lm_impl {
                 }
                 return mp.beta * std::complex<double>(S_re, S_im);
             }
-
-            // [
-            // For Cobrid Monte Carlo algorithms
-
-            double get_potential(const double site, const std::vector<double *> neighbours) {
-                std::complex<double> S = 0;
-                for (size_t i = 0; i < neighbours.size(); i += 2) {
-                    S += std::cos(std::complex<double>(site - *neighbours[i], -1.0 * mp.mu * int(i == 0))) +
-                         std::cos(std::complex<double>(*neighbours[i + 1] - site, -1.0 * mp.mu * int(i == 0)));
-                }
-                return (-1.0 * mp.beta * S).real(); // 0.5
-            }
-
-            double get_imag_potential(const double site, const std::vector<double *> neighbours) {
-                std::complex<double> S = 0;
-                for (size_t i = 0; i < neighbours.size(); i += 2) {
-                    S += std::cos(std::complex<double>(site - *neighbours[i], -1.0 * mp.mu * int(i == 0))) +
-                         std::cos(std::complex<double>(*neighbours[i + 1] - site, -1.0 * mp.mu * int(i == 0)));
-                }
-                return (-1.0 * mp.beta * S).imag(); // 0.5
-            }
-
-            double get_drift_term(const double site, const std::vector<double *> neighbours) {
-                std::complex<double> S = 0;
-                for (size_t i = 0; i < neighbours.size(); i += 2) {
-                    S += std::sin(std::complex<double>(site - *neighbours[i], mp.mu * int(i == 0))) +
-                         std::sin(std::complex<double>(site - *neighbours[i + 1], -1.0 * mp.mu * int(i == 0)));
-                }
-                return (mp.beta * S).real();
-            }
-
-            double get_imag_drift_term(const double site, const std::vector<double *> neighbours) {
-                std::complex<double> S = 0;
-                for (size_t i = 0; i < neighbours.size(); i += 2) {
-                    S += std::sin(std::complex<double>(site - *neighbours[i], mp.mu * int(i == 0))) +
-                         std::sin(std::complex<double>(site - *neighbours[i + 1], -1.0 * mp.mu * int(i == 0)));
-                }
-                return (mp.beta * S).imag();
-            }
-
 
         private:
             const ComplexXYModelParameters &mp;

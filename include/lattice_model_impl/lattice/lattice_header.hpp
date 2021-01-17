@@ -13,6 +13,6 @@
 #include "lattice_models/complex_on_model.hpp"
 #include "lattice_models/ising_model.hpp"
 #include "lattice_models/xy_model.hpp"
-#include "lattice_models/o_n_model.hpp"
+#include "lattice_models/on_model.hpp"
 
 #endif //LATTICEMODELIMPLEMENTATIONS_LATTICE_HEADER_HPP

@@ -63,8 +63,8 @@ namespace lm_impl {
                     potential += site * (*neighbours[i]);
                 }
                 std::complex<double> site_sq = site * site;
-                potential = 2.0 * mp.kappa * potential - site_sq + mp.lambda * pow(site_sq - 1.0, 2.0);
-                return  mp.beta * potential;
+                potential = 2.0 * mp.kappa * potential - site_sq - mp.lambda * pow(site_sq - 1.0, 2.0);
+                return -1.0 * mp.beta * potential;
             }
 
             template<typename T>
@@ -73,8 +73,8 @@ namespace lm_impl {
                 for(size_t i = 0; i < neighbours.size(); i++) {
                     drift_term += (*neighbours[i]);
                 }
-                drift_term = 2.0 * mp.kappa * drift_term + (4.0 * mp.lambda - 2.0) * site;
-                return  mp.beta * drift_term;
+                drift_term = 2.0 * mp.kappa * drift_term + (-2.0) * site + (-4.0) * site * mp.lambda * (site * site - 1.0);
+                return -1.0 * mp.beta * drift_term;
             }
 
         private:

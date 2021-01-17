@@ -2,8 +2,8 @@
 // Created by lukas on 12.12.20.
 //
 
-#ifndef LATTICEMODELIMPLEMENTATIONS_O_N_MODEL_HPP
-#define LATTICEMODELIMPLEMENTATIONS_O_N_MODEL_HPP
+#ifndef LATTICEMODELIMPLEMENTATIONS_ON_MODEL_HPP
+#define LATTICEMODELIMPLEMENTATIONS_ON_MODEL_HPP
 
 #include "mcmc_simulation/util/random.hpp"
 #include "../lattice_model.hpp"
@@ -17,13 +17,13 @@ namespace lm_impl {
         public:
             explicit ONModelParameters(const json params_) : LatticeModelParameters(params_),
                                                                 beta(get_entry<double>("beta")),
-                                                                m(get_entry<double>("m")),
+                                                                kappa(get_entry<double>("kappa")),
                                                                 lambda(get_entry<double>("lambda"))
             {}
 
             explicit ONModelParameters(double beta_, double m_, double lambda_) : ONModelParameters(json{
                     {"beta", beta_},
-                    {"m", m_},
+                    {"kappa", m_},
                     {"lambda", lambda_}
             }) {}
 
@@ -37,7 +37,7 @@ namespace lm_impl {
             friend class ONModel;
 
             const double beta;
-            const double m;
+            const double kappa;
             const double lambda;
         };
 
@@ -45,18 +45,19 @@ namespace lm_impl {
         public:
             explicit ONModel(const ONModelParameters &mp_) : mp(mp_) {}
 
+            // According to equation (3.16) from Smit QFT Lattice
             template<typename T, typename T2=double_t>
             T2 get_potential(const T site, const std::vector<T*> neighbours)
             {
-                double sum = 0;
+                double potential = 0;
                 for(size_t i = 0; i < neighbours.size(); i++) {
-                    sum += site * (*neighbours[i]);
+                    potential += site * (*neighbours[i]);
                 }
                 double site_sq = site * site;
-                sum = sum - 0.5 * (2.0 * site.dim() + pow(mp.m, 2.0)) * site_sq + 0.25 * mp.lambda * pow(site_sq, 2.0);
-                return  -1.0 * mp.beta * sum; // 0.5
+                potential = 2.0 * mp.kappa * potential - site_sq - mp.lambda * pow(site_sq - 1.0, 2.0);
+                return -1.0 * mp.beta * potential;
             }
-
+ 
             template<typename T, typename T2=double_t>
             T2 get_drift_term(const T site, const std::vector<T *> neighbours) {
                 return T2(0.0);
@@ -104,4 +105,4 @@ namespace lm_impl {
     }
 }
 
-#endif //LATTICEMODELIMPLEMENTATIONS_O_N_MODEL_HPP
+#endif //LATTICEMODELIMPLEMENTATIONS_ON_MODEL_HPP

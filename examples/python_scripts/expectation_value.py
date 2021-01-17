@@ -8,9 +8,9 @@ if __name__ == '__main__':
         # expectation_value = load_expectation_value_results(files_dir="SU2ModelMetropolis")
         # expectation_value = load_expectation_value_results(files_dir="SU2ModelMetropolis")
 
-        os.chdir("../")
+        os.chdir("../simulations/ComplexXYModel/")
 
-        expectation_value(files_dir="ComplexONModelComplexLangevin")
+        expectation_value(files_dir="ComplexXYModelComplexLangevin")
 
         # expectation_value(files_dir="PolynomialModelLangevin")
         # expectation_value(files_dir="XYModelHMC")

@@ -18,32 +18,23 @@ namespace lm_impl {
         class ComplexPolynomialModelParameters : public SiteModelParameters {
         public:
             explicit ComplexPolynomialModelParameters(const json params_) : SiteModelParameters(params_),
-                                                                            sigma_real(get_entry<double>("sigma_real",
-                                                                                                         0.0)),
-                                                                            sigma_imag(get_entry<double>("sigma_imag",
-                                                                                                         0.0)),
-                                                                            sigma(get_entry<std::complex<double> >(
-                                                                                    "sigma", {sigma_real, sigma_imag})),
-                                                                            lambda(get_entry<std::complex<double> >(
-                                                                                    "lambda")),
-                                                                            h(get_entry<std::complex<double> >("h",
-                                                                                                               0.0)) {}
+                                                                            sigma(std::complex<double> {get_entry<double>("sigma_real", 0.0),
+                                                                                    get_entry<double>("sigma_imag", 0.0)}),
+                                                                            lambda(std::complex<double> {get_entry<double>("lambda_real", 0.0),
+                                                                                    get_entry<double>("lambda_imag", 0.0)}),
+                                                                            h(std::complex<double> {get_entry<double>("h_real", 0.0),
+                                                                                    get_entry<double>("h_imag", 0.0)})
+            {}
 
-            explicit ComplexPolynomialModelParameters(std::complex<double> lambda_, std::complex<double> sigma_,
-                                                      std::complex<double> h_) : ComplexPolynomialModelParameters(json{
-                    {"lambda", lambda_},
-                    {"sigma",  sigma_},
-                    {"h",      h_}
-            }) {}
-
-            explicit ComplexPolynomialModelParameters(std::complex<double> lambda_, double sigma_real_,
-                                                      double sigma_imag_, std::complex<double> h_)
+            explicit ComplexPolynomialModelParameters(double lambda_real_, double lambda_imag_, double sigma_real_,
+                                                      double sigma_imag_, double h_real_, double h_imag_)
                     : ComplexPolynomialModelParameters(json{
-                    {"lambda",     lambda_},
+                    {"lambda_real", lambda_real_},
+                    {"lambda_imag", lambda_imag_},
                     {"sigma_real", sigma_real_},
                     {"sigma_imag", sigma_imag_},
-                    {"sigma",      {sigma_real_, sigma_imag_}},
-                    {"h",          h_}
+                    {"h_real", h_real_},
+                    {"h_imag", h_imag_},
             }) {}
 
             static std::string name() {
@@ -55,8 +46,6 @@ namespace lm_impl {
         private:
             friend class ComplexPolynomialModel;
 
-            const double sigma_real;
-            const double sigma_imag;
             const std::complex<double> sigma;
             const std::complex<double> lambda;
             const std::complex<double> h;

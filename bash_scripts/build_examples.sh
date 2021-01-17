@@ -22,3 +22,32 @@ source "${path_to_mcmc_simulation_lib}/bash_scripts/generic_main_builder.sh"
 
 # Compile the sample project
 source "${path_to_mcmc_simulation_lib}/bash_scripts/generic_compiling.sh"
+
+# Build simulations
+
+project_name="IsingModel"
+project_path="./simulations/IsingModel/"
+mkdir -p $project_path
+project_path="$(cd "$project_path" && pwd -P)"
+project_type="simulation"
+
+# Build the project
+source "${path_to_mcmc_simulation_lib}/bash_scripts/generic_main_builder.sh"
+
+# Compile the sample project
+source "${path_to_mcmc_simulation_lib}/bash_scripts/generic_compiling.sh"
+
+# Navigate back to examples/
+cd ../../
+
+project_name="SU2Model"
+project_path="./simulations/SU2Model/"
+mkdir -p $project_path
+project_path="$(cd "$project_path" && pwd -P)"
+project_type="simulation"
+
+# Build the project
+source "${path_to_mcmc_simulation_lib}/bash_scripts/generic_main_builder.sh"
+
+# Compile the sample project
+source "${path_to_mcmc_simulation_lib}/bash_scripts/generic_compiling.sh"
