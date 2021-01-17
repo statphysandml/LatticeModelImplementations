@@ -70,6 +70,14 @@ namespace lm_impl {
             }
 
             std::complex<double>
+            get_energy_per_lattice_elem(const std::complex<double> site, const std::vector<std::complex<double> *> neighbours)
+            {
+                // neighbour[0] corresponds to the right neighbour, neighbour[1] to the left one
+                return 0.5 * mp.m * std::pow(*neighbours[0] - site, 2.0) / mp.dt +
+                       0.5 * mp.dt * mp.omega_sq * std::pow(site, 2.0) + mp.lambda / 24.0 * mp.dt * std::pow(site, 4.0);
+            }
+
+            std::complex<double>
             get_drift_term(const std::complex<double> site, const std::vector<std::complex<double> *> neighbours) {
                 return mp.m * (-1.0 * (*neighbours[0] - site) + (site - *neighbours[1])) / mp.dt +
                        mp.dt * mp.omega_sq * site + mp.lambda / 6.0 * mp.dt * std::pow(site, 3.0);
@@ -79,35 +87,6 @@ namespace lm_impl {
                                                              const std::vector<std::complex<double> *> neighbours) {
                 return mp.m / mp.dt + mp.dt * mp.omega_sq + mp.lambda / 2.0 * mp.dt * std::pow(site, 2.0);
             }
-
-            // [
-            // For Cobrid Monte Carlo algorithms
-
-            double get_potential(const double site, const std::vector<double *> neighbours) {
-                return (0.5 * mp.m * (std::pow(*neighbours[0] - site, 2.0) + std::pow(site - *neighbours[1], 2.0)) /
-                        mp.dt +
-                        0.5 * mp.dt * mp.omega_sq * std::pow(site, 2.0) +
-                        mp.lambda / 24.0 * mp.dt * std::pow(site, 4.0)).real();
-            }
-
-            double get_imag_potential(const double site, const std::vector<double *> neighbours) {
-                return (0.5 * mp.m * (std::pow(*neighbours[0] - site, 2.0) + std::pow(site - *neighbours[1], 2.0)) /
-                        mp.dt +
-                        0.5 * mp.dt * mp.omega_sq * std::pow(site, 2.0) +
-                        mp.lambda / 24.0 * mp.dt * std::pow(site, 4.0)).imag();
-            }
-
-            double get_drift_term(const double site, const std::vector<double *> neighbours) {
-                return (mp.m * (-1.0 * (*neighbours[0] - site) + (site - *neighbours[1])) / mp.dt +
-                        mp.dt * mp.omega_sq * site + mp.lambda / 6.0 * mp.dt * std::pow(site, 3.0)).real();
-            }
-
-            double get_imag_drift_term(const double site, const std::vector<double *> neighbours) {
-                return (mp.m * (-1.0 * (*neighbours[0] - site) + (site - *neighbours[1])) / mp.dt +
-                        mp.dt * mp.omega_sq * site + mp.lambda / 6.0 * mp.dt * std::pow(site, 3.0)).imag();
-            }
-
-            // ]
 
         private:
             const ComplexAnharmonicOscillatorParameters &mp;

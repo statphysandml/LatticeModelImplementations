@@ -60,7 +60,18 @@ namespace lm_impl
                 for(size_t i = 0; i < neighbours.size(); i++) {
                     coupling += *neighbours[i];
                 }
-                return  -1.0 * mp.beta * site * (mp.J * coupling + mp.h); // 0.5
+                return  -1.0 * mp.beta * site * (mp.J * coupling + mp.h);
+            }
+
+            template<typename T, typename T2=double_t>
+            T2 get_energy_per_lattice_elem(const T site, const std::vector<T*> neighbours)
+            {
+                double coupling = 0;
+                // Only neighbours in positive direction
+                for(size_t i = 0; i < neighbours.size(); i += 2) {
+                    coupling += *neighbours[i];
+                }
+                return  -1.0 * mp.beta * site * (mp.J * coupling + mp.h);
             }
 
         private:

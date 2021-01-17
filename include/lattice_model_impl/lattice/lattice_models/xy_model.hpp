@@ -83,10 +83,19 @@ namespace lm_impl {
             T get_potential(const T site, const std::vector<T *> neighbours) {
                 double S = 0;
                 for (size_t i = 0; i < neighbours.size(); i += 2) {
-                    S += mp.J * std::cos(site - *neighbours[i]) + mp.J * std::cos(*neighbours[i + 1] - site) +
-                         mp.h * std::cos(site);
+                    S += mp.J * std::cos(site - *neighbours[i]) + mp.h * std::cos(site);
                 }
-                return -1.0 * mp.beta * S; // 0.5
+                return -1.0 * mp.beta * S;
+            }
+
+            template<typename T, typename T2=double_t>
+            T2 get_energy_per_lattice_elem(const T site, const std::vector<T*> neighbours)
+            {
+                double S = 0;
+                for (size_t i = 0; i < neighbours.size(); i += 2) {
+                    S += mp.J * std::cos(site - *neighbours[i]) + mp.h * std::cos(site);
+                }
+                return -1.0 * mp.beta * S;
             }
 
             template<typename T>

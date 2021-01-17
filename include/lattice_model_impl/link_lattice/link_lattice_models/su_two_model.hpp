@@ -56,6 +56,13 @@ namespace lm_impl {
             }
 
             template<typename T, typename T2=double_t>
+            T2 get_energy_per_lattice_elem(const T site, const std::vector<T*> neighbours) {
+                T A = calc_A(neighbours, false);
+                return mp.beta / SUTwoModelParameters::N() * (neighbours.size() / 3 * SUTwoModelParameters::N() -
+                                                              std::real((link * A).trace()));
+            }
+
+            template<typename T, typename T2=double_t>
             T2 get_drift_term(const T link, const std::vector<T *> neighbours) {
                 return T2(0.0);
             }

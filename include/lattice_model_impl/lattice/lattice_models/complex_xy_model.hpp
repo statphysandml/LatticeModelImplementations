@@ -81,6 +81,19 @@ namespace lm_impl {
             }
 
             std::complex<double>
+            get_energy_per_lattice_elem(const std::complex<double> site, const std::vector<std::complex<double> *> neighbours) {
+                double S_re = 0;
+                double S_im = 0;
+                for (size_t i = 0; i < neighbours.size(); i += 2) {
+                    S_re += std::cos(site.real() - neighbours[i]->real()) *
+                            std::cosh(site.imag() - neighbours[i]->imag() - mp.mu * int(i == 0));
+                    S_im += std::sin(site.real() - neighbours[i]->real()) *
+                            std::sinh(site.imag() - neighbours[i]->imag() - mp.mu * int(i == 0));
+                }
+                return {-1.0 * mp.beta * S_re, mp.beta * S_im};
+            }
+
+            std::complex<double>
             get_drift_term(const std::complex<double> site, const std::vector<std::complex<double> *> neighbours) {
                 double S_re = 0;
                 double S_im = 0;

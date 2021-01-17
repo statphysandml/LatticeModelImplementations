@@ -67,6 +67,18 @@ namespace lm_impl {
                 return -1.0 * mp.beta * potential;
             }
 
+            template<typename T, typename T2=double_t>
+            T2 get_energy_per_lattice_elem(const T site, const std::vector<T*> neighbours)
+            {
+                std::complex<double> potential = 0;
+                for(size_t i = 0; i < neighbours.size(); i += 2) {
+                    potential += site * (*neighbours[i]);
+                }
+                std::complex<double> site_sq = site * site;
+                potential = 2.0 * mp.kappa * potential - site_sq - mp.lambda * pow(site_sq - 1.0, 2.0);
+                return -1.0 * mp.beta * potential;
+            }
+
             template<typename T>
             T get_drift_term(const T site, const std::vector<T *> neighbours) {
                 T drift_term(0);

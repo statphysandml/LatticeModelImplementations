@@ -73,7 +73,14 @@ namespace lm_impl {
                 return 0.5 * mp.m * (std::pow(*neighbours[0] - site, 2.0) + std::pow(site - *neighbours[1], 2.0)) /
                        mp.dt +
                        0.5 * mp.dt * mp.omega_sq * std::pow(site, 2.0) + mp.lambda / 24.0 * mp.dt * std::pow(site, 4.0);
+            }
 
+            template<typename T>
+            T2 get_energy_per_lattice_elem(const T site, const std::vector<T*> neighbours)
+            {
+                // neighbour[0] corresponds to the right neighbour, neighbour[1] to the left one
+                return 0.5 * mp.m * std::pow(*neighbours[0] - site, 2.0) / mp.dt +
+                       0.5 * mp.dt * mp.omega_sq * std::pow(site, 2.0) + mp.lambda / 24.0 * mp.dt * std::pow(site, 4.0);
             }
 
         private:

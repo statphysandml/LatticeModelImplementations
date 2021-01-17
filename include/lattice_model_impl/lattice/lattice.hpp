@@ -239,15 +239,15 @@ namespace lm_impl {
             auto energy() const {
                 decltype(model->get_potential(lattice[0], neighbours[0])) energy(0);
                 for (uint i = 0; i < get_size(); i++) {
-                    energy += model->get_potential(lattice[i], neighbours[i]);
+                    energy += model->get_energy_per_lattice_elem(lattice[i], neighbours[i]);
                 }
-                return 0.5 * energy / double(get_size());
+                return energy / double(get_size());
             }
 
             auto drift_term() const {
                 decltype(model->get_potential(lattice[0], neighbours[0])) drift_term(0);
                 for (uint i = 0; i < get_size(); i++) {
-                    // ToDo: Think about how this can be integrated!
+                    // ToDo: How can this be integrated?
                     // drift_term += model->get_drift_term(lattice[i], neighbours[i]);
                 }
                 return 0.5 * drift_term / double(get_size());

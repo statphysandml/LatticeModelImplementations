@@ -49,7 +49,14 @@ namespace lm_impl {
                 T A = calc_A(neighbours);
                 // (lat.dim()-1)*2-std::real(1.0/N*(lat(n*lat.dim()+mu)*calc_A(lat, n, mu, both_orientations)).trace())
                 return mp.beta / mp.N() * (neighbours.size() / 3.0 -
-                                           std::real((site * A).trace())); // Additional 1/N missing in second term??
+                                           std::real((site * A).trace()));
+            }
+
+            template<typename T, typename T2=double_t>
+            T2 get_energy_per_lattice_elem(const T site, const std::vector<T*> neighbours) {
+                T A = calc_A(neighbours, false);
+                return mp.beta / mp.N() * (neighbours.size() / 3.0 -
+                                           std::real((site * A).trace()));
             }
 
             template<typename T, typename T2=double_t>

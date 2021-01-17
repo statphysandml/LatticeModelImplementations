@@ -50,8 +50,7 @@ namespace lm_impl {
 
                 // Needs to be devided by the inverse temperature in a postprocessing step
                 std::string measure(const SB &system) override {
-                    // The factor of 2.0 is to compensate the 1/2.0 factor in the computation of the energy
-                    return std::to_string(2.0 * system.energy() / n_plaquettes_per_link);
+                    return std::to_string(system.energy() / n_plaquettes_per_link);
                 }
 
                 std::string name() {

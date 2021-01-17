@@ -36,13 +36,6 @@ namespace lm_impl {
         public:
             explicit ComplexCubicModel(const ComplexCubicModelParameters &mp_) : mp(mp_) {}
 
-/* std::complex<double> propose_state(const std::complex<double> site, const double KMax, const double KExpectation)
-    {
-        double eps = std::min(mp.eps, mp.eps * KExpectation / KMax);
-        std::complex<double> state = site + eps * std::complex<double>(propose_normal(gen), propose_normal(gen));
-        return state;
-    } */
-
             static std::complex<double> get_drift_term(const std::complex<double> site) {
                 return {-2.0 * site.real() * site.imag(), -1.0 * (std::pow(site.imag(), 2) - std::pow(site.real(), 2))};
             }
