@@ -43,4 +43,4 @@ cd bash_scripts
 bash build_examples.sh
 ```
 
-The generated executables can be found after that in the debug/ and release/ directories of the different examples. It is important that the virtual environment is activated before the simulation.
+The generated executables can be found after that in the debug/ and release/ directories of the different examples. It is important that the virtual environment is activated before the simulation. The two Python packages: MCMCEvaluationLib (https://github.com/statphysandml/MCMCEvaluationLib) and pystatplottools (https://github.com/statphysandml/pystatplottools) need to be installed in the virtual environment for a successful exeuction of the code.
