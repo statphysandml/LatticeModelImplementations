@@ -1,3 +1,0 @@
-[submodule "external_submodules/MCMCSimulationLib"]
-	path = external_submodules/MCMCSimulationLib
-	url = https://github.com/statphysandml/MCMCSimulationLib.git
