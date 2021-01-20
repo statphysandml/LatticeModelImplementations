@@ -25,6 +25,14 @@ simulations/ComplexONModel/*
 simulations/ComplexPolynomialModel/*
 !simulations/ComplexPolynomialModel/main.cpp
 !simulations/ComplexPolynomialModel/simulation_header.hpp
+!simulations/ComplexPolynomialModel/data/
+simulations/ComplexPolynomialModel/data/*
+!simulations/ComplexPolynomialModel/data/ComplexPolynomialModelComplexLangevin/
+simulations/ComplexPolynomialModel/data/ComplexPolynomialModelComplexLangevin/*
+!simulations/ComplexPolynomialModel/data/ComplexPolynomialModelComplexLangevin/raw/
+simulations/ComplexPolynomialModel/data/ComplexPolynomialModelComplexLangevin/raw/*
+!simulations/ComplexPolynomialModel/data/ComplexPolynomialModelComplexLangevin/raw/__init__.py
+!simulations/ComplexPolynomialModel/data/ComplexPolynomialModelComplexLangevin/raw/raw_transformer.py
 !simulations/ComplexXYModel/
 simulations/ComplexXYModel/*
 !simulations/ComplexXYModel/main.cpp
