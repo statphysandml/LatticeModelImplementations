@@ -1,6 +1,6 @@
 git submodule update --init --recursive
 
-# Build ParamHelper
+# Build LatticeModelSimulationLib
 cd ../external_submodules/LatticeModelSimulationLib/build
 source build.sh
 

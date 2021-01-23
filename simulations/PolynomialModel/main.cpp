@@ -61,9 +61,9 @@ void custom_main()
     ExecutionParams execution_parameters(100, 1000000, 10000, {}, // optional replacement of above measures
                                          {"SecondMoment"}); // Meausures which will be evaluated in terms of mean and error evaluation
 
-    auto simparams = mcmc::simulation::SimulationParameters< SystemBaseParams , ExecutionParams >::generate_simulation(
+    auto simulation_params = mcmc::simulation::SimulationParameters< SystemBaseParams , ExecutionParams >::generate_simulation(
             site_parameters, execution_parameters, rel_data_path);
-    simparams.write_to_file(rel_config_path);
+    simulation_params.write_to_file(rel_config_path);
 
     mcmc::execution::execute< SystemBaseParams > (ExecutionParams::name(), model_name);
 }

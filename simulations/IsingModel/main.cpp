@@ -69,25 +69,25 @@ void custom_main()
     /* mcmc::execution::EquilibriateParameters equilibriate_parameters(5000, 100, {"Mean"}); // Meausures which will be evaluated in terms of mean and error evaluation
     // equilibriate_parameters.write_to_file(rel_data_path);
 
-    auto simparams_equilibriate = mcmc::simulation::SimulationParameters< SystemBaseParams, mcmc::execution::EquilibriateParameters >::generate_simulation(
+    auto simulation_params_equilibriate = mcmc::simulation::SimulationParameters< SystemBaseParams, mcmc::execution::EquilibriateParameters >::generate_simulation(
             lattice_parameters, equilibriate_parameters, rel_data_path, "model_params", "beta", 0.1, 0.6, 5);
 
     mcmc::execution::execute< SystemBaseParams > (mcmc::execution::EquilibriateParameters::name(), model_name); */
 
     mcmc::execution::CorrelationTimeParameters correlation_time_parameters(5000, 100, 10000, {"Mean"}); // Meausures which will be evaluated in terms of mean and error evaluation
 
-    auto simparams_correlation_time = mcmc::simulation::SimulationParameters< SystemBaseParams , mcmc::execution::CorrelationTimeParameters >::generate_simulation(
+    auto simulation_params_correlation_time = mcmc::simulation::SimulationParameters< SystemBaseParams , mcmc::execution::CorrelationTimeParameters >::generate_simulation(
             lattice_parameters, correlation_time_parameters, rel_data_path, "model_params", "beta", 0.1, 0.7, 25);
-    simparams_correlation_time.write_to_file(rel_config_path);
+    simulation_params_correlation_time.write_to_file(rel_config_path);
 
     mcmc::execution::execute< SystemBaseParams > (mcmc::execution::CorrelationTimeParameters::name(), model_name);
 
     mcmc::execution::ExpectationValueParameters expectation_value_parameters(correlation_time_results_path, 10000, 10000, {}, // optional additional measures
                                                                              {"AbsMean", "Energy"}); // Meausures which will be evaluated in terms of mean and error evaluation
 
-    auto simparams_expectation_value = mcmc::simulation::SimulationParameters< SystemBaseParams , mcmc::execution::ExpectationValueParameters >::generate_simulation(
+    auto simulation_params_expectation_value = mcmc::simulation::SimulationParameters< SystemBaseParams , mcmc::execution::ExpectationValueParameters >::generate_simulation(
             lattice_parameters, expectation_value_parameters, rel_data_path, "model_params", "beta", 0.1, 0.7, 25);
-    simparams_expectation_value.write_to_file(rel_config_path);
+    simulation_params_expectation_value.write_to_file(rel_config_path);
 
     mcmc::execution::execute< SystemBaseParams > (mcmc::execution::ExpectationValueParameters::name(), model_name);
 }

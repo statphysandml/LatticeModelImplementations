@@ -61,6 +61,11 @@ simulations/U1Model/*
 simulations/XYModel/*
 !simulations/XYModel/main.cpp
 !simulations/XYModel/simulation_header.hpp
+!data/ONModelMetropolis/
+data/ONModelMetropolis/*
+!data/ONModelMetropolis/raw/
+data/ONModelMetropolis/raw/*
+!data/ONModelMetropolis/raw/raw_transformer.py
 __pychache__/
 .ipynb_checkpoints/
 CMakeLists.txt

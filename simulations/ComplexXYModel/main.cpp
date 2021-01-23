@@ -70,9 +70,9 @@ void custom_main()
                                          {}, // Meausures which will be evaluated in terms of mean and error evaluation
                                          20); // Compute error based on Bootstrap method with 200 sampled sets of configurations 
 
-    auto simparams = mcmc::simulation::SimulationParameters< SystemBaseParams , ExecutionParams >::generate_simulation(
+    auto simulation_params = mcmc::simulation::SimulationParameters< SystemBaseParams , ExecutionParams >::generate_simulation(
             lattice_parameters, execution_parameters, rel_data_path, "model_params", "mu", 0.0, std::sqrt(0.2), 2);
-    simparams.write_to_file(rel_config_path);
+    simulation_params.write_to_file(rel_config_path);
 
     mcmc::execution::execute< SystemBaseParams > (ExecutionParams::name(), model_name);
 }

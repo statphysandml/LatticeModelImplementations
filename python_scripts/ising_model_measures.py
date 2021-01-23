@@ -33,12 +33,3 @@ def compute_ising_model_energy(data, sim_params):
     data.insert(len(data.columns), "Energy", energies / (n_sites * elem_per_site))
 
     return ["Energy"], data
-
-
-# # Needs to be reintegrated
-# def compute_two_point_correlator(data, key="Config"):
-#     new_measures = []
-#     for i in range(len(data[key].iloc[0])):
-#         data.insert(len(data.columns), "TwoPCDelt" + str(i), data[key].apply(lambda x: np.multiply(x, np.roll(x, i)).sum()))
-#         new_measures.append("TwoPCDelt" + str(i))
-#     return new_measures

@@ -1,47 +1,33 @@
+import os
 import torch
 
 
 if __name__ == '__main__':
+    # To ensure to run code from this file
+    os.chdir(os.path.dirname(os.path.abspath(__file__)))
+
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-    # mcmc_model = "XYModelHMC"
-    mcmc_model = "ComplexPolynomialModelComplexLangevin"
+    mcmc_model = "XYModelHMC"
 
-    #path = "../data/" + mcmc_model
-    #root = "../data/" + mcmc_model
-
-    path = "../simulations/ComplexPolynomialModel/data/" + mcmc_model
-    root = "../simulations/ComplexPolynomialModel/data/" + mcmc_model
+    path = "../simulations/XYModel/data/" + mcmc_model
+    root = "../simulations/XYModel/data/" + mcmc_model
 
     from pystatplottools.utils.utils import set_up_directories
     data_root, results_root = set_up_directories(data_dir=mcmc_model, results_dir=mcmc_model,
-                                                 data_base_dir="../simulations/ComplexPolynomialModel/data/",
-                                                 results_base_dir="../simulations/ComplexPolynomialModel/results/")
+                                                 data_base_dir="../simulations/XYModel/data/",
+                                                 results_base_dir="../simulations/XYModel/results/")
 
     ''' Data generation with storage of a permament file '''
-
-    lamda = 1.0
-    sigma = 1.0
-    h = 0
-
-    def transformer(data):
-        import numpy as np
-        x = data["Config"].values[:, 0] + 1.0j * data["Config"].values[:, 1]
-        action = 0.25 * lamda * np.power(x, 4.0) + 0.5 * sigma * np.power(x, 2.0) + h * x
-        data.insert(len(data.columns), ("Action", "", 0), np.real(action))
-        data.insert(len(data.columns), ("Action", "", 1), np.real(action))
-        return data
-
 
     data_generator_args = {
         # ConfigDataGenerator Args
         "data_type": "target_param",
         # Args for ConfigurationLoader
         "path": path,
-        "total_number_of_data_per_file": 20000,
+        "total_number_of_data_per_file": 1000,
         "identifier": "expectation_value",
-        "labels": [["Action", "", 0], ["Action", "", 1]],
-        "transform": True,
+        "running_parameter": "beta",
         "chunksize": 400  # If no chunksize is given, all data is loaded at once
     }
 
@@ -85,12 +71,12 @@ if __name__ == '__main__':
     # config, label = dataset_inspector.sampler()
     config, label = data_loader.dataset.get_random_sample()
 
-    from pystatplottools.visualization.sample_visualization import SampleVisualization
+    from pystatplottools.visualization import sample_visualization
 
-    SampleVisualization.im_single_sample(sample=config, config_dim=config_dim, ab=ab)
+    sample_visualization.fd_im_single_sample(sample=config, config_dim=config_dim, ab=ab)
 
     # batch, batch_label = next(iter(data_loader))
     batch, batch_label = data_loader.dataset.get_random_batch(108)
 
-    SampleVisualization.im_batch(batch, num_samples=36, dim=(6, 6), config_dim=config_dim, ab=ab)
-    SampleVisualization.im_batch_grid(batch, config_dim=config_dim, ab=ab)
+    sample_visualization.fd_im_batch(batch, num_samples=36, dim=(6, 6), config_dim=config_dim, ab=ab)
+    sample_visualization.fd_im_batch_grid(batch, config_dim=config_dim, ab=ab)
