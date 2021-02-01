@@ -6,7 +6,6 @@
 *.pyc
 .idea/
 cmake/*
-!cmake/CMakeLists.txt
 debug/*
 release/*
 release_thrust_cpu/*

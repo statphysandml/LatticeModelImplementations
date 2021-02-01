@@ -1,7 +1,7 @@
 import numpy as np
 
 
-from util import get_neighbour_index
+from mcmctools.utils.lattice import get_neighbour_index
 
 
 def compute_su_two_model_measures(data, measure_name, sim_params):
