@@ -28,11 +28,11 @@ All lattice models can be simulated in arbitrary dimensions.
 Build
 -----
 
-The following steps are necessary for a possible execution of the code. The steps are very similar to the one explained for building the MCMCSimulationLib (see: https://github.com/statphysandml/MCMCSimulationLib) and for the LatticeModelSimulationLib (see: https://github.com/statphysandml/LatticeModelSimulationLib).
+The following steps are necessary for a possible execution of the code. The steps are very similar to the one explained for building the MCMCSimulationLib (see: https://github.com/statphysandml/MCMCSimulationLib) and for the LatticeModelSimulationLib (see: https://github.com/statphysandml/LatticeModelSimulationLib). For the MCMCSimulationLib there exists a more thorough getting started guide (https://github.com/statphysandml/MCMCSimulationLib/blob/master/doc/getting_started.md) that also explains how the virtual environment for Python can be set up. It also contains a short introduction to the LatticeModelImplementations and can be used as a second source to build the library.
 
 Two config files: config.sh and project_config.sh need to be generated in the bash_scripts/ directory. Templates for both files can be found there already and can be copied.
 
-The defined parameters in the project_config.sh file are by default the correct one for the beginning. Additional information about the two parameters is given in the link to MCMCSimulationLib.
+The defined parameters in the project_config.sh file are by default the correct ones for the beginning. Additional information about the two parameters is given in the link to MCMCSimulationLib.
 
 The config.sh contains information about the used virtual environment. The parameters need to be adapted for a successful execution of the data evaluation in Python.
 
@@ -42,6 +42,14 @@ Having these two files, all examples can be by executing the bash script build_e
 cd bash_scripts
 bash build_examples.sh
 ```
+
+To keep track of changes in the submodules when pulling updates of the respository, we strongly recommend for an update on your local machine to use
+
+```bash
+git pull --recurse-submodules
+```
+
+otherwise the code might not run properly after an update of the library.
 
 Running
 -------
