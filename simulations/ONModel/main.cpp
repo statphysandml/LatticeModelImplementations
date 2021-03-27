@@ -52,7 +52,6 @@ void custom_main()
     MCMCUpdateParams mcmc_update_parameters(0.1);
 
     ModelParams model_parameters(json{
-        {"beta", 1.0},
         {"kappa", 1.0},
         {"lambda", 1.0}
     });
