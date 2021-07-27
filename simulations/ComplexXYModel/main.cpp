@@ -54,7 +54,8 @@ void custom_main()
     double beta = 0.7;
     ModelParams model_parameters(beta, 0.0);
 
-    UpdateDynamicsParams update_dynamics_parameters(10000);
+    // Thermalization time and measure interval in terms of Langevin time
+    UpdateDynamicsParams update_dynamics_parameters(1.0, 0.01);
 
     SystemBaseParams lattice_parameters(
             json {
@@ -66,7 +67,9 @@ void custom_main()
     );
 
     typedef mcmc::execution::ExpectationValueParameters ExecutionParams;
-    ExecutionParams execution_parameters(10, 20000, 0, {}, // optional additional measures
+    // Note that the measure interval is set to 1 since an update with adaptive step size is used
+    // -> measure interval is determined in terms of Langein time in the UpdateDynamicsParams
+    ExecutionParams execution_parameters(1, 20000, 0, {}, // optional additional measures
                                          {}, // Meausures which will be evaluated in terms of mean and error evaluation
                                          20); // Compute error based on Bootstrap method with 200 sampled sets of configurations 
 

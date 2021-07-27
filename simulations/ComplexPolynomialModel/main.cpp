@@ -58,7 +58,8 @@ void custom_main()
         {"h_imag", 0.0}
     });
 
-    UpdateDynamicsParams update_dynamics_parameters(2000);
+    // Thermalization time and measure interval in terms of Langevin time
+    UpdateDynamicsParams update_dynamics_parameters(10.0, 1.0);
 
     SystemBaseParams site_parameters(
             json {
@@ -69,7 +70,9 @@ void custom_main()
     );
 
     typedef mcmc::execution::ExpectationValueParameters ExecutionParams;
-    ExecutionParams execution_parameters(100, 100000, 0, {}, // optional additional measures
+    // Note that the measure interval is set to 1 since an update with adaptive step size is used
+    // -> measure interval is determined in terms of Langein time in the UpdateDynamicsParams
+    ExecutionParams execution_parameters(1, 100000, 0, {}, // optional additional measures
                                          {"SecondMoment"}); // Meausures which will be evaluated in terms of mean and error evaluation
 
     auto simulation_params = mcmc::simulation::SimulationParameters< SystemBaseParams , ExecutionParams >::generate_simulation(
