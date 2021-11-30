@@ -1,3 +1,0 @@
-[submodule "external_submodules/LatticeModelSimulationLib"]
-	path = external_submodules/LatticeModelSimulationLib
-	url = https://github.com/statphysandml/LatticeModelSimulationLib

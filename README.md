@@ -1,13 +1,13 @@
 LatticeModelImplementions
 =================
 
-The repository contains example code for an MCMC simulation and evaluation of different interesting model in physics. The code makes use of the C++ LatticeModelSimulationLib (https://github.com/statphysandml/LatticeModelSimulationLib). The resulting simulation data is evaluated in Python with modules of the MCMCEvaluationLib (https://github.com/statphysandml/MCMCEvaluationLib) and of the pystatplottools library  (https://github.com/statphysandml/pystatplottools). Besides the evaluation, the sampled configurations can be loaded with the help of the libraries into PyTorch. The generation of a respective data loader is shown for each of the models. The training of achine learning algorithms with Monte Carlo samples is therefore also straightforward
+The repository contains example code for MCMC simulations and evaluations of different interesting model in physics. The code makes use of the C++ LatticeModelSimulationLib (https://github.com/statphysandml/LatticeModelSimulationLib). The resulting simulation data is evaluated in Python with modules of the MCMCEvaluationLib (https://github.com/statphysandml/MCMCEvaluationLib) and of the pystatplottools library  (https://github.com/statphysandml/pystatplottools). Besides the evaluation, the sampled configurations can be loaded with the help of the libraries into PyTorch. The generation of a respective data loader is shown for each of the models. The training of achine learning algorithms with Monte Carlo samples is therefore also straightforward
 
 In the long run, the project should serve as an easy-to-use simulator for various models which is equipped in addition with powerful libraries for an convenient evaluation of the simulation data in Python. The implemented models can be simulated and evaluated right away.
 
-The C++ code for the different implemented models can be found in the simulations/ folder. A possible computation of interesting observables and figures is implemented in jupyter. The respective notebooks are stored in the jupyter_notebooks/ directory.
+The C++ code for the different implemented models can be found in the examples/ folder. A possible computation of interesting observables and figures is implemented in jupyter. The respective notebooks are stored in the jupyter_notebooks/ directory.
 
-The code of the used C++ LatticeModelSimulationLib is integrated into the project as a submodule in the external_submodules/ directory.
+The code is also integrated as a submodule in the examples/ directory of the LatticeModelSimulationLib.
 
 Implemented Models
 ------------------
@@ -28,28 +28,23 @@ All lattice models can be simulated in arbitrary dimensions.
 Build
 -----
 
-The following steps are necessary for a possible execution of the code. The steps are very similar to the one explained for building the MCMCSimulationLib (see: https://github.com/statphysandml/MCMCSimulationLib) and for the LatticeModelSimulationLib (see: https://github.com/statphysandml/LatticeModelSimulationLib). For the MCMCSimulationLib there exists a more thorough getting started guide (https://github.com/statphysandml/MCMCSimulationLib/blob/master/doc/getting_started.md) that also explains how the virtual environment for Python can be set up. It also contains a short introduction to the LatticeModelImplementations and can be used as a second source to build the library.
+The building process is equivalent to the one described in the Examples section of the LatticeModelSimulationLib. The only difference is that the path to the lattice model simulation lib needs to be set explicitly by the CMake variable `PATH_TO_LATTICE_MODEL_SIMULATION_LIB` if the respository is not integrated as a directory in LatticeModelSimulationLib (default is "../").
 
-Two config files: config.sh and project_config.sh need to be generated in the bash_scripts/ directory. Templates for both files can be found there already and can be copied.
+After a navigation into the top-level directory, the following sequence of commands builds the respective example. Note that if you use a virtual envirnonment, it is important that it is activate for the building process to find the correct python version.
 
-The defined parameters in the project_config.sh file are by default the correct ones for the beginning. Additional information about the two parameters is given in the link to MCMCSimulationLib.
-
-The config.sh contains information about the used virtual environment. The parameters need to be adapted for a successful execution of the data evaluation in Python.
-
-Having these two files, all examples can be by executing the bash script build_examples.sh in the bash_scripts/ directory:
-
-```bash
-cd bash_scripts
-bash build_examples.sh
+```
+mkdir build
+cd build
+cmake -DCMAKE_BUILD_TYPE=Release -DPATH_TO_LATTICE_MODEL_SIMULATION_LIB=[path_to_the_lattice_model_simulation_lib]/LatticeModelSimulationLib .. 
+cmake --build .
 ```
 
-To keep track of changes in the submodules when pulling updates of the respository, we strongly recommend for an update on your local machine to use
+The build process can be customized with the following CMake variables,
+which can be set by adding `-D<var>={ON, OFF} / {other}` to the `cmake` call:
 
-```bash
-git pull --recurse-submodules
-```
+* `CLUSTER_MODE`: Indicates whether the code is executed on the cluster (`on_cluster`) or locally (`local`) (default: `local`). The "local" option can be used to test whether the library prepares a computation on a cluster correctly. In this case, the simulation runs locally on your machine. The option can be changed to "on_cluster". In this case the jobs are sent to the cluster. There are two functions "prepare_execution_on_cpu_cluster" and "run_execution_on_cpu_cluster" that take care of this. The functions can be found in the file ext/MCMCSimulationLib/src/execution/execution.cpp and need to be adapted according to the used cluster. More details on how to execute a simulation on the cluster can be found in the main.cpp file of the SimulateAndExecute example (https://github.com/statphysandml/MCMCSimulationLib/blob/master/examples/SimulateAndExecute//src/main.cpp) or in the main.cpp file of the template project (see Template Project).
+* `PYTHON_SCRIPTS_PATH`: Path to a directory including additional python files for a possible execution of code of custom written functions and modules. (default: `./python_scripts`). The path is appended by the programming to sys.path. It needs to be defined relative to the project root path.
 
-otherwise the code might not run properly after an update of the library.
 
 Running
 -------
