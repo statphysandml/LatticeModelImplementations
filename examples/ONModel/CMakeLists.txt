@@ -15,7 +15,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Compilation options
 
 # Path to lattice model simulation lib
-set(PATH_TO_LATTICE_MODEL_SIMULATION_LIB ON CACHE BOOL "../")
+set(PATH_TO_LATTICE_MODEL_SIMULATION_LIB "../../.." CACHE STRING "Path to lattice model simulationlib")
 
 # General compilation options
 set(RUN_WITH_PYTHON_BACKEND ON CACHE BOOL "Use Python backend to compute expectation values, etc.")
