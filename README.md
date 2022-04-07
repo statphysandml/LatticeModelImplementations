@@ -1,6 +1,8 @@
 LatticeModelImplementions
 =================
 
+--- Note that there will be soon an update integrating the newest changes of the MCMCSimulationLib and of other dependencies. At the moment, some features might not work properly. Stay tuned! ---
+
 The repository contains example code for MCMC simulations and evaluations of different interesting model in physics. The code makes use of the C++ LatticeModelSimulationLib (https://github.com/statphysandml/LatticeModelSimulationLib). The resulting simulation data is evaluated in Python with modules of the MCMCEvaluationLib (https://github.com/statphysandml/MCMCEvaluationLib) and of the pystatplottools library  (https://github.com/statphysandml/pystatplottools). Besides the evaluation, the sampled configurations can be loaded with the help of the libraries into PyTorch. The generation of a respective data loader is shown for each of the models. The training of achine learning algorithms with Monte Carlo samples is therefore also straightforward
 
 In the long run, the project should serve as an easy-to-use simulator for various models which is equipped in addition with powerful libraries for an convenient evaluation of the simulation data in Python. The implemented models can be simulated and evaluated right away.
