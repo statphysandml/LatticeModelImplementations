@@ -75,14 +75,14 @@ int main(int argc, char **argv) {
         1, // correlation_time_rel_results_dir
         200, //  number_of_measurements
         100, // equilibrium_time_rel_results_dir
-        {"Mean", "Config", "Energy"}, // measures
+        {"Energy", "Mean", "Config"}, // measures
         {}, // post_measures
         "hot", // starting_mode
         "statistical" // error_type
     );
 
     // Prepare the simulation
-    auto mu_intervals = mcmc::util::linspace(0.0, sqrt(0.2), 2);
+    auto mu_intervals = mcmc::util::linspace(0.0, 0.447214, 2);
     auto expectation_value_simulation = mcmc::simulation::Simulation<
             Lattice, ExpectationValueParams, ReadableMeasureProcessor>::generate_simulation(
             system,
