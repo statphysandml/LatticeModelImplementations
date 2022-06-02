@@ -13,8 +13,10 @@
 #include <lattice_model_impl/site/site_header.hpp>
 #include <lattice_model_impl/lattice/lattice_header.hpp>
 #include <lattice_model_impl/link_lattice/link_lattice_header.hpp>
+#include <lattice_model_impl/one_link/one_link_header.hpp>
 
-#include <lattice_model_impl/sampler/gaussian_sampler.hpp>
+//#include <lattice_model_impl/sampler/gaussian_sampler.hpp>
+#include <lattice_model_impl/sampler/su_3_sampler.hpp>
 
 
 int main(int argc, char **argv) {
@@ -35,10 +37,11 @@ int main(int argc, char **argv) {
     // Directory for storing the simulation data
     std::string rel_data_dir = "/data/" + target_name + "/";
 
-    typedef lm_impl::site_system::OneLinkSU3Model MCMCModel;
+    typedef lm_impl::one_link_system::OneLinkSU3Model MCMCModel;
 
-    typedef double BasicType;
-    typedef lm_impl::sampler::GaussianSampler Sampler;
+    //typedef double BasicType;
+    typedef lm_impl::link::OneLinkSU3<std::complex<double>> BasicType;
+    typedef lm_impl::sampler::SU3Sampler Sampler;
     typedef lm_impl::mcmc_method::ComplexLangevinSU3ModelUpdate<MCMCModel> MCMCMethod;
     typedef lm_impl::update_dynamics::SiteSimpleUpdate UpdateDynamics;
     typedef lm_impl::site_system::SiteSystem<BasicType, MCMCModel, MCMCMethod, UpdateDynamics, Sampler> Site;
