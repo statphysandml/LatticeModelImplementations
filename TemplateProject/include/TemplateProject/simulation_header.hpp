@@ -7,7 +7,7 @@
 
 #include <lattice_model_impl/representations/link_header.hpp>
 
-#include <mcmc_simulation/header.hpp>
+#include <mcmc/mcmc_simulation/header.hpp>
 #include <execution/executer.hpp>
 
 #include <lattice_model_impl/update_dynamics/update_dynamics_header.hpp>

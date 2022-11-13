@@ -2,15 +2,14 @@
 
 #include <lattice_model_impl/representations/link_header.hpp>
 
-#include <mcmc_simulation/header.hpp>
-#include <mcmc_simulation/util/intervals.hpp>
-#include <modes/mode_header.hpp>
-#include <mcmc_simulation/util/random.hpp>
+#include <mcmc/mcmc_simulation/header.hpp>
+#include <mcmc/mcmc_simulation/util/intervals.hpp>
+#include <mcmc/modes/mode_header.hpp>
+#include <mcmc/mcmc_simulation/util/random.hpp>
 
 #include <lattice_model_impl/update_dynamics/update_dynamics_header.hpp>
 #include <lattice_model_impl/mcmc_method/mcmc_method_header.hpp>
 
-// #include <lattice_model_impl/site/site_header.hpp>
 #include <lattice_model_impl/lattice/lattice_header.hpp>
 #include <lattice_model_impl/link_lattice/link_lattice_header.hpp>
 
@@ -49,7 +48,7 @@ int main(int argc, char **argv) {
 
     MCMCModel model(0.5);
 
-    MCMCMethod mcmc_method();
+    MCMCMethod mcmc_method;
 
     UpdateDynamics update_dynamics;
 
@@ -74,7 +73,7 @@ int main(int argc, char **argv) {
     typedef mcmc::mode::ExpectationValue ExpectationValueParams;
     ExpectationValueParams expectation_value_parameters(
         1, // correlation_time_rel_results_dir
-        20000, //  number_of_measurements
+        200, //  number_of_measurements
         1000, // equilibrium_time_rel_results_dir
         {"Config", "AveragePlaquetteAction"}, // measures
         {}, // post_measures
@@ -98,7 +97,7 @@ int main(int argc, char **argv) {
     expectation_value_simulation.run();
     expectation_value_simulation.eval(rel_results_dir);
 
-    //] */
+    //]
 
     // Finalization
 #ifdef PYTHON_BACKEND

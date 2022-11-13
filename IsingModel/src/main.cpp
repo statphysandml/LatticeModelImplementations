@@ -1,18 +1,13 @@
 #include "../include/IsingModel/config.h"
 
-#include <mcmc_simulation/header.hpp>
-#include <mcmc_simulation/util/intervals.hpp>
-#include <modes/mode_header.hpp>
-#include <mcmc_simulation/util/random.hpp>
-
-// #include <lattice_model_impl/representations/link_header.hpp>
+#include <mcmc/mcmc_simulation/header.hpp>
+#include <mcmc/mcmc_simulation/util/intervals.hpp>
+#include <mcmc/modes/mode_header.hpp>
+#include <mcmc/mcmc_simulation/util/random.hpp>
 
 #include <lattice_model_impl/update_dynamics/update_dynamics_header.hpp>
 #include <lattice_model_impl/mcmc_method/mcmc_method_header.hpp>
-
-// #include <lattice_model_impl/site/site_header.hpp>
 #include <lattice_model_impl/lattice/lattice_header.hpp>
-// #include <lattice_model_impl/link_lattice/link_lattice_header.hpp>
 
 
 int main(int argc, char **argv) {
@@ -143,8 +138,7 @@ int main(int argc, char **argv) {
         rel_correlation_time_results_path, // correlation_time_rel_results_dir
         1000, //  number_of_measurements
         rel_equilibrium_time_results_path, // equilibrium_time_rel_results_dir
-        {"Config", "Mean", "AbsMean", "SecondMoment", "Action", "AcceptanceRate", "EnergyViolation",
-         "ExponentialEnergyViolation"}, // measures
+        {"Config", "Mean", "AbsMean", "SecondMoment", "Energy"}, // measures
          {}, // post_measures
          "hot", // starting_mode
          "statistical" // error_type

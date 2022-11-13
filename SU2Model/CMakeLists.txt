@@ -22,6 +22,7 @@ set(PYTHON_SCRIPTS_PATH "./python_scripts" CACHE STRING "Path to the potential p
 
 # Include libraries
 find_package(ParamHelper CONFIG REQUIRED)
+find_package(Eigen3 CONFIG REQUIRED)
 find_package(MCMCSimulationLib CONFIG REQUIRED)
 find_package(LatticeModelSimulationLib CONFIG REQUIRED)
 
@@ -80,4 +81,4 @@ add_executable(SU2Model src/main.cpp)
 if(RUN_WITH_PYTHON_BACKEND)
     target_compile_definitions(SU2Model PUBLIC PYTHON_BACKEND)
 endif()
-target_link_libraries(SU2Model PUBLIC latticemodelsimulationlib::latticemodelsimulationlib mcmcsimulationlib::mcmcsimulationlib paramhelper::paramhelper ${target_link_libraries_python_appendix})
+target_link_libraries(SU2Model PUBLIC latticemodelsimulationlib::latticemodelsimulationlib mcmcsimulationlib::mcmcsimulationlib paramhelper::paramhelper Eigen3::Eigen ${target_link_libraries_python_appendix})

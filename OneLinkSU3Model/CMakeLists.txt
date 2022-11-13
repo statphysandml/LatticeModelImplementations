@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.15)
 
 # Set a name and a version number for your project:
-project(IsingModel VERSION 0.0.1 LANGUAGES CXX)
+project(OneLinkSU3Model VERSION 0.0.1 LANGUAGES CXX)
 
 # Initialize some default paths
 include(GNUInstallDirs)
@@ -26,7 +26,7 @@ find_package(Eigen3 CONFIG REQUIRED)
 find_package(MCMCSimulationLib CONFIG REQUIRED)
 find_package(LatticeModelSimulationLib CONFIG REQUIRED)
 
-configure_file(./include/IsingModel/config.h.in ../include/IsingModel/config.h @ONLY)
+configure_file(./include/OneLinkSU3Model/config.h.in ../include/OneLinkSU3Model/config.h @ONLY)
 
 if(RUN_WITH_PYTHON_BACKEND)
     set(target_link_libraries_python_appendix "pybind11::embed")
@@ -76,9 +76,9 @@ endif()
 include(FeatureSummary)
 feature_summary(WHAT ALL)
 
-add_executable(IsingModel src/main.cpp)
+add_executable(OneLinkSU3Model src/main.cpp)
 
 if(RUN_WITH_PYTHON_BACKEND)
-    target_compile_definitions(IsingModel PUBLIC PYTHON_BACKEND)
+    target_compile_definitions(OneLinkSU3Model PUBLIC PYTHON_BACKEND)
 endif()
-target_link_libraries(IsingModel PUBLIC latticemodelsimulationlib::latticemodelsimulationlib mcmcsimulationlib::mcmcsimulationlib paramhelper::paramhelper Eigen3::Eigen ${target_link_libraries_python_appendix})
+target_link_libraries(OneLinkSU3Model PUBLIC latticemodelsimulationlib::latticemodelsimulationlib mcmcsimulationlib::mcmcsimulationlib paramhelper::paramhelper Eigen3::Eigen ${target_link_libraries_python_appendix})

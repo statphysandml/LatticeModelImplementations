@@ -2,10 +2,10 @@
 
 #include <lattice_model_impl/representations/link_header.hpp>
 
-#include <mcmc_simulation/header.hpp>
-#include <mcmc_simulation/util/intervals.hpp>
-#include <modes/mode_header.hpp>
-#include <mcmc_simulation/util/random.hpp>
+#include <mcmc/mcmc_simulation/header.hpp>
+#include <mcmc/mcmc_simulation/util/intervals.hpp>
+#include <mcmc/modes/mode_header.hpp>
+#include <mcmc/mcmc_simulation/util/random.hpp>
 
 #include <lattice_model_impl/update_dynamics/update_dynamics_header.hpp>
 #include <lattice_model_impl/mcmc_method/mcmc_method_header.hpp>
@@ -97,7 +97,7 @@ int main(int argc, char **argv) {
     expectation_value_simulation.run();
     expectation_value_simulation.eval(rel_results_dir);
 
-    //] */
+    //]
 
     // Finalization
 #ifdef PYTHON_BACKEND

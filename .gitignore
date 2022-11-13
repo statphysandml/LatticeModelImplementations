@@ -70,6 +70,20 @@ IsingModel/include/IsingModel/config.h
 IsingModel/results/*
 !IsingModel/results/.keep
 
+!OneLinkSU3Model/
+OneLinkSU3Model/build
+OneLinkSU3Model/configs/*
+!OneLinkSU3Model/configs/.keep
+OneLinkSU3Model/cpu_cluster_runs/*
+!OneLinkSU3Model/cpu_cluster_runs/.keep
+OneLinkSU3Model/data/*
+!OneLinkSU3Model/data/.keep
+OneLinkSU3Model/ext/*
+!OneLinkSU3Model/ext/.keep
+OneLinkSU3Model/include/OneLinkSU3Model/config.h
+OneLinkSU3Model/results/*
+!OneLinkSU3Model/results/.keep
+
 !ONModel/
 ONModel/build
 ONModel/configs/*
