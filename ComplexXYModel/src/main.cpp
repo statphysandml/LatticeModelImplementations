@@ -27,7 +27,7 @@ int main(int argc, char **argv) {
     //[ Defining the MCMC system and further important variables
 
     // Name of the simulation
-    const std::string target_name = "ComplexXYModelComplexLangevin";
+    const std::string target_name = "ComplexXYModelComplexLangevin_mu0to15_beta05_26";
 
     // Directory for storing the results
     std::string rel_results_dir = "/results/" + target_name + "/";
@@ -46,7 +46,7 @@ int main(int argc, char **argv) {
     
     Sampler sampler(0.1);
 
-    MCMCModel model(0.4, 0.0);
+    MCMCModel model(0.5, 0.0);
 
     MCMCMethod mcmc_method(0.001);
 
@@ -72,8 +72,8 @@ int main(int argc, char **argv) {
 
     typedef mcmc::mode::ExpectationValue ExpectationValueParams;
     ExpectationValueParams expectation_value_parameters(
-        1, // correlation_time_rel_results_dir
-        200, //  number_of_measurements
+        10, // correlation_time_rel_results_dir
+        1000, //  number_of_measurements
         100, // equilibrium_time_rel_results_dir
         {"Energy", "Mean", "Config"}, // measures
         {}, // post_measures
@@ -82,7 +82,7 @@ int main(int argc, char **argv) {
     );
 
     // Prepare the simulation
-    auto mu_intervals = mcmc::util::linspace(0.0, 0.447214, 2);
+    auto mu_intervals = mcmc::util::linspace(0.0, 1.5, 26);
     auto expectation_value_simulation = mcmc::simulation::Simulation<
             Lattice, ExpectationValueParams, ReadableMeasureProcessor>::generate_simulation(
             system,

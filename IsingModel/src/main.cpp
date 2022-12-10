@@ -13,7 +13,7 @@
 #include <lattice_model_impl/site/site_header.hpp>
 #include <lattice_model_impl/lattice/lattice_header.hpp>
 #include <lattice_model_impl/link_lattice/link_lattice_header.hpp>
-#include <lattice_model_impl/one_link/one_link_header.hpp>
+#include <lattice_model_impl/site/one_link_header.hpp>
 
 //#include <lattice_model_impl/sampler/gaussian_sampler.hpp>
 #include <lattice_model_impl/sampler/su_3_sampler.hpp>
@@ -38,13 +38,15 @@ int main(int argc, char **argv) {
     std::string rel_data_dir = "/data/" + target_name + "/";
 
     typedef lm_impl::one_link_system::OneLinkSU3Model MCMCModel;
+    //typedef lm_impl::site_system::PolynomialModel MCMCModel;
+
 
     //typedef double BasicType;
     typedef lm_impl::link::OneLinkSU3<std::complex<double>> BasicType;
     typedef lm_impl::sampler::SU3Sampler Sampler;
     typedef lm_impl::mcmc_method::ComplexLangevinSU3ModelUpdate<MCMCModel> MCMCMethod;
     typedef lm_impl::update_dynamics::SiteSimpleUpdate UpdateDynamics;
-    typedef lm_impl::site_system::SiteSystem<BasicType, MCMCModel, MCMCMethod, UpdateDynamics, Sampler> Site;
+    typedef lm_impl::site_system::SiteSystem<BasicType, MCMCModel, MCMCMethod, UpdateDynamics, Sampler> Link;
     
     Sampler sampler(0.1);
 
@@ -55,7 +57,7 @@ int main(int argc, char **argv) {
     UpdateDynamics update_dynamics;
 
     // Setting up the system
-    Site system(
+    Link system(
         sampler,
         model,
         mcmc_method,
@@ -75,15 +77,15 @@ int main(int argc, char **argv) {
         100, // correlation_time_rel_results_dir
         1000, //  number_of_measurements
         1000, // equilibrium_time_rel_results_dir
-        {"Config"}, // measures
-        {"SecondMoment"}, // post_measures
+        {"Polyakov_Loop", "Config"}, // measures "Config", 
+        {}, // post_measures
         "hot", // starting_mode
         "statistical" // error_type
     );
 
     // Prepare the simulation
     auto expectation_value_simulation = mcmc::simulation::Simulation<
-            Site, ExpectationValueParams, ReadableMeasureProcessor>::generate_simulation(
+            Link, ExpectationValueParams, ReadableMeasureProcessor>::generate_simulation(
             system,
             expectation_value_parameters,
             readable_measures
